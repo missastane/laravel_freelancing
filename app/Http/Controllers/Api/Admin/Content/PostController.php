@@ -11,7 +11,6 @@ use App\Models\Content\Post;
 use App\Models\Market\File;
 use App\Traits\ApiResponseTrait;
 use Exception;
-use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -33,7 +32,7 @@ class PostController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Posts with their Tags",
-     *   @OA\JsonContent(
+     *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", nullable=true, example=null),
      *             @OA\Property(
