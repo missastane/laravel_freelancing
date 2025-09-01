@@ -44,6 +44,7 @@ use App\Http\Controllers\Api\Customer\UserEducationController;
 use App\Http\Controllers\Api\Customer\UserExperienceController;
 use App\Http\Controllers\Api\Customer\UserPortfolioController;
 use App\Http\Controllers\Api\Customer\WithdrawalRequestController;
+use App\Http\Controllers\Api\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\OTPController;
@@ -77,6 +78,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::patch('/status/{post}', [PostController::class, 'status'])->name('admin.content.post.status');
             Route::put('/update/{post}', [PostController::class, 'update'])->name('admin.content.post.update');
             Route::delete('/delete/{post}', [PostController::class, 'delete'])->name('admin.content.post.delete');
+            Route::delete('/delete-file/{file}', [PostController::class, 'deleteFile'])->name('admin.content.post.delete-file');
         });
         Route::prefix('comment')->group(function () {
             Route::get('/', [CommentController::class, 'index']);

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\Admin\Content;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Content\PostRequest;
 use App\Http\Requests\SearchRequest;
+use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Post\PostService;
 use App\Models\Content\Post;
+use App\Models\Market\File;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,7 +17,8 @@ class PostController extends Controller
 {
     use ApiResponseTrait;
     public function __construct(
-        protected PostService $postService
+        protected PostService $postService,
+        protected FileManagementService $fileManagementService
     ) {
     }
     /**
@@ -222,6 +225,17 @@ class PostController extends Controller
      *                                 @OA\Property(property="id", type="integer", example=2),
      *                                 @OA\Property(property="name", type="string", example="برنامه نویسی")
      *                             )
+     *                         ),
+     *                         @OA\Property(
+     *                             property="files",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="id", type="integer", example=2),
+     *                                 @OA\Property(property="file_name", type="string", example="name.extension"),
+     *                                 @OA\Property(property="file_path", type="string", example="path/.."),
+     *                                 @OA\Property(property="file_size", type="string", example="1245525"),
+     *                             )
      *                         )
      *                    )
      *                 ),
@@ -347,7 +361,18 @@ class PostController extends Controller
      *                                 @OA\Property(property="id", type="integer", example=2),
      *                                 @OA\Property(property="name", type="string", example="برنامه نویسی")
      *                             )
-     *                       )
+     *                       ),
+     *                         @OA\Property(
+     *                             property="files",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="id", type="integer", example=2),
+     *                                 @OA\Property(property="file_name", type="string", example="name.extension"),
+     *                                 @OA\Property(property="file_path", type="string", example="path/.."),
+     *                                 @OA\Property(property="file_size", type="string", example="1245525"),
+     *                             )
+     *                         )
      *                 )
      *          )
      *   ),
@@ -655,7 +680,10 @@ class PostController extends Controller
      *                     @OA\Schema(type="integer", example=2, description="2 = inactive")
      *                 }
      *             ),
-     *             @OA\Property(property="related_posts", description="Ids Of Relation Posts", type="array", nullable="true", 
+     *             @OA\Property(property="files[]", type="array", 
+     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."
+     *              ),
+     *             @OA\Property(property="related_posts[]", description="Ids Of Relation Posts", type="array", nullable="true", 
      *                 @OA\Items(type="integer", example=1)
      *             ),
      *             @OA\Property(property="category_id",description="ParentID.This field is optional when creating or updating the category.", type="integer", nullable="true", example=5),
@@ -806,6 +834,72 @@ class PostController extends Controller
             return $this->success(null, 'پست ' . $post->title . ' با موفقیت حذف شد');
         } catch (Exception $e) {
            return $this->error();
+        }
+    }
+
+      /**
+     * @OA\Delete(
+     *     path="/api/admin/content/post/delete-file/{file}",
+     *     summary="Delete a File of a Post",
+     *     description="This endpoint allows the user to `delete an existing File of a Post`.",
+     *     tags={"Post"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="file",
+     *         in="path",
+     *         description="The ID of the File to be deleted",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Post's File deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="فایل با موفقیت حذف شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *         )
+     *     )
+     * )
+     */
+    public function deleteFile(File $file)
+    {
+        try {
+            $this->fileManagementService->deleteFile($file);
+            return $this->success(null, 'فایل با موفقیت حذف شد');
+        } catch (Exception $e) {
+            return $this->error();
         }
     }
 }

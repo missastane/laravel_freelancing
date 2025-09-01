@@ -19,20 +19,20 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
     }
      public function getPosts()
     {
-        $posts = $this->all(['postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name'],'id','desc');
+        $posts = $this->all(['postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name','files'],'id','desc');
         return New BaseCollection($posts,PostResource::class,null);
     }
     public function searchPosts(string $search)
     {
         $posts = $this->model->where('title', 'LIKE', "%" . $search . "%")
-            ->with('postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name','files:id,file_name,file_path,file_size')
+            ->with('postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name','files')
             ->orderBy('title', 'asc')->paginate(15);
             
         return New BaseCollection($posts,PostResource::class,null);
     }
     public function showPost(Post $post)
     {
-        $post = $this->showWithRelations($post, ['postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name','files:id,file_name,file_path,file_size']);
+        $post = $this->showWithRelations($post, ['postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name','files']);
         foreach($post->files() as $file){
             \Log::info($file);
         }

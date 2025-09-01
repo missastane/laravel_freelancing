@@ -2658,6 +2658,30 @@
                                                                     },
                                                                     "type": "object"
                                                                 }
+                                                            },
+                                                            "files": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 2
+                                                                        },
+                                                                        "file_name": {
+                                                                            "type": "string",
+                                                                            "example": "name.extension"
+                                                                        },
+                                                                        "file_path": {
+                                                                            "type": "string",
+                                                                            "example": "path/.."
+                                                                        },
+                                                                        "file_size": {
+                                                                            "type": "string",
+                                                                            "example": "1245525"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
                                                             }
                                                         },
                                                         "type": "object"
@@ -2980,6 +3004,30 @@
                                                             "name": {
                                                                 "type": "string",
                                                                 "example": "برنامه نویسی"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "files": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "file_name": {
+                                                                "type": "string",
+                                                                "example": "name.extension"
+                                                            },
+                                                            "file_path": {
+                                                                "type": "string",
+                                                                "example": "path/.."
+                                                            },
+                                                            "file_size": {
+                                                                "type": "string",
+                                                                "example": "1245525"
                                                             }
                                                         },
                                                         "type": "object"
@@ -3589,7 +3637,15 @@
                                             }
                                         ]
                                     },
-                                    "related_posts": {
+                                    "files[]": {
+                                        "description": "Upload a single media file.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "related_posts[]": {
                                         "description": "Ids Of Relation Posts",
                                         "type": "array",
                                         "items": {
@@ -3808,6 +3864,139 @@
                                         "message": {
                                             "type": "string",
                                             "example": "پست با موفقیت حذف شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/content/post/delete-file/{file}": {
+            "delete": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Delete a File of a Post",
+                "description": "This endpoint allows the user to `delete an existing File of a Post`.",
+                "operationId": "fe50d7aebd36f9ff755e31d5f91c1a57",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path",
+                        "description": "The ID of the File to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post's File deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "فایل با موفقیت حذف شد"
                                         },
                                         "data": {
                                             "type": "object",
@@ -33078,6 +33267,139 @@
                     }
                 ]
             }
+        },
+        "/api/file/delete/{file}": {
+            "delete": {
+                "tags": [
+                    "File"
+                ],
+                "summary": "Delete a File of a Model",
+                "description": "This endpoint allows the user to `delete an existing File of a Model`.",
+                "operationId": "3fba18a97edd95abe64a9acb384f2c3b",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path",
+                        "description": "The ID of the File to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Model's File deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "فایل با موفقیت حذف شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -35718,6 +36040,10 @@
         {
             "name": "Customer-WithdrawalRequest",
             "description": "Customer-WithdrawalRequest"
+        },
+        {
+            "name": "File",
+            "description": "File"
         }
     ]
 }
