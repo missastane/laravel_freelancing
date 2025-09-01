@@ -1,0 +1,490 @@
+<?php
+
+namespace App\Http\Controllers\Api\Customer;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Freelancer\ProposalRequest;
+use App\Http\Services\Favorite\FavoriteService;
+use App\Http\Services\Proposal\ProposalService;
+use App\Models\Market\Project;
+use App\Models\Market\Proposal;
+use App\Traits\ApiResponseTrait;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
+class ProposalController extends Controller
+{
+    use ApiResponseTrait;
+    public function __construct(
+        protected ProposalService $proposalService,
+        protected FavoriteService $favoriteService
+    ) {
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/proposal",
+     *     summary="Retrieve list of Proposals a project by employer",
+     *     description="Retrieve list of all Proposals a project by employer`",
+     *     tags={"Customer-Proposal"},
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         description="ID of the Project to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of Proposals",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example="true"),
+     *             @OA\Property(property="message", type="string", example="null"),
+     *             @OA\Property(property="data", type="object",
+     *             @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="data", type="array",
+     *                     @OA\Items(
+     *                      ref="#/components/schemas/Proposal"
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="total", type="integer", example=45)
+     *             )
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     * )
+     */
+    public function index(Project $project, Request $request)
+    {
+        return $this->proposalService->getProposals($project, null, $request->query('status'));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/proposal/add-to-favorite",
+     *     summary="Add a Proposal to Favorites by employers",
+     *     description="In this method employers can Add a Proposal to Favorites",
+     *     tags={"Customer-Proposal"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="proposal",
+     *         in="path",
+     *         description="ID of the Proposal to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Add to Favorite was successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="پیشنهاد با موفقیت به لیست علاقمندی ها اضافه شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *      @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     ),
+     *   @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function addToFavorite(Proposal $proposal)
+    {
+        try {
+            $inputs = [];
+            $inputs['context'] = Proposal::class;
+            $inputs['context_id'] = $proposal->id;
+            $this->favoriteService->addToFavorite($inputs);
+            return $this->success(null, "پیشنهاد با موفقیت به لیست علاقمندی ها اضافه شد", 201);
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/proposal/show/{proposal}",
+     *     summary="Get details of a specific Proposal",
+     *     description="Returns the `Proposal` details",
+     *     tags={"Customer-Proposal","Customer-Proposal/Form"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="proposal",
+     *         in="path",
+     *         description="ID of the Proposal to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully fetched Proposal details",
+     *           @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example="true"),
+     *             @OA\Property(property="message", type="string", example="null"),
+     *             @OA\Property(property="data", type="object",
+     *               ref="#/components/schemas/Proposal"
+     *             )
+     *         )
+     *   ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *  @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     ))
+     * )
+     */
+    public function show(Proposal $proposal)
+    {
+        return $this->proposalService->showProposal($proposal);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/proposal/store",
+     *     summary="Store a new Proposal by freelancer",
+     *     description="In this method freelancers can Store a new Proposal",
+     *     tags={"Customer-Proposal"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="milstones", type="array", minItems=1,
+     *                @OA\Items(
+     *                  @OA\Property(property="title", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters and numbers. Any other characters will result in a validation error.", example="این تیکت منه"),
+     *                  @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *                  @OA\Property(property="duration_time", type="integer", description="per day", example=5),
+     *                  @OA\Property(property="amount", type="integer", description="currency is tooman", example=700000),
+     *               )
+     *            )
+     *          )
+     *        )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="successful Proposal Creation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="پیشنهاد با موفقیت ثبت شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *      @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="x", type="array",
+     *                     @OA\Items(type="string", example="فیلد x اجباری است")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function store(Project $project, ProposalRequest $request)
+    {
+        if (Gate::denies('store', $project)) {
+            return $this->error('کارفرما قبلا فریلنسری را برای این پروژه استخدام کرده است', 403);
+        }
+        try {
+            $this->proposalService->storeProposal($project, $request->all());
+            return $this->success(null, 'پشنهاد با موفقیت افزوده شد', 201);
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/proposal/update/{proposal}",
+     *     summary="Update an existing Proposal by freelancer",
+     *     description="In this method freelancers can Update an existing Proposal",
+     *     tags={"Customer-Proposal"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="milstones", type="array", minItems=1,
+     *                @OA\Items(
+     *             @OA\Property(property="title", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters and numbers. Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="duration_time", type="integer", description="per day", example=5),
+     *             @OA\Property(property="amount", type="integer", description="currency is tooman", example=700000),
+     *              )
+     *            )
+     *         )
+     *       )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful Proposal Update",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="پیشنهاد با موفقیت بروزرسانی شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *      @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="x", type="array",
+     *                     @OA\Items(type="string", example="فیلد x اجباری است")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function update(Proposal $proposal, ProposalRequest $request)
+    {
+        if (Gate::denies('update', $proposal)) {
+            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
+        }
+        try {
+            $this->proposalService->updateProposal($proposal, $request->all());
+            return $this->success(null, 'پیشنهاد با موفقیت بروزرسانی شد');
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/api/proposal/withdraw/{proposal}",
+     *     summary="Withdraw a Proposal by freelancer",
+     *     description="In this method freelancers can Withdraw a Proposal",
+     *     tags={"Customer-Proposal"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful Proposal Withdraw",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="پیشنهاد با موفقیت پس گرفته شده و لغو شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *      @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function withdraw(Proposal $proposal)
+    {
+        if (Gate::denies('withdraw', $proposal)) {
+            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
+        }
+        try {
+            $this->proposalService->withdrawProposal($proposal);
+            return $this->success(null, 'پیشنهاد فریلنسر پس گرفته شده و لغو شد');
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/proposal/approve/{proposal}",
+     *     summary="Approve a Proposal by employer",
+     *     description="In this method employers can Approve a Proposal. Upon approval, the proposal status will be marked as `approved`. The project payment will also be locked in employer's wallet.",
+     *     tags={"Customer-Proposal"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful Proposal Approve",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="پیشنهاد با موفقیت پذیرفته شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *      @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function approve(Proposal $proposal)
+    {
+        if (Gate::denies('approve', $proposal)) {
+            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
+        }
+        try {
+            $this->proposalService->approveProposal($proposal);
+            return $this->success(null, 'پیشنهاد با موفقیت پذیرفته شد', 201);
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
+
+}
