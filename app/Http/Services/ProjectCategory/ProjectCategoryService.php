@@ -20,15 +20,15 @@ class ProjectCategoryService
 
     }
 
-    public function getCategories(): Paginator
+    public function getCategories()
     {
         return $this->projectCategoryRepository->getCategoies();
     }
-    public function searchCategory(string $search): Paginator
+    public function searchCategory(string $search)
     {
         return $this->projectCategoryRepository->searchCategories($search);
     }
-    public function showCategory(ProjectCategory $projectCategory): ProjectCategory
+    public function showCategory(ProjectCategory $projectCategory)
     {
         return $this->projectCategoryRepository->showCategory($projectCategory);
     }

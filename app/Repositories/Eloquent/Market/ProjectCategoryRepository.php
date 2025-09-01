@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\ProjectCategoryResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\ProjectCategory;
 use App\Repositories\Contracts\Market\ProjectCategoryRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -22,27 +24,24 @@ class ProjectCategoryRepository extends BaseRepository implements ProjectCategor
             $item->makeHidden('status', 'show_in_menu', 'parent_id');
         })->append(['status_value', 'show_in_menu_value']);
     }
-    public function getCategoies(): Paginator
+    public function getCategoies()
     {
-        $projectCategories = $this->all(['parent:id,name']);
-        $this->formatCategories($projectCategories);
-        return $projectCategories;
-
+        $projectCategories = $this->all(['parent:id,name', 'tags']);
+        return new BaseCollection($projectCategories, ProjectCategoryResource::class, null);
     }
-    public function searchCategories(string $search): Paginator
+    public function searchCategories(string $search)
     {
         $catgories = $this->model->where('name', 'LIKE', "%" . $search . "%")
             ->orWhere('description', 'LIKE', '%' . $search . '%')->with('parent:id,name')
             ->orderBy('name')
-            ->simplePaginate(15);
-        $this->formatCategories($catgories);
-        return $catgories;
+            ->paginate(15);
+        // $this->formatCategories($catgories);
+        return new BaseCollection($catgories, ProjectCategoryResource::class, null);
     }
-    public function showCategory(ProjectCategory $projectCategory): ProjectCategory
+    public function showCategory(ProjectCategory $projectCategory)
     {
-        $projectCategory = $this->showWithRelations($projectCategory, ['parent:id,name']);
-        $projectCategory->makeHidden(['status', 'show_in_menu', 'parent_id'])->append(['status_value', 'show_in_menu_value']);
-        return $projectCategory;
+        $projectCategory = $this->showWithRelations($projectCategory, ['parent:id,name','tags']);
+        return new ProjectCategoryResource($projectCategory);
     }
 
     public function getOptions()

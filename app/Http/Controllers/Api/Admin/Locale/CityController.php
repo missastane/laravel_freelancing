@@ -99,7 +99,7 @@ class CityController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Cities",
-     *            @OA\JsonContent(
+     *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", nullable=true, example=null),
      *             @OA\Property(

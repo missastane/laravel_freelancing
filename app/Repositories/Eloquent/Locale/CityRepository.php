@@ -36,10 +36,10 @@ class CityRepository extends BaseRepository implements CityRepositoryInterface
         $result = $this->model->where('name', 'LIKE', "%{$search}%")
             ->with('province')
             ->orderBy('name', 'asc')->paginate(15);
-        return new BaseCollection($result,CityResource::class,null);
+        return new BaseCollection($result, CityResource::class, null);
     }
 
-     public function showCity(City $city)
+    public function showCity(City $city)
     {
         return $this->showWithRelations($city, ['province:id,name']);
     }

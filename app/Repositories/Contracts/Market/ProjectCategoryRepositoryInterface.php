@@ -8,8 +8,8 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface ProjectCategoryRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getCategoies() : Paginator;
-    public function searchCategories(string $search) : Paginator;
-    public function showCategory(ProjectCategory $projectCategory) : ProjectCategory;
+    public function getCategoies();
+    public function searchCategories(string $search);
+    public function showCategory(ProjectCategory $projectCategory);
     public function getOptions();
 }

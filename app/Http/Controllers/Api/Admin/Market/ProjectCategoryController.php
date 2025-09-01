@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin\Market;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Market\ProjectCategoryRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Services\ProjectCategory\ProjectCategoryService;
 use App\Models\Market\ProjectCategory;
 use App\Traits\ApiResponseTrait;
@@ -25,30 +26,76 @@ class ProjectCategoryController extends Controller
      *     tags={"ProjectCategory"},
      *     security={{"bearerAuth":{}}},
      *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         required=false,
-     *         description="Page number for pagination",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Paginated list of ProjectCategories",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
      *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
-     *                      ref="#/components/schemas/ProjectCategory"
+     *                      @OA\Property(property="id", type="integer", example=2),
+     *                      @OA\Property(property="name", type="string", example="php"),
+     *                      @OA\Property(property="description", type="string", example="توضیح php"),
+     *                      @OA\Property(property="image", type="string", example="path/image.jpg"),
+     *                      @OA\Property(property="status", type="string", example="فعال"),
+     *                      @OA\Property(property="show_in_menu", type="string", example="بله"),
+     *                      @OA\Property(property="created_at", type="string", example="2025-06-28T07:56:18.000000Z"),
+     *                      @OA\Property(property="updated_at", type="string", example="2025-06-28T07:56:18.000000Z"),
+     *                      @OA\Property(property="parent", type="object", 
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="php")
+     *                       ),
+     *                      @OA\Property(property="tags", type="array", 
+     *                      @OA\Items(type="object", 
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="php")
+     *                       )
+     *                     )
+     *                   )
+     *                 ),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -73,7 +120,7 @@ class ProjectCategoryController extends Controller
     public function index()
     {
         $projectCategories = $this->projectCategoryService->getCategories();
-        return $this->success($projectCategories);
+        return $projectCategories;
     }
     /**
      * @OA\Get(
@@ -89,30 +136,76 @@ class ProjectCategoryController extends Controller
      *         description="ProjectCategory name or description",
      *         @OA\Schema(type="string", example="ترجمه")
      *     ),
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         required=false,
-     *         description="Page number for pagination",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Paginated list of ProjectCategories",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
+     *          @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
      *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
-     *                      ref="#/components/schemas/ProjectCategory"
+     *                      @OA\Property(property="id", type="integer", example=2),
+     *                      @OA\Property(property="name", type="string", example="php"),
+     *                      @OA\Property(property="description", type="string", example="توضیح php"),
+     *                      @OA\Property(property="image", type="string", example="path/image.jpg"),
+     *                      @OA\Property(property="status", type="string", example="فعال"),
+     *                      @OA\Property(property="show_in_menu", type="string", example="بله"),
+     *                      @OA\Property(property="created_at", type="string", example="2025-06-28T07:56:18.000000Z"),
+     *                      @OA\Property(property="updated_at", type="string", example="2025-06-28T07:56:18.000000Z"),
+     *                      @OA\Property(property="parent", type="object", 
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="php")
+     *                       ),
+     *                      @OA\Property(property="tags", type="array", 
+     *                      @OA\Items(type="object", 
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="php")
+     *                       )
+     *                     )
+     *                   )
+     *                 ),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -134,10 +227,10 @@ class ProjectCategoryController extends Controller
      *     ))
      * )
      */
-    public function search(Request $request)
+    public function search(SearchRequest $request)
     {
         $projectCategories = $this->projectCategoryService->searchCategory($request->search);
-        return $this->success($projectCategories);
+        return $projectCategories;
     }
 
     /**
@@ -163,7 +256,24 @@ class ProjectCategoryController extends Controller
      *             @OA\Property(property="status", type="boolean", example="true"),
      *             @OA\Property(property="message", type="string", example="null"),
      *             @OA\Property(property="data", type="object",
-     *               ref="#/components/schemas/ProjectCategory"
+     *                 @OA\Property(property="id", type="integer", example=2),
+     *                 @OA\Property(property="name", type="string", example="php"),
+     *                 @OA\Property(property="description", type="string", example="توضیح php"),
+     *                 @OA\Property(property="image", type="string", example="path/image.jpg"),
+     *                 @OA\Property(property="status", type="string", example="فعال"),
+     *                 @OA\Property(property="show_in_menu", type="string", example="بله"),
+     *                 @OA\Property(property="created_at", type="string", example="2025-06-28T07:56:18.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", example="2025-06-28T07:56:18.000000Z"),
+     *                 @OA\Property(property="parent", type="object", 
+     *                    @OA\Property(property="id", type="integer", example=2),
+     *                    @OA\Property(property="name", type="string", example="php")
+     *                  ),
+     *                 @OA\Property(property="tags", type="array", 
+     *                      @OA\Items(type="object", 
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="php")
+     *                       )
+     *                  )
      *             )
      *         )
      *     ),
@@ -218,7 +328,7 @@ class ProjectCategoryController extends Controller
      *         description="ProjectCategory status state updated successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="وضعیت با موفقیت فعال شد"),
+     *             @OA\Property(property="message", type="string", example="دسته بندی پروژه با موفقیت فعال شد"),
      *             @OA\Property(property="data", type="object", nullable=true),
      *         )
      *     ),
@@ -288,7 +398,7 @@ class ProjectCategoryController extends Controller
      *         description="ProjectCategory show in menu state updated successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="وضعیت نمایش در منو با موفقیت فعال شد"),
+     *             @OA\Property(property="message", type="string", example="وضعیت نمایش دسته بندی با موفقیت فعال شد"),
      *             @OA\Property(property="data", type="object", nullable=true)
      *         )
      *     ),
@@ -388,7 +498,7 @@ class ProjectCategoryController extends Controller
      *         description="successful Project Category creation",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="bool", example="true"),
-     *             @OA\Property(property="message", type="string", example="دسته بندی پروژه با موفقیت ایجاد شد"),
+     *             @OA\Property(property="message", type="string", example="دسته بندی پروژه با موفقیت افزوده شد"),
      *             @OA\Property(property="data", type="object", nullable=true)
      *         )
      *     ),
