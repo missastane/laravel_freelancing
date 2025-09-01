@@ -12,11 +12,15 @@ use Illuminate\Database\Eloquent\Collection;
 class SkillRepository extends BaseRepository implements SkillRepositoryInterface
 {
     use HasCRUDTrait;
+    public function __construct(Skill $model)
+    {
+        parent::__construct($model);
+    }
     public function searchSkill(string $search): Paginator
     {
         $skills = $this->model->where('original_title', 'LIKE', "%" . $search . "%")
             ->orWhere('persian_title', 'LIKE', '%' . $search . '%')
-            ->orderBy('persian_title')->simplePaginate(20);
+            ->orderBy('persian_title')->paginate(20);
         return $skills;
     }
 
