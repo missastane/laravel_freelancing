@@ -28,18 +28,55 @@ class ProvinceController extends Controller
      *         response=200,
      *         description="A list of Provinces",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *               @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Province"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -72,7 +109,7 @@ class ProvinceController extends Controller
      *     path="/api/admin/locale/province/search",
      *     summary="Searchs among Provinces by name",
      *     description="This endpoint allows users to search for `Province` by name. The search is case-insensitive and returns results that contain the given keyword. The results are paginated for better performance",
-     *    tags={"Province"},
+     *     tags={"Province"},
      *     security={
      *         {"bearerAuth": {}}
      *     },
@@ -86,19 +123,56 @@ class ProvinceController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Provinces",
-     *        @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *               @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Province"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -344,7 +418,6 @@ class ProvinceController extends Controller
             return $this->success(null, 'استان با موفقیت بروزرسانی شد');
         } catch (Exception $e) {
             return $this->error();
-
         }
     }
     /**
