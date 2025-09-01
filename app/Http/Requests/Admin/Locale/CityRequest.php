@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Locale;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CityRequest extends FormRequest
 {
@@ -21,8 +22,24 @@ class CityRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->isMethod('post')) {
+            return [
+                'name' => [
+                    'required',
+                    'regex:/^[ا-یء-ي ]+$/u',
+                    Rule::unique('cities')
+                        ->where(fn($query) => $query->where('province_id', $this->route('province')->id))
+                ],
+                // 'g-recaptcha-response' => 'recaptcha',
+            ];
+        }
         return [
-              'name' => 'required|max:120|min:2|regex:/^[ا-یء-ي ]+$/u',
+            'name' => [
+                'required',
+                'regex:/^[ا-یء-ي ]+$/u',
+                Rule::unique('cities')
+                    ->where(fn($query) => $query->where('province_id', $this->province_id))->ignore($this->route('city'))
+            ],
             // 'g-recaptcha-response' => 'recaptcha',
         ];
     }

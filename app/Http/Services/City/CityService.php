@@ -14,18 +14,18 @@ class CityService
     }
 
     public function getCities(Province $province)
-    {
-        return $this->cityRepository->showWithRelations($province, ['cities']);
+    { 
+        return $this->cityRepository->getCities($province);
     }
 
-    public function searchCity(Province $province, string $search): Paginator
+    public function searchCity(string $search)
     {
-        return $this->cityRepository->searchCity($province, $search);
+        return $this->cityRepository->searchCity($search);
     }
 
-    public function showCity(City $city): City
+    public function showCity(City $city)
     {
-        return $this->cityRepository->showWithRelations($city, ['province:id,name']);
+        return $this->cityRepository->showCity($city);
     }
 
     public function storeCity(array $data): City

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin\Locale;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Locale\CityRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Services\City\CityService;
 use App\Models\Locale\City;
 use App\Models\Locale\Province;
@@ -38,15 +39,14 @@ class CityController extends Controller
      *             @OA\Property(property="status", type="boolean", example="true"),
      *             @OA\Property(property="message", type="string", example="null"),
      *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
-     *                     @OA\Items(
-     *                      ref="#/components/schemas/City"
+     *                @OA\Property(property="province_id", type="integer", example=1),
+     *                @OA\Property(property="province_name", type="string", example="تهران"),
+     *                @OA\Property(property="cities", type="array",
+     *                    @OA\Items(type="object",
+     *                      @OA\Property(property="id", type="integer", example=1),
+     *                      @OA\Property(property="name", type="string", example="تهران")
      *                     )
-     *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
-     *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 )
      *             )
      *         )
      *     ),
@@ -82,20 +82,13 @@ class CityController extends Controller
     }
     /**
      * @OA\Get(
-     *     path="/api/admin/locale/city/search/{province}",
-     *     summary="Searches among ProductColor by name.",
-     *     description="This endpoint allows users to search for `Cities of A Province` by name. The search is case-insensitive and returns results that contain the given keyword. The results are paginated for better performance",
+     *     path="/api/admin/locale/city/search",
+     *     summary="Searches among Cities by name.",
+     *     description="This endpoint allows users to search for `Cities` by name. The search is case-insensitive and returns results that contain the given keyword. The results are paginated for better performance",
      *     tags={"City"},
      *     security={
      *         {"bearerAuth": {}}
      *     },
-     *  @OA\Parameter(
-     *         name="province",
-     *         in="path",
-     *         description="Id of province that you want search fo its Cities",
-     *         required=true,
-     *         @OA\Schema(type="integer", format="int64")
-     *     ),
      *   @OA\Parameter(
      *         name="search",
      *         in="query",
@@ -105,20 +98,57 @@ class CityController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="A list of Cities of a Province",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
+     *         description="A list of Cities",
+     *            @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *               @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/City"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -147,14 +177,14 @@ class CityController extends Controller
      *     ))
      * )
      */
-    public function search(Request $request, Province $province)
+    public function search(SearchRequest $request)
     {
-        $cities = $this->cityService->searchCity($province,$request->search);
-        return $this->success($cities);
+        $cities = $this->cityService->searchCity($request->search);
+        return $cities;
     }
     /**
      * @OA\Get(
-     *     path="/api/admin/market/delivery/city/show/{city}",
+     *     path="/api/admin/locale/city/show/{city}",
      *     summary="Returns City details for edit form",
      *     description="Returns `City` details with its province for edit form",
      *     tags={"City","City/Form"},
@@ -207,7 +237,7 @@ class CityController extends Controller
     public function show(City $city)
     {
         $city = $this->cityService->showCity($city);
-        return $this->success();
+        return $this->success($city);
     }
     /**
      * @OA\Post(

@@ -100,8 +100,8 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::delete('/delete/{province}', [ProvinceController::class, 'delete'])->name('admin.locale.province.delete');
         });
         Route::prefix('city')->group(function () {
+            Route::get('/search', [CityController::class, 'search'])->name('admin.locale.city.search');
             Route::get('/{province}', [CityController::class, 'index'])->name('admin.locale.city');
-            Route::get('/search/{province}', [CityController::class, 'search'])->name('admin.locale.city.search');
             Route::get('/show/{city}', [CityController::class, 'show'])->name('admin.locale.city.show');
             Route::post('/store/{province}', [CityController::class, 'store'])->name('admin.locale.city.store');
             Route::put('/update/{city}', [CityController::class, 'update'])->name('admin.locale.city.update');

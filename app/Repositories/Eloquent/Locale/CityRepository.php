@@ -2,6 +2,9 @@
 
 namespace App\Repositories\Eloquent\Locale;
 
+use App\Http\Resources\Locale\CityResource;
+use App\Http\Resources\Locale\ProvinceResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Locale\City;
 use App\Models\Locale\Province;
 use App\Repositories\Contracts\Locale\CityRepositoryInterface;
@@ -22,12 +25,23 @@ class CityRepository extends BaseRepository implements CityRepositoryInterface
     {
         parent::__construct($model);
     }
-    public function searchCity(Province $province ,string $search):Paginator
+
+    public function getCities(Province $province)
     {
-        $result = $this->model->where('province_id',$province->id)
-        ->where('name','LIKE',"%{$search}%")
-        ->orderBy('name','asc')->simplePaginate(15);
-        return $result;
+        $province = $this->showWithRelations($province, ['cities']);
+        return new ProvinceResource($province);
+    }
+    public function searchCity(string $search)
+    {
+        $result = $this->model->where('name', 'LIKE', "%{$search}%")
+            ->with('province')
+            ->orderBy('name', 'asc')->paginate(15);
+        return new BaseCollection($result,CityResource::class,null);
+    }
+
+     public function showCity(City $city)
+    {
+        return $this->showWithRelations($city, ['province:id,name']);
     }
 
 }

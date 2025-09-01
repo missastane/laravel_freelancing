@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Contracts\Locale;
 
+use App\Models\Locale\City;
 use App\Models\Locale\Province;
 use App\Repositories\Contracts\BaseRepositoryInterface;
 use App\Repositories\Contracts\CreatableRepositoryInterface;
@@ -17,5 +18,7 @@ CreatableRepositoryInterface,
 UpdatableRepositoryInterface,
 DeletableRepositoryInterface
 {
-    public function searchCity(Province $province, string $search): Paginator;
+    public function getCities(Province $province);
+    public function searchCity(string $search);
+     public function showCity(City $city);
 }

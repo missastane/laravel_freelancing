@@ -5132,27 +5132,29 @@
                                         },
                                         "data": {
                                             "properties": {
-                                                "current_page": {
+                                                "province_id": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "data": {
+                                                "province_name": {
+                                                    "type": "string",
+                                                    "example": "تهران"
+                                                },
+                                                "cities": {
                                                     "type": "array",
                                                     "items": {
-                                                        "$ref": "#/components/schemas/City"
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "تهران"
+                                                            }
+                                                        },
+                                                        "type": "object"
                                                     }
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 15
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 45
                                                 }
                                             },
                                             "type": "object"
@@ -5231,25 +5233,15 @@
                 ]
             }
         },
-        "/api/admin/locale/city/search/{province}": {
+        "/api/admin/locale/city/search": {
             "get": {
                 "tags": [
                     "City"
                 ],
-                "summary": "Searches among ProductColor by name.",
-                "description": "This endpoint allows users to search for `Cities of A Province` by name. The search is case-insensitive and returns results that contain the given keyword. The results are paginated for better performance",
-                "operationId": "b0e60167ed6ab29fc068559072f74bcf",
+                "summary": "Searches among Cities by name.",
+                "description": "This endpoint allows users to search for `Cities` by name. The search is case-insensitive and returns results that contain the given keyword. The results are paginated for better performance",
+                "operationId": "6ab7b913ceea66dd71dc854355650ae5",
                 "parameters": [
-                    {
-                        "name": "province",
-                        "in": "path",
-                        "description": "Id of province that you want search fo its Cities",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
                     {
                         "name": "search",
                         "in": "query",
@@ -5262,18 +5254,19 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A list of Cities of a Province",
+                        "description": "A list of Cities",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -5287,17 +5280,120 @@
                                                         "$ref": "#/components/schemas/City"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -5376,7 +5472,7 @@
                 ]
             }
         },
-        "/api/admin/market/delivery/city/show/{city}": {
+        "/api/admin/locale/city/show/{city}": {
             "get": {
                 "tags": [
                     "City",
@@ -5384,7 +5480,7 @@
                 ],
                 "summary": "Returns City details for edit form",
                 "description": "Returns `City` details with its province for edit form",
-                "operationId": "bf3f1b9cf4ab1aa718e4a42ea2befdef",
+                "operationId": "1915455a88721d9702600263118a2a8e",
                 "parameters": [
                     {
                         "name": "city",
