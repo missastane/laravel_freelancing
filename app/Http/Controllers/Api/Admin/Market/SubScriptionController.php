@@ -193,7 +193,6 @@ class SubScriptionController extends Controller
     public function store(SubscriptionRequest $request)
     {
         try {
-            \Log::info($request->all());
             $this->subscriptionService->storeSubscription($request->all());
             return $this->success(null, 'پلن اشتراک با موفقیت ثبت شد', 201);
         } catch (Exception $e) {

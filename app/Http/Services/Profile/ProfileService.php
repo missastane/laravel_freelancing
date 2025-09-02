@@ -72,6 +72,16 @@ class ProfileService
         if (!empty($oldUser) || !normalizeMobile($data['id'])) {
             throw new Exception('شماره موبایل صحیح نیست یا از قبل وجود دارد', 422);
         }
+        $oldOTP = $this->oTPService->checkOldOtp($data['id'], 0);
+
+        if ($oldOTP) {
+            return [
+                'status' => false,
+                'data' => null,
+                'message' => 'جهت ارسال مجدد کد تأیید لطفا ' . $oldOTP->timer . ' ثانیه دیگر منتظر بمانید',
+                'code' => 429
+            ];
+        }
         // send sms
         $type = 0; //id is a mobile number;
         $otp = $this->oTPService->createOtp($data['id'], $type, $user->id);
@@ -89,7 +99,7 @@ class ProfileService
     public function confirmMobile($token, array $data)
     {
         $user = auth()->user();
-        $otp = $this->oTPRepository->findIfExist($token, $user->id);
+        $otp = $this->oTPRepository->findByUserToken($token, $user->id);
         if (empty($otp)) {
             return [
                 'status' => false,
@@ -122,7 +132,8 @@ class ProfileService
         return [
             'status' => true,
             'message' => 'شماره موبایل شما با موفقیت تأیید شد',
-            'data' => null
+            'data' => null,
+            'code' => 200
         ];
     }
 }

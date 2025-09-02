@@ -32,39 +32,58 @@ class OTPService
         $newOtp = $this->oTPRepository->create($otpInputs);
         return $newOtp;
     }
-    public function otpTimer(OTP $otp)
-    {
-        $minutes_to_add = 2;
-        $expired = new DateTime($otp->created_at);
-        $expired->add(new DateInterval('PT' . $minutes_to_add . 'M'));
-        $timer = ((new \Carbon\Carbon($otp->created_at))->addMinutes(2)->timestamp - \Carbon\Carbon::now()->timestamp);
-        return $timer;
-    }
+    // public function otpTimer(OTP $otp)
+    // {
+    //     $minutes_to_add = 2;
+    //     $expired = new DateTime($otp->created_at);
+    //     $expired->add(new DateInterval('PT' . $minutes_to_add . 'M'));
+    //     $timer = ((new \Carbon\Carbon($otp->created_at))->addMinutes(2)->timestamp - \Carbon\Carbon::now()->timestamp);
+    //     return $timer;
+    // }
 
+    // public function checkOldOtp($input, $type)
+    // {
+    //     $oldOtp = $this->oTPRepository->findByLoginId($input);
+    //     if ($oldOtp) {
+
+    //         $minutes_to_add = 2;
+    //         $expired = new DateTime($oldOtp->created_at);
+    //         $expired->add(new DateInterval('PT' . $minutes_to_add . 'M'));
+    //         $now = new DateTime();
+    //         $timer = ((new \Carbon\Carbon($oldOtp->created_at))->addMinutes(2)->timestamp - \Carbon\Carbon::now()->timestamp);
+
+    //         if ($now < $expired) {
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => 'جهت ارسال مجدد کد تأیید لطفا ' . $timer . ' ثانیه دیگر منتظر بمانید',
+    //                 'data' => [
+    //                     'token' => $oldOtp->token,
+    //                     'timer' => $timer
+    //                 ]
+    //             ], 429);
+    //         }
+
+    //     }
+    // }
     public function checkOldOtp($input, $type)
     {
         $oldOtp = $this->oTPRepository->findByLoginId($input);
-        if ($oldOtp) {
 
-            $minutes_to_add = 2;
-            $expired = new DateTime($oldOtp->created_at);
-            $expired->add(new DateInterval('PT' . $minutes_to_add . 'M'));
-            $now = new DateTime();
-            $timer = ((new \Carbon\Carbon($oldOtp->created_at))->addMinutes(2)->timestamp - \Carbon\Carbon::now()->timestamp);
-
-            if ($now < $expired) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'جهت ارسال مجدد کد تأیید لطفا ' . $timer . ' ثانیه دیگر منتظر بمانید',
-                    'data' => [
-                        'token' => $oldOtp->token,
-                        'timer' => $timer
-                    ]
-                ], 429);
-            }
-
+        if (!$oldOtp) {
+            return null;
         }
+        $expiresAt = $oldOtp->created_at->addMinutes(2);
+        $timer = max($expiresAt->timestamp - now()->timestamp, 0);
+        if (now()->lessThan($expiresAt)) {
+            // فقط اطلاعات لازم رو برگردون
+            return (object) [
+                'token' => $oldOtp->token,
+                'timer' => $timer
+            ];
+        }
+        return null;
     }
+
 
     public function sendEmail($input, $code)
     {

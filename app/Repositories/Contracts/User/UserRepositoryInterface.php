@@ -10,7 +10,6 @@ use App\Repositories\Contracts\CreatableRepositoryInterface;
 use App\Repositories\Contracts\DeletableRepositoryInterface;
 use App\Repositories\Contracts\ShowableRepositoryInterface;
 use App\Repositories\Contracts\UpdatableRepositoryInterface;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
 interface UserRepositoryInterface extends
@@ -20,8 +19,8 @@ interface UserRepositoryInterface extends
   DeletableRepositoryInterface
 {
   public function findById(int $id);
-  public function findByEmail(string $email): User;
-  public function findByMobile(string $mobile): User;
+  public function findByEmail(string $email): User|null;
+  public function findByMobile(string $mobile);
   public function getUsers(int $type,$message);
   public function searchUsers(int $type, string $search, $message);
   public function showUser(User $user);

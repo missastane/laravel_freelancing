@@ -179,7 +179,8 @@ class ProfileController extends Controller
    {
       try {
          $inputs = $request->all();
-         $this->profileService->changeMobile($inputs);
+         $result = $this->profileService->changeMobile($inputs);
+         return $this->success($result['data'],$result['message'],200);
       } catch (Exception $e) {
          return $this->error($e->getMessage());
       }
@@ -259,7 +260,7 @@ class ProfileController extends Controller
          $inputs = $request->all();
          $result = $this->profileService->confirmMobile($token, $inputs);
          if ($result['status']) {
-            return $this->success(true, $result['data'], $result['message']);
+            return $this->success($result['data'], $result['message'],$result['code']);
          } else {
             return response()->json([
                'status' => $result['status'],
@@ -267,9 +268,8 @@ class ProfileController extends Controller
                'data' => $result['data'],
             ], $result['code']);
          }
-
       } catch (Exception $e) {
-         return $this->error();
+         return $this->error($e->getMessage());
       }
    }
 
@@ -405,6 +405,7 @@ class ProfileController extends Controller
     *                 type="object",
     *             @OA\Property(property="current_password", type="string", minimum="8", example="fL520khf56"),
     *             @OA\Property(property="new_password", type="string", minimum="8", example="fL520khf56"),
+    *             @OA\Property(property="new_password_confirmation", type="string", minimum="8", example="fL520khf56"),
     *              )
     *          )
     *     ),

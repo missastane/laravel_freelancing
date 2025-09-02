@@ -13786,6 +13786,11 @@
                                         "type": "string",
                                         "minimum": "8",
                                         "example": "fL520khf56"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "minimum": "8",
+                                        "example": "fL520khf56"
                                     }
                                 },
                                 "type": "object"

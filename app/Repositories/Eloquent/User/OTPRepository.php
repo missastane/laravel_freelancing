@@ -17,7 +17,11 @@ class OTPRepository extends BaseRepository implements OTPRepositoryInterface
     use HasUpdateTrait;
     use HasDeleteTrait;
     use HasShowTrait;
-    public function findByUserToken(string $token, int $userId): OTP
+    public function __construct(OTP $model)
+    {
+        parent::__construct($model);
+    }
+    public function findByUserToken(string $token, int $userId)
     {
         $otp = $this->model->where('token', $token)
             ->where('user_id', $userId)->where('used', 0)
@@ -30,7 +34,7 @@ class OTPRepository extends BaseRepository implements OTPRepositoryInterface
         return $otp;
     }
 
-    public function findByLoginId(string $loginId): OTP
+    public function findByLoginId(string $loginId)
     {
         $otp = $this->model->where('login_id', $loginId)
         ->where('used', 0)->orderBy('created_at', 'desc')

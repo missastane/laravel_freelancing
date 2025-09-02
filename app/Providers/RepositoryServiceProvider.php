@@ -19,6 +19,7 @@ use App\Repositories\Contracts\Market\SubscriptionRepositoryInterface;
 use App\Repositories\Contracts\Market\UserSubscriptionRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
+use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -39,6 +40,7 @@ use App\Repositories\Eloquent\Market\SubscriptionRepository;
 use App\Repositories\Eloquent\Market\UserSubscriptionRepository;
 use App\Repositories\Eloquent\Payment\WalletRepository;
 use App\Repositories\Eloquent\Payment\WalletTransactionRepository;
+use App\Repositories\Eloquent\User\OTPRepository;
 use App\Repositories\Eloquent\User\PermissionRepository;
 use App\Repositories\Eloquent\User\RoleRepository;
 use App\Repositories\Eloquent\User\UserRepository;
@@ -52,6 +54,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(OTPRepositoryInterface::class, OTPRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(ProvinceRepositoryInterface::class, ProvinceRepository::class);

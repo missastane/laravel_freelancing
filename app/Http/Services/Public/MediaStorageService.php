@@ -27,7 +27,7 @@ class MediaStorageService
         $service->setExclusiveDirectory($normalized);
     }
 
-    public function storeSingleImage(UploadedFile $file, string $directory, string $name): string|bool
+    public function storeSingleImage(UploadedFile $file, string $directory, string|null $name): string|bool
     {
         if (empty($file)) {
             return null;

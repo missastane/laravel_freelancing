@@ -58,7 +58,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
   }
   public function showUser(User $user)
   {
-    $user = $this->showWithRelations($user, ['roles:id,name', 'permissions:id,name']);
+    $user = $this->showWithRelations($user, ['roles', 'permissions']);
 
     return new UserResource($user);
   }
@@ -80,7 +80,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     return null;
   }
 
-  public function findByMobile(string $mobile): User
+  public function findByMobile(string $mobile)
   {
     $user = $this->model->
       Where(
