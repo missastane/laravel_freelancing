@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent\Market;
 
 use App\Models\Market\Subscription;
+use App\Models\Market\SubscriptionFeature;
 use App\Repositories\Contracts\Market\SubscriptionRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCRUDTrait;
@@ -30,10 +31,16 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
             'employer' => $this->model->where('user_type', 1)
         };
         $subscriptions = $query->with('subscriptionFeatures')
-            ->orderBy('amount', 'desc')->simplePaginate(5);
+            ->orderBy('amount', 'desc')->paginate(5);
         return $subscriptions;
     }
 
+    public function showSubscription(Subscription $subscription)
+    {
+        $result = $this->showWithRelations($subscription, ['features']);
+        $result->features->makeHidden('is_limited')->append('is_limited_value');
+        return $result;
+    }
     public function userActivePlan()
     {
         $user = auth()->user();
@@ -42,5 +49,17 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
         $role = $user->active_role === 'freelancer' ? 'freelancer' : 'employer';
         return $subscription;
     }
+
+    public function firstOrCreate(array $attributes, array $values)
+    {
+        return $this->model->firstOrCreate($attributes, $values);
+    }
+
+    public function updateOrCreate(array $attributes, array $values)
+    {
+        $record = $this->model->updateOrCreate($attributes, $values);
+        return $record;
+    }
+
 
 }

@@ -25,7 +25,7 @@ class SubscriptionRequest extends FormRequest
             'name' => 'required|min:2|max:255|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
             'amount' => 'required|numeric',
             'duration_days' => 'required|integer',
-            'commission_rate' => 'required|integer|in:0,100',
+            'commission_rate' => 'required|integer|min:0|max:99',
             'target_type' => 'required|in:1,2', // 1 => project,  2 => proposal
             'max_target_per_month' => 'required|integer',
             'max_notification_per_month' => 'required|integer',
@@ -33,10 +33,11 @@ class SubscriptionRequest extends FormRequest
             'max_sms_per_month' => 'required|integer',
             'max_view_deatils_per_month' => 'required|integer',
             'features' => ['nullable', 'array'],
-            'features.*.feature_key' => 'required|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
-            'features.*.feature_value' => 'required|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
-            'features.*.feature_value_type' => 'required|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
-            'features.*.is_limited' => 'required|integer|in:1,2',
+            'features.*.feature_key' => 'nullable|string|regex:/^[a-zA-Z0-9\-]+$/u',
+            'features.*.feature_persian_key' => 'nullable|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
+            'features.*.feature_value' => 'nullable|string|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
+            'features.*.feature_value_type' => 'nullable|string|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
+            'features.*.is_limited' => 'nullable|integer|in:1,2',
         ];
     }
 

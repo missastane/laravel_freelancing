@@ -11115,11 +11115,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -11133,17 +11134,120 @@
                                                         "$ref": "#/components/schemas/Subscription"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -11217,9 +11321,7 @@
                             "schema": {
                                 "properties": {
                                     "name": {
-                                        "description": "This field can only contain Persian and English letters, Persian and English numbers. Any other characters will result in a validation error.",
                                         "type": "string",
-                                        "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\ ]+$",
                                         "example": "پلن طلایی"
                                     },
                                     "amount": {
@@ -11230,19 +11332,68 @@
                                         "type": "integer",
                                         "example": 30
                                     },
-                                    "user_type": {
-                                        "oneOf": [
-                                            {
-                                                "description": "1 = employer",
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            {
-                                                "description": "2 = freelancer",
-                                                "type": "integer",
-                                                "example": 2
-                                            }
+                                    "commission_rate": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "target_type": {
+                                        "description": "1 => project, 2 => proposal",
+                                        "enum": [
+                                            1,
+                                            2
                                         ]
+                                    },
+                                    "max_target_per_month": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "max_notification_per_month": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "max_email_per_month": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "max_sms_per_month": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "max_view_deatils_per_month": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "features": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "feature_key": {
+                                                    "type": "string",
+                                                    "example": "vip-proposal"
+                                                },
+                                                "feature_persian_key": {
+                                                    "type": "string",
+                                                    "example": "پیشنهاد اختصاصی"
+                                                },
+                                                "feature_value": {
+                                                    "type": "string",
+                                                    "example": "10"
+                                                },
+                                                "feature_value_type": {
+                                                    "type": "string",
+                                                    "example": "عدد"
+                                                },
+                                                "is_limited": {
+                                                    "type": "integer",
+                                                    "enum": [
+                                                        1,
+                                                        2
+                                                    ],
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -11408,7 +11559,23 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Subscription"
+                                            "type": "object",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/Subscription"
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "features": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/SubscriptionFeature"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            ]
                                         }
                                     },
                                     "type": "object"
@@ -11515,28 +11682,6 @@
                                         "type": "string",
                                         "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\ ]+$",
                                         "example": "پلن طلایی"
-                                    },
-                                    "amount": {
-                                        "type": "integer",
-                                        "example": 300000
-                                    },
-                                    "duration_days": {
-                                        "type": "integer",
-                                        "example": 30
-                                    },
-                                    "user_type": {
-                                        "oneOf": [
-                                            {
-                                                "description": "1 = employer",
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            {
-                                                "description": "2 = freelancer",
-                                                "type": "integer",
-                                                "example": 2
-                                            }
-                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -11558,390 +11703,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "پلن اشتراک با موفقیت بروزرسانی شد"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "You are not authorized to do this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "شما مجاز به انجام این عملیات نیستید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "route not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "مسیر مورد نظر پیدا نشد"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "فیلد وارد شده نامعتبر است"
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "x": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "فیلد x اجباری است"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/admin/market/subscription/update-feature/{subscriptionFeature}": {
-            "put": {
-                "tags": [
-                    "Subscription"
-                ],
-                "summary": "Update an existing SubscriptionFeature by admin",
-                "description": "In this method admins can updates an existing SubscriptionFeature",
-                "operationId": "40098ae72322cd88c09caefc15c937d3",
-                "parameters": [
-                    {
-                        "name": "subscriptionFeature",
-                        "in": "path",
-                        "description": "The ID of the SubscriptionFeature to fetch",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "feature_key": {
-                                        "description": "This field can only contain Persian and English letters, Persian and English numbers and space. Any other characters will result in a validation error.",
-                                        "type": "string",
-                                        "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\ ]+$",
-                                        "example": ""
-                                    },
-                                    "feature_value": {
-                                        "description": "This field can only contain Persian and English letters, Persian and English numbers and space. Any other characters will result in a validation error.",
-                                        "type": "string",
-                                        "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\ ]+$",
-                                        "example": ""
-                                    },
-                                    "feature_value_type": {
-                                        "description": "This field can only contain Persian and English letters, Persian and English numbers and space. Any other characters will result in a validation error.",
-                                        "type": "string",
-                                        "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\ ]+$",
-                                        "example": ""
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "successful SubscriptionFeature Update",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "ویژگی با موفقیت بروزرسانی شد"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "You are not authorized to do this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "شما مجاز به انجام این عملیات نیستید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "route not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "مسیر مورد نظر پیدا نشد"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "فیلد وارد شده نامعتبر است"
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "x": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "فیلد x اجباری است"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/admin/market/subscription/update-default-feature/{subscriptionDefaultFeature}": {
-            "put": {
-                "tags": [
-                    "Subscription"
-                ],
-                "summary": "Update an existing SubscriptionDefaultFeature by admin",
-                "description": "In this method admins can updates an existing SubscriptionDefaultFeature",
-                "operationId": "da73068c35e2d84285c8fd20c66ff6fd",
-                "parameters": [
-                    {
-                        "name": "subscriptionDefaultFeature",
-                        "in": "path",
-                        "description": "The ID of the SubscriptionDefaultFeature to fetch",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "max_target_per_month": {
-                                        "type": "integer",
-                                        "example": "50"
-                                    },
-                                    "max_notification_per_month": {
-                                        "type": "integer",
-                                        "example": "50"
-                                    },
-                                    "max_email_per_month": {
-                                        "type": "integer",
-                                        "example": "50"
-                                    },
-                                    "max_sms_per_month": {
-                                        "type": "integer",
-                                        "example": "50"
-                                    },
-                                    "max_view_deatils_per_month": {
-                                        "type": "integer",
-                                        "example": "50"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "successful SubscriptionDefaultFeature Update",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "ویژگی های پلن با موفقیت بروزرسانی شد"
                                         },
                                         "data": {
                                             "type": "object",
@@ -35777,6 +35538,76 @@
                         "type": "integer",
                         "example": 30
                     },
+                    "target_type": {
+                        "description": "1 => project, 2 => proposal",
+                        "enum": [
+                            1,
+                            2
+                        ]
+                    },
+                    "max_target_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_notification_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_email_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_sms_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_view_deatils_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "deleted_at": {
+                        "description": "delete datetime",
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2025-02-22T14:30:00Z"
+                    },
+                    "created_at": {
+                        "description": "creation datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "update datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionFeature": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "feature_key": {
+                        "type": "string",
+                        "example": "vip-proposal"
+                    },
+                    "feature_persian_key": {
+                        "type": "string",
+                        "example": "پیشنهاد اختصاصی"
+                    },
+                    "feature_value": {
+                        "type": "string",
+                        "example": "10"
+                    },
+                    "feature_value_type": {
+                        "type": "string",
+                        "example": "عدد"
+                    },
                     "created_at": {
                         "description": "creation datetime",
                         "type": "string",
@@ -35789,11 +35620,10 @@
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
                     },
-                    "deleted_at": {
-                        "description": "delete datetime",
+                    "is_limited_value": {
+                        "description": "1 => yes, 2 => no",
                         "type": "string",
-                        "format": "datetime",
-                        "example": "2025-02-22T14:30:00Z"
+                        "example": "بله"
                     }
                 },
                 "type": "object"

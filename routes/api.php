@@ -149,8 +149,6 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::post('/store', [SubScriptionController::class, 'store']);
             Route::get('/show/{subscription}', [SubScriptionController::class, 'show']);
             Route::put('/update/{subscription}', [SubScriptionController::class, 'update']);
-            Route::put('/update-feature/{subscriptionFeature}', [SubScriptionController::class, 'updateFeature']);
-            Route::put('/update-default-feature/{subscriptionDefaultFeature}', [SubScriptionController::class, 'updateDefaultFeature']);
             Route::delete('/delete-feature/{subscriptionFeature}', [SubScriptionController::class, 'deleteFeature']);
             Route::delete('/delete/{subscription}', [SubScriptionController::class, 'delete']);
         });

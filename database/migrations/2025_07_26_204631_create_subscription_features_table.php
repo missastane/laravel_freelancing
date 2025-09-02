@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('subscription_features', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subscription_id')->constrained('subscriptions')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('target_type');
             $table->string('feature_key');
+            $table->string('feature_persian_key');
             $table->string('feature_value');
             $table->string('feature_value_type');
             $table->tinyInteger('is_limited')->default(2)->comment('1 => yes, 2 => no');

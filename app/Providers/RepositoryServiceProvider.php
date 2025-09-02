@@ -12,7 +12,13 @@ use App\Repositories\Contracts\Market\OrderRepositoryInterface;
 use App\Repositories\Contracts\Market\ProjectCategoryRepositoryInterface;
 use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
 use App\Repositories\Contracts\Market\SkillRepositoryInterface;
+use App\Repositories\Contracts\Market\SubscriptionDefaultFeatureRepositoryInterface;
+use App\Repositories\Contracts\Market\SubscriptionDefaultUsageRepositoryInterface;
+use App\Repositories\Contracts\Market\SubscriptionFeatureRepositoryInterface;
+use App\Repositories\Contracts\Market\SubscriptionRepositoryInterface;
+use App\Repositories\Contracts\Market\UserSubscriptionRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
+use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -26,7 +32,13 @@ use App\Repositories\Eloquent\Market\OrderRepository;
 use App\Repositories\Eloquent\Market\ProjectCategoryRepository;
 use App\Repositories\Eloquent\Market\ProjectRepository;
 use App\Repositories\Eloquent\Market\SkillRepository;
+use App\Repositories\Eloquent\Market\SubscriptionDefaultFeatureRepository;
+use App\Repositories\Eloquent\Market\SubscriptionDefaultUsageRepository;
+use App\Repositories\Eloquent\Market\SubscriptionFeatureRepository;
+use App\Repositories\Eloquent\Market\SubscriptionRepository;
+use App\Repositories\Eloquent\Market\UserSubscriptionRepository;
 use App\Repositories\Eloquent\Payment\WalletRepository;
+use App\Repositories\Eloquent\Payment\WalletTransactionRepository;
 use App\Repositories\Eloquent\User\PermissionRepository;
 use App\Repositories\Eloquent\User\RoleRepository;
 use App\Repositories\Eloquent\User\UserRepository;
@@ -53,6 +65,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ProjectCategoryRepositoryInterface::class, ProjectCategoryRepository::class);
         $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
         $this->app->bind(SkillRepositoryInterface::class, SkillRepository::class);
+        $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
+        $this->app->bind(SubscriptionDefaultUsageRepositoryInterface::class, SubscriptionDefaultUsageRepository::class);
+        $this->app->bind(SubscriptionFeatureRepositoryInterface::class, SubscriptionFeatureRepository::class);
+        $this->app->bind(WalletTransactionRepositoryInterface::class, WalletTransactionRepository::class);
+        $this->app->bind(UserSubscriptionRepositoryInterface::class, UserSubscriptionRepository::class);
     }
 
     /**

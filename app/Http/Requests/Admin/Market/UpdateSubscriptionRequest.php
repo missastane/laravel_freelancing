@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Market;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSubscriptionRequest extends FormRequest
 {
@@ -21,11 +22,19 @@ class UpdateSubscriptionRequest extends FormRequest
      */
     public function rules(): array
     {
+        $subscription = $this->route('subscription');
         return [
-            'name' => 'required|min:2|max:255|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
-            'amount' => 'required|numeric',
-            'duration_days' => 'required|integer',
-            'commission_rate' => 'required|integer|in:0,100',
+            'name' => [
+                'required',
+                'min:2',
+                'max:255',
+                'regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
+                Rule::unique('subscriptions', 'name')
+                    ->where(function ($query) use ($subscription) {
+                        return $query->where('target_type', $subscription->target_type);
+                    })
+                    ->ignore($subscription->id), 
+            ],
         ];
     }
 
@@ -33,9 +42,6 @@ class UpdateSubscriptionRequest extends FormRequest
     {
         return [
             'name' => 'نام',
-            'amount' => 'قیمت',
-            'duration_days' => 'تعداد روزهای اشتراک',
-            'commission_rate' => 'درصد کارمزد سایت',
         ];
     }
 }

@@ -22,9 +22,9 @@ class UpdateSubscriptionFeatureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'feature_key' => 'required|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
-            'feature_value' => 'required|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
-            'feature_value_type' => 'required|string|regex:/^[ا-یء-ي۰-۹ ]+$/u',
+            'feature_key' => 'required|string|unique:subscription_features,feature_key|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
+            'feature_value' => 'required|string|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
+            'feature_value_type' => 'required|string|regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
             'is_limited' => 'required|integer|in:1,2',
         ];
     }

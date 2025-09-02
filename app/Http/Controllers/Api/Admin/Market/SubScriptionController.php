@@ -32,19 +32,56 @@ class SubScriptionController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Subscriptions",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
+     *          @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Subscription"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -80,22 +117,30 @@ class SubScriptionController extends Controller
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                
-     *             @OA\Property(property="name", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters, Persian and English numbers. Any other characters will result in a validation error.", example="پلن طلایی"),
+     *    @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="پلن طلایی"),
      *             @OA\Property(property="amount", type="integer", example=300000),
      *             @OA\Property(property="duration_days", type="integer", example=30),
+     *             @OA\Property(property="commission_rate", type="integer", example=10),
+     *             @OA\Property(property="target_type", enum={1,2}, description="1 => project, 2 => proposal"),
+     *             @OA\Property(property="max_target_per_month", type="integer", example=20),
+     *             @OA\Property(property="max_notification_per_month", type="integer", example=20),
+     *             @OA\Property(property="max_email_per_month", type="integer", example=20),
+     *             @OA\Property(property="max_sms_per_month", type="integer", example=20),
+     *             @OA\Property(property="max_view_deatils_per_month", type="integer", example=20),
      *             @OA\Property(
-     *                 property="user_type",
-     *                 oneOf={
-     *                     @OA\Schema(type="integer", example=1, description="1 = employer"),
-     *                     @OA\Schema(type="integer", example=2, description="2 = freelancer")
-     *                 }
-     *             ),
-     *                       )
+     *                 property="features",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="feature_key", type="string", example="vip-proposal"),
+     *                     @OA\Property(property="feature_persian_key", type="string", example="پیشنهاد اختصاصی"),
+     *                     @OA\Property(property="feature_value", type="string", example="10"),
+     *                     @OA\Property(property="feature_value_type", type="string", example="عدد"),
+     *                     @OA\Property(property="is_limited", type="integer", enum={1,2}, example=1)
+     *                 )
+     *             )
      *             )
      *     ),
      *     @OA\Response(
@@ -148,10 +193,11 @@ class SubScriptionController extends Controller
     public function store(SubscriptionRequest $request)
     {
         try {
+            \Log::info($request->all());
             $this->subscriptionService->storeSubscription($request->all());
             return $this->success(null, 'پلن اشتراک با موفقیت ثبت شد', 201);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -177,7 +223,12 @@ class SubScriptionController extends Controller
      *             @OA\Property(property="status", type="boolean", example="true"),
      *             @OA\Property(property="message", type="string", example="null"),
      *             @OA\Property(property="data", type="object",
-     *               ref="#/components/schemas/Subscription"
+     *                allOf={
+     *                   @OA\Schema(ref="#/components/schemas/Subscription")
+     *                },
+     *                @OA\Property(property="features", type="array",
+     *                  @OA\Items(ref="#/components/schemas/SubscriptionFeature")
+     *                 )
      *             )
      *         )
      *   ),
@@ -231,19 +282,9 @@ class SubScriptionController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *                
      *             @OA\Property(property="name", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters, Persian and English numbers. Any other characters will result in a validation error.", example="پلن طلایی"),
-     *             @OA\Property(property="amount", type="integer", example=300000),
-     *             @OA\Property(property="duration_days", type="integer", example=30),
-     *             @OA\Property(
-     *                 property="user_type",
-     *                 oneOf={
-     *                     @OA\Schema(type="integer", example=1, description="1 = employer"),
-     *                     @OA\Schema(type="integer", example=2, description="2 = freelancer")
-     *                 }
-     *             ),
-     *                       )
-     *             )
+     *            )
+     *        )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -304,190 +345,6 @@ class SubScriptionController extends Controller
         try {
             $this->subscriptionService->updateSubscription($subscription, $request->all());
             return $this->success(null, 'پلن اشتراک با موفقیت بروزرسانی شد');
-        } catch (Exception $e) {
-            return $this->error();
-        }
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/admin/market/subscription/update-feature/{subscriptionFeature}",
-     *     summary="Update an existing SubscriptionFeature by admin",
-     *     description="In this method admins can updates an existing SubscriptionFeature",
-     *     tags={"Subscription"},
-     *     security={{"bearerAuth": {}}},
-     *     @OA\Parameter(
-     *         name="subscriptionFeature",
-     *         in="path",
-     *         description="The ID of the SubscriptionFeature to fetch",
-     *         required=true,
-     *         @OA\Schema(type="integer", format="int64")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                
-     *             @OA\Property(property="feature_key", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters, Persian and English numbers and space. Any other characters will result in a validation error.", example=""),
-     *             @OA\Property(property="feature_value", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters, Persian and English numbers and space. Any other characters will result in a validation error.", example=""),
-     *             @OA\Property(property="feature_value_type", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters, Persian and English numbers and space. Any other characters will result in a validation error.", example=""),
-     *                       )
-     *             )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="successful SubscriptionFeature Update",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="true"),
-     *             @OA\Property(property="message", type="string", example="ویژگی با موفقیت بروزرسانی شد"),
-     *             @OA\Property(property="data", type="object", nullable=true)
-     *         )
-     *     ),
-     *  @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
-     *     )),
-     *      @OA\Response(
-     *         response=403,
-     *         description="You are not authorized to do this action.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="route not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
-     *     )),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
-     *             @OA\Property(property="errors", type="object",
-     *                 @OA\Property(property="x", type="array",
-     *                     @OA\Items(type="string", example="فیلد x اجباری است")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="internal server error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
-     *         )
-     *     )
-     * )
-     */
-    public function updateFeature(SubscriptionFeature $subscriptionFeature, UpdateSubscriptionFeatureRequest $request)
-    {
-        try {
-            $this->subscriptionService->updateFeature($subscriptionFeature, $request->all());
-            return $this->success(null, 'ویژگی با موفقیت بروزرسانی شد');
-        } catch (Exception $e) {
-            return $this->error();
-        }
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/admin/market/subscription/update-default-feature/{subscriptionDefaultFeature}",
-     *     summary="Update an existing SubscriptionDefaultFeature by admin",
-     *     description="In this method admins can updates an existing SubscriptionDefaultFeature",
-     *     tags={"Subscription"},
-     *     security={{"bearerAuth": {}}},
-     *     @OA\Parameter(
-     *         name="subscriptionDefaultFeature",
-     *         in="path",
-     *         description="The ID of the SubscriptionDefaultFeature to fetch",
-     *         required=true,
-     *         @OA\Schema(type="integer", format="int64")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                
-     *             @OA\Property(property="max_target_per_month", type="integer", example="50"),
-     *             @OA\Property(property="max_notification_per_month", type="integer", example="50"),
-     *             @OA\Property(property="max_email_per_month", type="integer", example="50"),
-     *             @OA\Property(property="max_sms_per_month", type="integer", example="50"),
-     *             @OA\Property(property="max_view_deatils_per_month", type="integer", example="50"),
-     *                       )
-     *             )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="successful SubscriptionDefaultFeature Update",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="true"),
-     *             @OA\Property(property="message", type="string", example="ویژگی های پلن با موفقیت بروزرسانی شد"),
-     *             @OA\Property(property="data", type="object", nullable=true)
-     *         )
-     *     ),
-     *  @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
-     *     )),
-     *      @OA\Response(
-     *         response=403,
-     *         description="You are not authorized to do this action.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="route not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
-     *     )),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
-     *             @OA\Property(property="errors", type="object",
-     *                 @OA\Property(property="x", type="array",
-     *                     @OA\Items(type="string", example="فیلد x اجباری است")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="internal server error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
-     *         )
-     *     )
-     * )
-     */
-    public function updateDefaultFeature(SubscriptionDefaultFeature $subscriptionDefaultFeature, UpdateSubscriptionDefaultFeatureRequest $request)
-    {
-        try {
-            $this->subscriptionService->updateDefaultFeature($subscriptionDefaultFeature, $request->all());
-            return $this->success(null, 'ویژگی های پلن با موفقیت بروزرسانی شد');
         } catch (Exception $e) {
             return $this->error();
         }
@@ -620,7 +477,7 @@ class SubScriptionController extends Controller
     {
         try {
             $this->subscriptionService->deleteSubscription($subscription);
-            return $this->success(null, 'پلن اشتراک با موفقیت حذف شد');
+            return $this->success(null, 'اشتراک با موفقیت حذف شد');
         } catch (Exception $e) {
             return $this->error();
         }

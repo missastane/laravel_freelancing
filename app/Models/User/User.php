@@ -214,7 +214,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserSubscription::class);
     }
-
     public function activeSubscription(): ?UserSubscription
     {
         switch ($this->active_role) {
@@ -233,14 +232,13 @@ class User extends Authenticatable implements JWTSubject
             ->where('status', 2)
             ->where('end_date', '>', now())
             ->when($targetType, function ($q) use ($targetType) {
-                $q->whereHas('subscription.defaultFeatures', function ($q2) use ($targetType) {
+                $q->whereHas('subscription', function ($q2) use ($targetType) {
                     $q2->where('target_type', $targetType);
                 });
             })
             ->latest('started_at')
             ->first();
     }
-
 
     public function proposalsThisMonth(): int
     {
@@ -262,6 +260,6 @@ class User extends Authenticatable implements JWTSubject
             ->count();
     }
 
-   
+
 
 }
