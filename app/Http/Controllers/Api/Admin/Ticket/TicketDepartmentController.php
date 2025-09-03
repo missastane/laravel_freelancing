@@ -27,7 +27,7 @@ class TicketDepartmentController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Ticket Departments",
-     *        @OA\JsonContent(
+     *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", nullable=true, example=null),
      *             @OA\Property(

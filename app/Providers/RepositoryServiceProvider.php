@@ -21,6 +21,7 @@ use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
 use App\Repositories\Contracts\Setting\SettingRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
+use App\Repositories\Contracts\Ticket\TicketMessageRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
@@ -46,6 +47,7 @@ use App\Repositories\Eloquent\Payment\WalletRepository;
 use App\Repositories\Eloquent\Payment\WalletTransactionRepository;
 use App\Repositories\Eloquent\Setting\SettingRepository;
 use App\Repositories\Eloquent\Ticket\TicketDepartmentRepository;
+use App\Repositories\Eloquent\Ticket\TicketMessageRepository;
 use App\Repositories\Eloquent\Ticket\TicketPriorityRepository;
 use App\Repositories\Eloquent\Ticket\TicketRepository;
 use App\Repositories\Eloquent\User\OTPRepository;
@@ -85,6 +87,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(TicketRepositoryInterface::class, TicketRepository::class);
         $this->app->bind(TicketDepartmentRepositoryInterface::class, TicketDepartmentRepository::class);
         $this->app->bind(TicketPriorityRepositoryInterface::class, TicketPriorityRepository::class);
+        $this->app->bind(TicketMessageRepositoryInterface::class, TicketMessageRepository::class);
     }
 
     /**

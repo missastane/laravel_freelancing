@@ -10,14 +10,14 @@ class TicketPriorityService
 {
     public function __construct(protected TicketPriorityRepositoryInterface $ticketPriorityRepository){}
 
-    public function getPriorities():Paginator
+    public function getPriorities()
     {
-        return $this->ticketPriorityRepository->all();
+        return $this->ticketPriorityRepository->getPriorities();
     }
 
     public function showPriority(TicketPriority $ticketPriority)
     {
-        return $this->ticketPriorityRepository->showWithRelations($ticketPriority);
+        return $this->ticketPriorityRepository->showPriority($ticketPriority);
     }
 
     public function storePriority(array $data)

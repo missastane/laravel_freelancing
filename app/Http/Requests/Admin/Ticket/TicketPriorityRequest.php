@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Ticket;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TicketPriorityRequest extends FormRequest
 {
@@ -21,8 +22,14 @@ class TicketPriorityRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|min:2|max:255|regex:/^[ا-یa-zA-Zء-ي ]+$/u'
+        if ($this->isMethod('post')) {
+            return [
+                'name' => 'required|min:2|max:255|unique:ticket_priorities,name|regex:/^[ا-یa-zA-Zء-ي ]+$/u'
+            ];
+        }
+         return [
+            'name' => ['required','min:2','max:255','regex:/^[ا-یa-zA-Zء-ي ]+$/u',Rule::unique('ticket_priorities','name')->ignore($this->route('ticketPriority'))],
         ];
+
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\Content\CommentController;
+use App\Http\Controllers\Api\Admin\Ticket\TicketPriorityController;
 use App\Http\Controllers\Api\Customer\CommentController as CustomerCommentController;
 use App\Http\Controllers\API\Admin\Content\PostCategoryController;
 use App\Http\Controllers\API\Admin\Content\PostController;
@@ -255,12 +256,12 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::delete('/delete/{ticketDepartment}', [TicketDepartmentController::class, 'delete']);
         });
         Route::prefix('priority')->group(function () {
-            Route::get('/', [TicketDepartmentController::class, 'index']);
-            Route::post('/store', [TicketDepartmentController::class, 'store']);
-            Route::get('/show/{ticketPriority}', [TicketDepartmentController::class, 'show']);
-            Route::put('/update/{ticketPriority}', [TicketDepartmentController::class, 'update']);
-            Route::patch('/status/{ticketPriority}', [TicketDepartmentController::class, 'changeStatus']);
-            Route::delete('/delete/{ticketPriority}', [TicketDepartmentController::class, 'delete']);
+            Route::get('/', [TicketPriorityController::class, 'index']);
+            Route::post('/store', [TicketPriorityController::class, 'store']);
+            Route::get('/show/{ticketPriority}', [TicketPriorityController::class, 'show']);
+            Route::put('/update/{ticketPriority}', [TicketPriorityController::class, 'update']);
+            Route::patch('/status/{ticketPriority}', [TicketPriorityController::class, 'changeStatus']);
+            Route::delete('/delete/{ticketPriority}', [TicketPriorityController::class, 'delete']);
         });
     });
     Route::prefix('profile')->group(function () {

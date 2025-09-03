@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="بسیار زیاد"),
+ *     @OA\Property(property="status", type="string",description="status: 1 => active, 2 => disactive	", example="فعال"),
  *     @OA\Property(property="deleted_at", type="string", format="date-time", description="delete datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="status_value", type="string",description="status: 1 => active, 2 => disactive	", example="فعال"),
  * )
  */
 class TicketPriority extends Model

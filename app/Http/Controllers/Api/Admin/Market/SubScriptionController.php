@@ -4,12 +4,9 @@ namespace App\Http\Controllers\Api\Admin\Market;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Market\SubscriptionRequest;
-use App\Http\Requests\Admin\Market\UpdateSubscriptionDefaultFeatureRequest;
-use App\Http\Requests\Admin\Market\UpdateSubscriptionFeatureRequest;
 use App\Http\Requests\Admin\Market\UpdateSubscriptionRequest;
 use App\Http\Services\Subscription\SubscriptionService;
 use App\Models\Market\Subscription;
-use App\Models\Market\SubscriptionDefaultFeature;
 use App\Models\Market\SubscriptionFeature;
 use App\Traits\ApiResponseTrait;
 use Exception;
@@ -32,7 +29,7 @@ class SubScriptionController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Subscriptions",
-     *          @OA\JsonContent(
+     *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", nullable=true, example=null),
      *             @OA\Property(
