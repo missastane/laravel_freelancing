@@ -27,19 +27,56 @@ class TicketDepartmentController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Ticket Departments",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
+     *        @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/TicketDepartment"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -63,12 +100,12 @@ class TicketDepartmentController extends Controller
      */
     public function index()
     {
-        return $this->success($this->ticketDepartmentService->getDepartments());
+        return $this->ticketDepartmentService->getDepartments();
     }
 
     /**
      * @OA\Post(
-     *     path="/api/admin/ticke/department/store",
+     *     path="/api/admin/ticket/department/store",
      *     summary="Store a new Ticket Department by admin",
      *     description="In this method admins can Store a new Ticket Department",
      *     tags={"TicketDepartment"},
@@ -135,7 +172,7 @@ class TicketDepartmentController extends Controller
         try {
             $inputs = $request->all();
             $department = $this->ticketDepartmentService->storeDepartment($inputs);
-            return $this->success(null, 'دپارتمان تیکت با موفقیت افزوده شد', 201);
+            return $this->success(null, 'دپارتمان تیکت با موفقیت ثبت شد', 201);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -199,7 +236,7 @@ class TicketDepartmentController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/admin/ticke/department/update/{ticketDepartment}",
+     *     path="/api/admin/ticket/department/update/{ticketDepartment}",
      *     summary="Update an existing Ticket Department by admin",
      *     description="In this method admins can Update an existing Ticket Department",
      *     tags={"TicketDepartment"},

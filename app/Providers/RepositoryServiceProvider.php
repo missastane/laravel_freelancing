@@ -20,6 +20,9 @@ use App\Repositories\Contracts\Market\UserSubscriptionRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
 use App\Repositories\Contracts\Setting\SettingRepositoryInterface;
+use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
+use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
+use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
@@ -42,6 +45,9 @@ use App\Repositories\Eloquent\Market\UserSubscriptionRepository;
 use App\Repositories\Eloquent\Payment\WalletRepository;
 use App\Repositories\Eloquent\Payment\WalletTransactionRepository;
 use App\Repositories\Eloquent\Setting\SettingRepository;
+use App\Repositories\Eloquent\Ticket\TicketDepartmentRepository;
+use App\Repositories\Eloquent\Ticket\TicketPriorityRepository;
+use App\Repositories\Eloquent\Ticket\TicketRepository;
 use App\Repositories\Eloquent\User\OTPRepository;
 use App\Repositories\Eloquent\User\PermissionRepository;
 use App\Repositories\Eloquent\User\RoleRepository;
@@ -76,6 +82,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(WalletTransactionRepositoryInterface::class, WalletTransactionRepository::class);
         $this->app->bind(UserSubscriptionRepositoryInterface::class, UserSubscriptionRepository::class);
         $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
+        $this->app->bind(TicketRepositoryInterface::class, TicketRepository::class);
+        $this->app->bind(TicketDepartmentRepositoryInterface::class, TicketDepartmentRepository::class);
+        $this->app->bind(TicketPriorityRepositoryInterface::class, TicketPriorityRepository::class);
     }
 
     /**

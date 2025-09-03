@@ -15324,11 +15324,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -15342,17 +15343,120 @@
                                                         "$ref": "#/components/schemas/TicketDepartment"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -15411,14 +15515,14 @@
                 ]
             }
         },
-        "/api/admin/ticke/department/store": {
+        "/api/admin/ticket/department/store": {
             "post": {
                 "tags": [
                     "TicketDepartment"
                 ],
                 "summary": "Store a new Ticket Department by admin",
                 "description": "In this method admins can Store a new Ticket Department",
-                "operationId": "06cc3d47a2f9c04cb3486e799da27c78",
+                "operationId": "67471f74b535cfc01f2e0e0616cd5b81",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -15670,14 +15774,14 @@
                 ]
             }
         },
-        "/api/admin/ticke/department/update/{ticketDepartment}": {
+        "/api/admin/ticket/department/update/{ticketDepartment}": {
             "put": {
                 "tags": [
                     "TicketDepartment"
                 ],
                 "summary": "Update an existing Ticket Department by admin",
                 "description": "In this method admins can Update an existing Ticket Department",
-                "operationId": "51ac3b0dfb6dbd9df57597cfc9491dcb",
+                "operationId": "7fc8dd81218a070dde58a90baecdfc0f",
                 "parameters": [
                     {
                         "name": "ticketDepartment",
@@ -36220,6 +36324,11 @@
                         "type": "string",
                         "example": "مالی"
                     },
+                    "status": {
+                        "description": "status: 1 => active, 2 => disactive\t",
+                        "type": "string",
+                        "example": "فعال"
+                    },
                     "deleted_at": {
                         "description": "delete datetime",
                         "type": "string",
@@ -36237,11 +36346,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "status_value": {
-                        "description": "status: 1 => active, 2 => disactive\t",
-                        "type": "string",
-                        "example": "فعال"
                     }
                 },
                 "type": "object"

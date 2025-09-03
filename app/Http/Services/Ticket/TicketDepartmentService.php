@@ -13,12 +13,12 @@ class TicketDepartmentService
 
     public function getDepartments()
     {
-        return $this->ticketDepartmentRepository->all();
+        return $this->ticketDepartmentRepository->getDepartments();
     }
 
     public function showDepartment(TicketDepartment $ticketDepartment)
     {
-        return $this->ticketDepartmentRepository->showWithRelations($ticketDepartment);
+        return $this->ticketDepartmentRepository->showDepartment($ticketDepartment);
     }
 
     public function storeDepartment(array $data)

@@ -245,6 +245,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
         Route::patch('/close/{ticket}', [TicketController::class, 'close']);
         Route::delete('/delete/{ticket}', [TicketController::class, 'delete']);
         Route::delete('/delete-file/{file}', [TicketController::class, 'deleteFile']);
+       
         Route::prefix('department')->group(function () {
             Route::get('/', [TicketDepartmentController::class, 'index']);
             Route::post('/store', [TicketDepartmentController::class, 'store']);
