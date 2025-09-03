@@ -36092,6 +36092,23 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
+                    },
+                    "keywords": {
+                        "description": "Array of related tags with both ID and name",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "تازه های دیجیتال"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"

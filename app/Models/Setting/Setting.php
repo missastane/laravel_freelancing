@@ -17,6 +17,16 @@ use Illuminate\Database\Eloquent\Model;
  *     @OA\Property(property="logo", type="string", format="uri", example="\path\logo.png"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(
+ *          property="keywords",
+ *          type="array",
+ *          description="Array of related tags with both ID and name",
+ *             @OA\Items(
+ *                  type="object",
+ *                  @OA\Property(property="id", type="integer", example=3),
+ *                  @OA\Property(property="name", type="string", example="تازه های دیجیتال")
+ *               )
+ *      )
  * )
  */
 class Setting extends Model
@@ -24,7 +34,7 @@ class Setting extends Model
     use HasFactory;
     protected $table = 'setting';
     protected $fillable = ['title', 'description', 'icon', 'logo'];
-    public function keywords()
+    public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable');
     }

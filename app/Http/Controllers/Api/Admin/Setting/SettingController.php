@@ -4,17 +4,16 @@ namespace App\Http\Controllers\Api\Admin\Setting;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Setting\SettingRequest;
-use App\Http\Services\Image\ImageService;
-use App\Models\Content\Tag;
-use App\Models\Setting\Setting;
+use App\Http\Services\Setting\SettingService;
 use App\Traits\ApiResponseTrait;
-use Database\Seeders\SettingSeeder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Exception;
 
 class SettingController extends Controller
 {
     use ApiResponseTrait;
+    public function __construct(protected SettingService $settingService)
+    {
+    }
     /**
      * @OA\Get(
      *     path="/api/admin/setting",
@@ -55,14 +54,7 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $setting = Setting::first(); {
-            $default = new SettingSeeder();
-            $default->run();
-            $setting = Setting::first();
-        }
-        return response()->json([
-            'data' => $setting->load('keywords')
-        ], 200);
+        return $this->success($this->settingService->getSetting());
     }
 
     /**
@@ -152,55 +144,14 @@ class SettingController extends Controller
      *     )
      * )
      */
-    public function update(SettingRequest $request, ImageService $imageService)
+    public function update(SettingRequest $request)
     {
         try {
-            DB::beginTransaction();
-            $setting = Setting::first();
             $inputs = $request->all();
-            if ($request->hasFile('icon')) {
-
-                if (!empty($setting->icon)) {
-                    $imageService->deleteImage($setting->icon);
-                }
-
-                $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'setting');
-                $imageService->setImageName('icon');
-                $icon = $imageService->save($request->file('icon'));
-
-                if ($icon === false) {
-                    return $this->error('بارگذاری آیکن با خطا مواجه شد', 422);
-                }
-                $inputs['icon'] = $icon;
-            }
-            if ($request->hasFile('logo')) {
-                if (!empty($setting->logo)) {
-                    $imageService->deleteImage($setting->logo);
-                }
-                $imageService->setExclusiveDirectory('images' . DIRECTORY_SEPARATOR . 'setting');
-                $imageService->setImageName('logo');
-                $logo = $imageService->save($request->file('logo'));
-                
-                if ($logo === false) {
-                    return $this->error('بارگذاری لوگو با خطا مواجه شد', 422);
-                }
-                $inputs['logo'] = $logo;
-            }
-            $setting->update($inputs);
-            if ($request->has('keywords')) {
-                $keywordIds = [];
-                foreach ($request->keywords as $keywordName) {
-                    $keyword = Tag::firstOrCreate(['name' => $keywordName]);
-                    $keywordIds[] = $keyword->id;
-                }
-
-                $setting->keywords()->sync($keywordIds);
-            }
-            DB::commit();
-            return $this->success(null,'تنظیمات با موفقیت بروزرسانی شد');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $this->error();
+            $this->settingService->update($inputs);
+            return $this->success(null, 'تنظیمات با موفقیت بروزرسانی شد');
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
         }
     }
 }
