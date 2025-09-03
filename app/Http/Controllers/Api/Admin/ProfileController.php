@@ -182,7 +182,7 @@ class ProfileController extends Controller
          $result = $this->profileService->changeMobile($inputs);
          return $this->success($result['data'],$result['message'],200);
       } catch (Exception $e) {
-         return $this->error($e->getMessage());
+         return $this->error();
       }
    }
    /**

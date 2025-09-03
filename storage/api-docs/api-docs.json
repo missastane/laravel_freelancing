@@ -27793,6 +27793,11 @@
                                         "type": "string",
                                         "minimum": "8",
                                         "example": "fL520khf56"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "minimum": "8",
+                                        "example": "fL520khf56"
                                     }
                                 },
                                 "type": "object"
@@ -27902,13 +27907,13 @@
             }
         },
         "/api/profile/change-mobile": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Customer-Profile"
                 ],
                 "summary": "Updates Mobile number",
                 "description": "This method updates `Mobile Number` and save it.",
-                "operationId": "fcc1a0b5408ae736c3eba3cceff6df79",
+                "operationId": "c74d4ec9a7ba0451759081013984955e",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -36792,6 +36797,10 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "username": {
+                        "type": "string",
+                        "example": "ایمان"
+                    },
                     "email": {
                         "type": "string",
                         "example": "missastaneh@yahoo.com"
@@ -36824,10 +36833,10 @@
                         "type": "string",
                         "example": "2732548965"
                     },
-                    "profile_photo_path": {
+                    "gender": {
+                        "description": "User gender: 'male' if 1, 'female' if 2",
                         "type": "string",
-                        "format": "uri",
-                        "example": "\\path\\image.jpg"
+                        "example": "مذکر"
                     },
                     "birth_date": {
                         "description": "birth datetime",
@@ -36835,15 +36844,25 @@
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
                     },
-                    "account_number": {
+                    "avatar_photo": {
                         "type": "string",
-                        "example": "273002548965"
+                        "format": "uri",
+                        "example": "\\path\\image.jpg"
+                    },
+                    "activation": {
+                        "description": "Activation Value: 'active' if 1, 'inactive' if 2",
+                        "type": "string",
+                        "example": "فعال"
                     },
                     "activation_date": {
                         "description": "activation datetime",
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
+                    },
+                    "active_role": {
+                        "type": "string",
+                        "example": "کارفرما"
                     },
                     "about_me": {
                         "type": "string",
@@ -36861,26 +36880,39 @@
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
                     },
-                    "deleted_at": {
-                        "description": "delete datetime",
-                        "type": "string",
-                        "format": "datetime",
-                        "example": "2025-02-22T14:30:00Z"
+                    "roles": {
+                        "description": "Array of related roles with both ID and name",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "کارفرما"
+                                }
+                            },
+                            "type": "object"
+                        }
                     },
-                    "gender_value": {
-                        "description": "User gender: 'male' if 1, 'female' if 2",
-                        "type": "string",
-                        "example": "مذکر"
-                    },
-                    "activation_value": {
-                        "description": "Activation Value: 'active' if 1, 'inactive' if 2",
-                        "type": "string",
-                        "example": "فعال"
-                    },
-                    "user_type_value": {
-                        "description": "User Type Value: 'admin' if 1, 'user' if 2",
-                        "type": "string",
-                        "example": "ادمین"
+                    "permissions": {
+                        "description": "Array of related permissions with both ID and name",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "edit-post"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"

@@ -29,6 +29,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  *     schema="User",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="username", type="string", example="ایمان"),
  *     @OA\Property(property="email", type="string", example="missastaneh@yahoo.com"),
  *     @OA\Property(property="email_verified_at", type="string", format="date-time", description="email verify datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="mobile", type="string", example="09125478963"),
@@ -36,17 +37,35 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  *     @OA\Property(property="first_name", type="string", example="ایمان"),
  *     @OA\Property(property="last_name", type="string", example="مدائنی"),
  *     @OA\Property(property="national_code", type="string", example="2732548965"),
- *     @OA\Property(property="profile_photo_path", type="string", format="uri", example="\path\image.jpg"),
+ *     @OA\Property(property="gender", type="string", description="User gender: 'male' if 1, 'female' if 2", example="مذکر"),
  *     @OA\Property(property="birth_date", type="string", format="date-time", description="birth datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="account_number", type="string", example="273002548965"),
+ *     @OA\Property(property="avatar_photo", type="string", format="uri", example="\path\image.jpg"),
+ *     @OA\Property(property="activation", type="string", description="Activation Value: 'active' if 1, 'inactive' if 2", example="فعال"),
  *     @OA\Property(property="activation_date", type="string", format="date-time", description="activation datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="active_role", type="string", example="کارفرما"),
  *     @OA\Property(property="about_me", type="string", example="رشته اصلی من ریاضی است"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="deleted_at", type="string", format="datetime",description="delete datetime", example="2025-02-22T14:30:00Z"),
- *     @OA\Property(property="gender_value", type="string", description="User gender: 'male' if 1, 'female' if 2", example="مذکر"),
- *     @OA\Property(property="activation_value", type="string", description="Activation Value: 'active' if 1, 'inactive' if 2", example="فعال"),
- *     @OA\Property(property="user_type_value", type="string", description="User Type Value: 'admin' if 1, 'user' if 2", example="ادمین"),
+ *     @OA\Property(
+ *          property="roles",
+ *          type="array",
+ *          description="Array of related roles with both ID and name",
+ *             @OA\Items(
+ *                  type="object",
+ *                  @OA\Property(property="id", type="integer", example=3),
+ *                  @OA\Property(property="name", type="string", example="کارفرما")
+ *               )
+ *        ),
+ *     @OA\Property(
+ *          property="permissions",
+ *          type="array",
+ *          description="Array of related permissions with both ID and name",
+ *             @OA\Items(
+ *                  type="object",
+ *                  @OA\Property(property="id", type="integer", example=3),
+ *                  @OA\Property(property="name", type="string", example="edit-post")
+ *               )
+ *        ),
  * )
  */
 class User extends Authenticatable implements JWTSubject

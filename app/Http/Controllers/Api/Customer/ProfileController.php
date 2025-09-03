@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\AboutMeRequest;
 use App\Http\Requests\Profile\ChangePasswordRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
-use App\Http\Services\Image\ImageService;
-use App\Http\Services\OTP\OTPService;
 use App\Http\Services\Profile\ProfileService;
-use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
@@ -210,6 +207,7 @@ class ProfileController extends Controller
      *                 type="object",
      *             @OA\Property(property="current_password", type="string", minimum="8", example="fL520khf56"),
      *             @OA\Property(property="new_password", type="string", minimum="8", example="fL520khf56"),
+     *             @OA\Property(property="new_password_confirmation", type="string", minimum="8", example="fL520khf56"),
      *              )
      *          )
      *     ),
@@ -259,76 +257,77 @@ class ProfileController extends Controller
         } catch (Exception $e) {
             return $this->error();
         }
-    } 
-    
+    }
+
     /**
-      * @OA\Post(
-      *     path="/api/profile/change-mobile",
-      *     summary="Updates Mobile number",
-      *     description="This method updates `Mobile Number` and save it.",
-      *     tags={"Customer-Profile"},
-      *     security={{"bearerAuth": {}}},
-      *     @OA\RequestBody(
-      *         required=true,
-      *         @OA\MediaType(
-      *             mediaType="application/json",
-      *             @OA\Schema(type="object",
-      *             @OA\Property(property="id", type="string", description="This field can only contain phone number. Any other characters will result in a validation error.", example="09112356987"),
-      *                       )
-      *             )
-      *     ),
-      *     @OA\Response(
-      *         response=200,
-      *         description="Successfull change phone number",
-      *         @OA\JsonContent(
-      *             @OA\Property(property="status", type="bool", example="true"),
-      *             @OA\Property(property="message", type="string", example="جهت ویرایش موبایل یا ایمیل خود با وارد کردن کد تأیید 6 رقمی ارسال شده لطفا آن را تأیید نمایید"),
-      *             @OA\Property(property="data", type="array", 
-      *                  @OA\Items(
-      *                    @OA\Property(property="token", type="string", example="345dcugdbhcjolsfdtfsgh..."),
-      *                    @OA\Property(property="meta", type="array", 
-      *                       @OA\Items(
-      *                          @OA\Property(property="next_step", type="string", example="redirect_to_/confirm_otp"),
-      *                         ),
-      *                       )
-      *                   )
-      *                )
-      *            )
-      *     ),
-      *     @OA\Response(
-      *         response=401,
-      *         description="Unauthenticated",
-      *         @OA\JsonContent(
-      *             @OA\Property(property="status", type="bool", example="false"),
-      *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
-      *     )),
-      *     @OA\Response(
-      *         response=422,
-      *         description="Validation error",
-      *         @OA\JsonContent(
-      *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
-      *             @OA\Property(property="errors", type="object",
-      *                 @OA\Property(property="x", type="array",
-      *                     @OA\Items(type="string", example="فیلد x اجباری است")
-      *                 )
-      *             )
-      *         )
-      *     ),
-      *     @OA\Response(
-      *         response=500,
-      *         description="internal server error",
-      *         @OA\JsonContent(
-      *             @OA\Property(property="status", type="bool", example="false"),
-      *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
-      *     )
-      *  )
-      * )
-      */
+     * @OA\Patch(
+     *     path="/api/profile/change-mobile",
+     *     summary="Updates Mobile number",
+     *     description="This method updates `Mobile Number` and save it.",
+     *     tags={"Customer-Profile"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(type="object",
+     *             @OA\Property(property="id", type="string", description="This field can only contain phone number. Any other characters will result in a validation error.", example="09112356987"),
+     *                       )
+     *             )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfull change phone number",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="جهت ویرایش موبایل یا ایمیل خود با وارد کردن کد تأیید 6 رقمی ارسال شده لطفا آن را تأیید نمایید"),
+     *             @OA\Property(property="data", type="array", 
+     *                  @OA\Items(
+     *                    @OA\Property(property="token", type="string", example="345dcugdbhcjolsfdtfsgh..."),
+     *                    @OA\Property(property="meta", type="array", 
+     *                       @OA\Items(
+     *                          @OA\Property(property="next_step", type="string", example="redirect_to_/confirm_otp"),
+     *                         ),
+     *                       )
+     *                   )
+     *                )
+     *            )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="x", type="array",
+     *                     @OA\Items(type="string", example="فیلد x اجباری است")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *     )
+     *  )
+     * )
+     */
     public function updateMobile(Request $request)
     {
         try {
             $inputs = $request->all();
-            $this->profileService->changeMobile($inputs);
+            $result = $this->profileService->changeMobile($inputs);
+            return $this->success($result['data'], $result['message'], 200);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -400,7 +399,7 @@ class ProfileController extends Controller
             $inputs = $request->all();
             $result = $this->profileService->confirmMobile($token, $inputs);
             if ($result['status']) {
-                return $this->success(true, $result['data'], $result['message']);
+                return $this->success($result['data'], $result['message'], $result['code']);
             } else {
                 return response()->json([
                     'status' => $result['status'],
@@ -408,7 +407,6 @@ class ProfileController extends Controller
                     'data' => $result['data'],
                 ], $result['code']);
             }
-
         } catch (Exception $e) {
             return $this->error();
         }

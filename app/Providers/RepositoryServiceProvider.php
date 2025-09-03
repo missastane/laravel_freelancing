@@ -24,6 +24,7 @@ use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketMessageRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
+use App\Repositories\Contracts\User\NotificationRepositoryInterface;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
@@ -50,6 +51,7 @@ use App\Repositories\Eloquent\Ticket\TicketDepartmentRepository;
 use App\Repositories\Eloquent\Ticket\TicketMessageRepository;
 use App\Repositories\Eloquent\Ticket\TicketPriorityRepository;
 use App\Repositories\Eloquent\Ticket\TicketRepository;
+use App\Repositories\Eloquent\User\NotificationRepository;
 use App\Repositories\Eloquent\User\OTPRepository;
 use App\Repositories\Eloquent\User\PermissionRepository;
 use App\Repositories\Eloquent\User\RoleRepository;
@@ -88,6 +90,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(TicketDepartmentRepositoryInterface::class, TicketDepartmentRepository::class);
         $this->app->bind(TicketPriorityRepositoryInterface::class, TicketPriorityRepository::class);
         $this->app->bind(TicketMessageRepositoryInterface::class, TicketMessageRepository::class);
+        $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
     }
 
     /**
