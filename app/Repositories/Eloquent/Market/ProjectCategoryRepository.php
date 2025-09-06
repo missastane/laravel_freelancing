@@ -17,13 +17,6 @@ class ProjectCategoryRepository extends BaseRepository implements ProjectCategor
     {
         parent::__construct($model);
     }
-
-    protected function formatCategories($categories)
-    {
-        $categories->getColletion()->each(function ($item) {
-            $item->makeHidden('status', 'show_in_menu', 'parent_id');
-        })->append(['status_value', 'show_in_menu_value']);
-    }
     public function getCategoies()
     {
         $projectCategories = $this->all(['parent:id,name', 'tags']);
@@ -35,7 +28,6 @@ class ProjectCategoryRepository extends BaseRepository implements ProjectCategor
             ->orWhere('description', 'LIKE', '%' . $search . '%')->with('parent:id,name')
             ->orderBy('name')
             ->paginate(15);
-        // $this->formatCategories($catgories);
         return new BaseCollection($catgories, ProjectCategoryResource::class, null);
     }
     public function showCategory(ProjectCategory $projectCategory)

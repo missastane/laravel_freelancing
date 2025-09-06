@@ -5,7 +5,7 @@ namespace App\Models\Market;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 
-class SubscriptionDefaultUsage extends Model
+class SubscriptionUsage extends Model
 {
     protected $fillable = [
         'user_id',

@@ -161,12 +161,12 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::get('/user-transactions', [WalletTransactionController::class, 'getUserTransactions']);
             Route::get('/show-wallet', [WalletTransactionController::class, 'showWallet']);
         });
-          Route::prefix('wallet-transaction')->group(function () {
+        Route::prefix('wallet-transaction')->group(function () {
             Route::get('/', [WalletTransactionController::class, 'index']);
             Route::get('/show/{withdrawal}', [WalletTransactionController::class, 'show']);
             Route::put('/paid/{withdrawal}', [WalletTransactionController::class, 'changeRequestToPaid']);
             Route::patch('/reject/{withdrawal}', [WalletTransactionController::class, 'rejectRequest']);
-    });
+        });
     });
     Route::prefix('setting')->group(function () {
         Route::get('/', [SettingController::class, 'index'])->name('admin.setting');
@@ -246,7 +246,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
         Route::patch('/close/{ticket}', [TicketController::class, 'close']);
         Route::delete('/delete/{ticket}', [TicketController::class, 'delete']);
         Route::delete('/delete-file/{file}', [TicketController::class, 'deleteFile']);
-       
+
         Route::prefix('department')->group(function () {
             Route::get('/', [TicketDepartmentController::class, 'index']);
             Route::post('/store', [TicketDepartmentController::class, 'store']);
@@ -317,16 +317,20 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::prefix('project')->group(function () {
         Route::get('/', [CustomerProjectController::class, 'index']);
-        Route::get('/user-projects', [CustomerProjectController::class, 'userProjects']);
         Route::get('/options', [CustomerProjectController::class, 'options']);
-        Route::post('/store', [CustomerProjectController::class, 'store']);
         Route::get('/show/{project}', [CustomerProjectController::class, 'show']);
         Route::get('/details/{project}', [CustomerProjectController::class, 'viewDetails']);
-        Route::post('/add-to-favorite/{project}', [CustomerProjectController::class, 'addToFavorite']);
-        Route::patch('/toggle-full-time/{project}', [CustomerProjectController::class, 'toggleFulltime']);
-        Route::put('/update/{project}', [CustomerProjectController::class, 'update']);
-        Route::delete('/delete/{project}', [CustomerProjectController::class, 'delete']);
-
+        Route::middleware('employer')->group(function () {
+            Route::get('/user-projects', [CustomerProjectController::class, 'userProjects']);
+            Route::post('/store', [CustomerProjectController::class, 'store']);
+            Route::patch('/toggle-full-time/{project}', [CustomerProjectController::class, 'toggleFulltime']);
+            Route::put('/update/{project}', [CustomerProjectController::class, 'update']);
+            Route::delete('/delete/{project}', [CustomerProjectController::class, 'delete']);
+        });
+        Route::middleware('freelancer')->group(function () {
+            Route::post('/add-to-favorite/{project}', [CustomerProjectController::class, 'addToFavorite'])->middleware('freelancer');
+            Route::delete('/delete-favorite/{project}', [CustomerProjectController::class, 'removeFromFavorite'])->middleware('freelancer');
+        });
     });
     Route::prefix('proposal')->group(function () {
         Route::get('/{Project}', [CustomerProposalController::class, 'index']);

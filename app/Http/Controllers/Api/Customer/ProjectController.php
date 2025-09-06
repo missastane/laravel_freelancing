@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\Exceptions\FavoriteNotExistException;
+use App\Exceptions\ProjectAddLimitException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Employer\ProjectRequest;
 use App\Http\Services\Favorite\FavoriteService;
-use App\Http\Services\File\FileService;
 use App\Http\Services\Project\ProjectService;
 use App\Models\Market\Project;
 use App\Models\User\User;
@@ -17,12 +18,11 @@ use Illuminate\Support\Facades\Gate;
 class ProjectController extends Controller
 {
     use ApiResponseTrait;
-    protected User $user;
     public function __construct(
         protected ProjectService $projectService,
         protected FavoriteService $favoriteService
     ) {
-        $this->user = auth()->user();
+
     }
 
     /**
@@ -38,18 +38,55 @@ class ProjectController extends Controller
      *         response=200,
      *         description="A list of Projects",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *               @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Project"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -64,7 +101,7 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->success($this->projectService->getProjects($request->all()));
+        return $this->projectService->getProjects($request->all());
     }
 
     /**
@@ -80,18 +117,55 @@ class ProjectController extends Controller
      *         response=200,
      *         description="A list of auth user's Projects",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *               @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Project"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -113,9 +187,9 @@ class ProjectController extends Controller
      *     )
      * )
      */
-    public function userProjects()
+    public function userProjects(Request $request)
     {
-        return $this->success($this->projectService->getUserPrjects());
+        return $this->projectService->getUserPrjects(null, $request->all());
     }
 
     /**
@@ -135,11 +209,22 @@ class ProjectController extends Controller
      *             @OA\Property(property="message", type="string", example="null"),
      *                 @OA\Property(property="data", type="array",
      *                   @OA\Items(
-     *                      @OA\Property(property="categories", type="object", ref="#/components/schemas/ProjectCategory"),
-     *                      @OA\Property(property="skills", type="object", ref="#/components/schemas/Skill"),
+     *                      @OA\Property(property="categories", type="array", 
+     *                          @OA\Items(
+     *                            @OA\Property(property="id", type="integer", example=2),
+     *                            @OA\Property(property="name", type="string", example="ترجمه"),
+     *                           )                
+     *                        ),
+     *                      @OA\Property(property="skills", type="array",
+     *                        @OA\Items(
+     *                            @OA\Property(property="id", type="integer", example=2),
+     *                            @OA\Property(property="persian_title", type="string", example="ترجمه"),
+     *                            @OA\Property(property="original_title", type="string", example="translate"),
+     *                           )        
+     *                       )
      *                    )
-     *               ),
-     *             )
+     *               )
+     *          )
      *     ),
      *  @OA\Response(
      *         response=401,
@@ -184,8 +269,17 @@ class ProjectController extends Controller
      *             @OA\Property(property="duration_time", type="integer", description="per day", example=5),
      *             @OA\Property(property="amount", type="integer", description="currency is tooman", example=700000),
      *             @OA\Property(property="files[]", type="array", 
-     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file.")
-     *              )
+     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."),
+     *             @OA\Property(property="skills[]", description="Id of skills to sync with project.", type="array", 
+     *                  @OA\Items(type="integer",example=2),
+     *               )
+     *              ),
+     *                encoding={
+     *                 "skills[]": {
+     *                     "style": "form",
+     *                     "explode": true
+     *                 }
+     *             }
      *          )
      *     ),
      *     @OA\Response(
@@ -225,6 +319,14 @@ class ProjectController extends Controller
      *             )
      *         )
      *     ),
+     *    @OA\Response(
+     *         response=429,
+     *         description="Too Many Requests",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما به حداکثر تعداد مجاز ایجاد پروژه‌ رسیده‌اید")
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=500,
      *         description="internal server error",
@@ -241,8 +343,10 @@ class ProjectController extends Controller
             $inputs = $request->all();
             $project = $this->projectService->storeProject($inputs);
             return $this->success(null, 'پروژه با موفقیت ثبت شد');
+        } catch (ProjectAddLimitException $e) {
+            throw $e;
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -345,7 +449,15 @@ class ProjectController extends Controller
      *             @OA\Property(property="status", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
      *         )
-     *     )
+     *     ),
+     *     @OA\Response(
+     *         response=429,
+     *         description="Too Many Requests",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما به حداکثر تعداد مجاز مشاهده جزئیات پروژه‌ها رسیده‌اید")
+     *         )
+     *     ),
      * )
      */
 
@@ -413,13 +525,78 @@ class ProjectController extends Controller
     public function addToFavorite(Project $project)
     {
         try {
-            $inputs = [];
-            $inputs['context'] = Project::class;
-            $inputs['context_id'] = $project->id;
-            $this->favoriteService->addToFavorite($inputs);
+            $this->projectService->addToFavorite($project);
             return $this->success(null, "پروژه با موفقیت به لیست علاقمندی ها اضافه شد", 201);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/project/delete-favorite/{project}",
+     *     summary="Delete a Project From Favorites",
+     *     description="This endpoint allows the freelancer to `delete a Project from favorites list`.",
+     *     tags={"Customer-Project"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         description="The ID of the Project to be deleted from favorites",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Project deleted successfully form favorites",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="پروژه با موفقیت از لیست علاقمندی ها حذف شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *         )
+     *     )
+     * )
+     */
+    public function removeFromFavorite(Project $project)
+    {
+        try {
+            $this->projectService->removeFavorite($project);
+            return $this->success(null, 'پروژه با موفقیت از لیست علاقمندی ها حذف شد');
+        } catch (FavoriteNotExistException $e) {
+            throw $e;
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
         }
     }
 
@@ -482,7 +659,7 @@ class ProjectController extends Controller
     public function toggleFulltime(Project $project)
     {
         if (Gate::denies('toggleFullTime')) {
-            return $this->error('شما مجاز به انجام این عملیات نیستید');
+            return $this->error('شما مجاز به انجام این عملیات نیستید. برای استفاده از این حالت باید ابتدا اشتراک خریداری فرمایید');
         }
         try {
             $message = $this->projectService->toggleFullTime($project);
@@ -496,7 +673,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *     path="/api/project/update/{project}",
      *     summary="Update a Project by employer",
      *     description="In this method employers can Update an existing Project",
@@ -521,10 +698,18 @@ class ProjectController extends Controller
      *             @OA\Property(property="duration_time", type="integer", description="per day", example=5),
      *             @OA\Property(property="amount", type="integer", description="currency is tooman", example=700000),
      *             @OA\Property(property="files[]", type="array", 
-     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."
-     *              ),
+     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."),
+     *                @OA\Property(property="skills[]", description="Id of skills to sync with project.", type="array", 
+     *                  @OA\Items(type="integer",example=2),
+     *               ),
      *             @OA\Property(property="_method", type="string", example="PUT")
-     *              )
+     *              ),
+     *                encoding={
+     *                 "skills[]": {
+     *                     "style": "form",
+     *                     "explode": true
+     *                 }
+     *             }
      *          )
      *     ),
      *     @OA\Response(

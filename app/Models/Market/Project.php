@@ -47,6 +47,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *                   @OA\Property(property="file_path", type="string", example="2356489"),
  *                   @OA\Property(property="mime_type", type="string", example="image/jpg"),
  *                )
+ *     ),
+ *    @OA\Property(
+ *          property="skills",
+ *          type="array",
+ *                @OA\Items(  
+ *                   @OA\Property(property="id", type="integer", example=3),
+ *                   @OA\Property(property="persian_title", type="string", example="ورد"),
+ *                   @OA\Property(property="original_title", type="string", example="word"),
+ *                )
  *     )
  *     )
  */
@@ -71,7 +80,7 @@ class Project extends Model
     }
     public function skills()
     {
-        return $this->belongsToMany(Portfolio::class);
+        return $this->belongsToMany(Skill::class);
     }
     public function tags()
     {
@@ -79,7 +88,12 @@ class Project extends Model
     }
     public function files()
     {
-        return $this->morphMany('App\Models\File', 'fillable');
+        return $this->morphMany('App\Models\Market\File', 'filable');
+    }
+
+    public function favorites()
+    {
+        return $this->morphMany('App\Models\User\Favorite', 'favoritable');
     }
     public function getStatusValueAttribute()
     {

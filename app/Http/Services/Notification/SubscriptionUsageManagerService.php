@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Notification;
 
-use App\Models\Market\SubscriptionDefaultUsage;
+use App\Models\Market\SubscriptionUsage;
 use App\Models\Market\UserSubscription;
 use App\Models\User\User;
 use App\Repositories\Contracts\Market\SubscriptionDefaultUsageRepositoryInterface;
@@ -11,7 +11,7 @@ class SubscriptionUsageManagerService
 {
     protected User $user;
     protected ?UserSubscription $activeSubscription = null;
-    protected ?SubscriptionDefaultUsage $currentUsage = null;
+    protected ?SubscriptionUsage $currentUsage = null;
 
     public function __construct(
         User $user,
@@ -48,7 +48,7 @@ class SubscriptionUsageManagerService
             }
         } else {
             // بدون پلن
-            $this->currentUsage = SubscriptionDefaultUsage::where('user_id', $this->user->id)
+            $this->currentUsage = SubscriptionUsage::where('user_id', $this->user->id)
                 ->where('period_start', '<=', now())
                 ->where('period_end', '>=', now())
                 ->first();

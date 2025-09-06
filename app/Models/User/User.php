@@ -10,6 +10,7 @@ use App\Models\Market\MessageUserStatus;
 use App\Models\Market\Portfolio;
 use App\Models\Market\Project;
 use App\Models\Market\Proposal;
+use App\Models\Market\Skill;
 use App\Models\Market\Subscription;
 use App\Models\Market\UserEducation;
 use App\Models\Market\UserSubscription;
@@ -191,6 +192,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Portfolio::class);
     }
 
+     public function skills()
+    {
+        return $this->belongsToMany(Skill::class);
+    }
     public function messages()
     {
         return $this->hasMany(Message::class);
@@ -255,7 +260,7 @@ class User extends Authenticatable implements JWTSubject
                     $q2->where('target_type', $targetType);
                 });
             })
-            ->latest('started_at')
+            ->latest('start_date')
             ->first();
     }
 

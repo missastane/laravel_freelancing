@@ -25,7 +25,7 @@ class UserSubscription extends Model
 
     public function defaultUsage()
     {
-        return $this->hasOne(SubscriptionDefaultUsage::class,'user_subscription_id');
+        return $this->hasOne(SubscriptionUsage::class,'user_subscription_id');
     }
 
     public function getStatusValueAttribute()

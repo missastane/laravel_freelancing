@@ -23,8 +23,9 @@ class ProjectPolicy
         return $user->activeSubscription();
     }
 
-    public function update(Project $project)
+    public function update(User $user,Project $project)
     {
+        \Log::info($project);
         return $project->status == 1;
     }
     /**

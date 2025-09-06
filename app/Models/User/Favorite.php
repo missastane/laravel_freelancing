@@ -28,23 +28,28 @@ use Illuminate\Database\Eloquent\Model;
 class Favorite extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id','favoritable_type','favoritable_id'];
+    protected $fillable = ['user_id', 'favoritable_type', 'favoritable_id'];
 
     public function getFavoritableValueAttribute()
     {
-        switch($this->Favoritable_type)
-        {
+        switch ($this->Favoritable_type) {
             case 'َApp\\Models\\Market\\Proposal':
-                $result = Proposal::where('id',$this->favoritable_id)
-                ->select('id','description','total_amount','total_duration_time','status')
-                ->with('milstones','user:id,username')->get();
+                $result = Proposal::where('id', $this->favoritable_id)
+                    ->select('id', 'description', 'total_amount', 'total_duration_time', 'status')
+                    ->with('milstones', 'user:id,username')->get();
                 break;
             case 'َApp\\Models\\Market\\Project':
-                 $result = Project::where('id',$this->favoritable_id)
-                ->select('id','title','description','amount','duration_time','status')
-                ->with('user:id,username')->get();
+                $result = Project::where('id', $this->favoritable_id)
+                    ->select('id', 'title', 'description', 'amount', 'duration_time', 'status')
+                    ->with('user:id,username')->get();
                 break;
         }
         return $result;
     }
+
+    public function favoritable()
+    {
+        return $this->morphTo();
+    }
+
 }

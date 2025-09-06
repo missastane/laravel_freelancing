@@ -60,6 +60,10 @@ class Proposal extends Model
     {
         return $this->hasMany(ProposalMilstone::class);
     }
+     public function favorites()
+    {
+        return $this->morphMany('App\Models\User\Favorite', 'favoritable');
+    }
     public function getStatusValueAttribute()
     {
         switch ($this->status) {

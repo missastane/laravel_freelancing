@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\ProjectResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Project;
 use App\Models\User\User;
 use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
@@ -30,32 +32,30 @@ class ProjectRepository extends BaseRepository implements ProjectRepositoryInter
             $project->makeHidden('status')->append('status_value');
         });
     }
-    public function getProjects(array $data): Paginator
+    public function getProjects(array $data)
     {
-        $projects = $this->model->filter($data)->orderBy('title')->simplePaginate(20);
-        $this->formatProjects($projects);
-        return $projects;
+        $projects = $this->model->filter($data)->with('employer','category','files','skills')->orderBy('title')->paginate(15);
+        return new BaseCollection($projects, ProjectResource::class, null);
     }
-    public function searchProject(string $search): Paginator
+    public function searchProject(string $search)
     {
-        $projects = $this->model->where('title', 'LIKE', "%$search%")->orderBy('title')->simplePaginate(15);
-        $this->formatProjects($projects);
-        return $projects;
+        $projects = $this->model->where('title', 'LIKE', "%$search%")->orderBy('title')->paginate(15);
+        return new BaseCollection($projects, ProjectResource::class, null);
     }
-    public function getUserProjects(?User $user, array $data): Paginator
+    public function getUserProjects(?User $user, array $data)
     {
         $user = $user ?? auth()->user();
-        $projects = $this->model->filter($data)->with('proposals')
-            ->orderBy('created_at', 'desc')->simplePaginate(15);
-        $this->formatProjects($projects);
-        return $projects;
+        $projects = $this->model->filter($data)->where('user_id',$user->id)->with('proposals')
+            ->orderBy('created_at', 'desc')->paginate(15);
+        return new BaseCollection($projects, ProjectResource::class, null);
     }
-    public function showProject(Project $project):Project
+    public function showProject(Project $project)
     {
-        if(auth()->user()->active_role !== 'employer'){
-            return $this->showWithRelations($project,['files']);
+        if (auth()->user()->active_role !== 'employer') {
+            $project = $this->showWithRelations($project, ['files','skills']);
         }
-        return $this->showWithRelations($project,['proposals','files']);
+        $project = $this->showWithRelations($project, ['proposals', 'files']);
+        return new ProjectResource($project);
     }
 
     public function syncSkills(Project $project, array $skills)

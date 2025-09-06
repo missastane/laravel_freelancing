@@ -24,15 +24,11 @@ class PostResource extends JsonResource
             'study_time' => $this->study_time,
             'view' => $this->view,
             'status' => $this->status_value,
-            'related_posts' => $this->related_posts_value
-                ? $this->related_posts_value->map(function ($post) {
-                    return [
-                        'id' => $post->id,
-                        'title' => $post->title,
-                        'slug' => $post->slug,
-                    ];
-                })
-                : null,
+            'related_posts' => $this->related_posts_value?->map(fn($post) => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'slug' => $post->slug,
+            ]),
             'post_category' => [
                 'id' => $this->postCategory->id,
                 'name' => $this->postCategory->name,
@@ -45,18 +41,12 @@ class PostResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'tags' => TagResource::collection($this->whenLoaded('tags')),
-            'files' => [
-               $this->files
-                ? $this->files->map(function ($file) {
-                    return [
-                        'id' => $file->id,
-                        'name' => $file->file_name,
-                        'path' => $file->file_path,
-                        'size' => $file->file_size,
-                    ];
-                })
-                : null,
-            ],
+            'files' => $this->files?->map(fn($file) => [
+                'id' => $file->id,
+                'name' => $file->file_name,
+                'path' => $file->file_path,
+                'size' => $file->file_size,
+            ]),
         ];
     }
 }

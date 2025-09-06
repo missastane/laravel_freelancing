@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent\Market;
 
-use App\Models\Market\SubscriptionDefaultUsage;
+use App\Models\Market\SubscriptionUsage;
 use App\Repositories\Contracts\Market\SubscriptionDefaultUsageRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCreateTrait;
@@ -17,14 +17,14 @@ class SubscriptionDefaultUsageRepository extends BaseRepository implements Subsc
     use HasShowTrait;
     use HasUpdateTrait;
 
-    public function __construct(SubscriptionDefaultUsage $model)
+    public function __construct(SubscriptionUsage $model)
     {
         parent::__construct($model);
     }
 
-    public function increamentUsage(SubscriptionDefaultUsage $subscriptionDefaultUsage, string $field)
+    public function increamentUsage(SubscriptionUsage $subscriptionUsage, string $field)
     {
-        return $subscriptionDefaultUsage->increment($field);
+        return $subscriptionUsage->increment($field);
     }
 
 }

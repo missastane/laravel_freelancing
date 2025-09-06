@@ -16,9 +16,9 @@ interface ProjectRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getProjects(array $data): Paginator;
-    public function searchProject(string $search): Paginator;
-    public function getUserProjects(?User $user, array $data): Paginator;
-    public function showProject(Project $project): Project;
+    public function getProjects(array $data);
+    public function searchProject(string $search);
+    public function getUserProjects(?User $user, array $data);
+    public function showProject(Project $project);
     public function syncSkills(Project $project, array $skills);
 }

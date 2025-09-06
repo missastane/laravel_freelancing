@@ -2,12 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\ApiResponseTrait;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Freelancer
 {
+    use ApiResponseTrait;
     /**
      * Handle an incoming request.
      *
@@ -16,11 +18,8 @@ class Freelancer
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-        if ($user->user_type != 1 && $user->active_role !== 'freelancer') {
-            return response()->json([
-                'status' => false,
-                'message' => 'شما مجوز انجام این عملیات را ندارید'
-            ], 403);
+        if ($user->user_type != 1 || $user->active_role !== 'freelancer') {
+            return $this->error('شما مجوز انجام این عملیات را ندارید',403);
         }
         return $next($request);
     }

@@ -112,6 +112,10 @@ class Post extends Model
     {
         return $this->morphMany('App\Models\Rating', 'ratable');
     }
+    public function favorites()
+    {
+        return $this->morphMany('App\Models\User\Favorite', 'favoritable');
+    }
     public function files()
     {
         return $this->morphMany(File::class, 'filable');

@@ -2,6 +2,9 @@
 
 namespace App\Http\Services\Project;
 
+use App\Exceptions\ProjectAddLimitException;
+use App\Exceptions\ProjectViewLimitException;
+use App\Http\Services\Favorite\FavoriteService;
 use App\Http\Services\Public\MediaStorageService;
 use App\Jobs\SendNotificationForNewProject;
 use App\Jobs\SendNotificationForUpdatingProject;
@@ -24,25 +27,26 @@ class ProjectService
         protected MediaStorageService $mediaStorageService,
         protected SkillRepositoryInterface $skillRepository,
         protected UserRepositoryInterface $userRepository,
-        protected ProposalRepositoryInterface $proposalRepository
+        protected ProposalRepositoryInterface $proposalRepository,
+        protected FavoriteService $favoriteService
     ) {
     }
 
-    public function getProjects(array $data): array
+    public function getProjects(array $data)
     {
-        return [
-            'categories' => $this->projectRepository->getProjects($data),
-            'skills' => $this->skillRepository->skillOption()
-        ];
+        return $this->projectRepository->getProjects($data);
     }
-    public function getUserPrjects(?User $user = null, array $data): Paginator
+    public function getUserPrjects(?User $user = null, array $data)
     {
         return $this->projectRepository->getUserProjects($user, $data);
     }
 
-    public function options()
+    public function options(): array
     {
-        return $this->projectCategoryRepository->getOptions();
+        return [
+            'categories' => $this->projectCategoryRepository->getOptions(),
+            'skills' => $this->skillRepository->skillOption()
+        ];
     }
     public function storeProject(array $data): Project
     {
@@ -52,7 +56,7 @@ class ProjectService
         $usageService = app(SubscriptionUsageManagerService::class, ['user' => $user]);
 
         if (!$usageService->canUse('target_create')) {
-            throw new Exception("شما به حداکثر تعداد مجاز ایجاد پروژه رسیده‌اید.");
+            throw new ProjectAddLimitException();
         }
 
         $project = DB::transaction(function () use ($data, $user, $usageService) {
@@ -87,9 +91,9 @@ class ProjectService
         $usageService = app(SubscriptionUsageManagerService::class, ['user' => $user]);
 
         if (!$usageService->canUse('view_details')) {
-            throw new Exception("شما به حداکثر تعداد مجاز مشاهده جزئیات پروژه‌ها رسیده‌اید.");
+            throw new ProjectViewLimitException();
         }
-        $stats = $this->proposalRepository->getProjectProposalsStats($project->id);
+        $stats = $this->proposalRepository->getProjectProposalsStats($project);
         // مصرف کاربر یکی اضافه میشه
         $usageService->increamentUsage('view_details');
         return [
@@ -98,7 +102,7 @@ class ProjectService
         ];
     }
 
-    public function showProject(Project $project): Project
+    public function showProject(Project $project)
     {
         return $this->projectRepository->showProject($project);
     }
@@ -134,6 +138,18 @@ class ProjectService
         return null;
     }
 
+    public function addToFavorite(Project $project)
+    {
+        $inputs = [];
+        $inputs['favoritable_type'] = Project::class;
+        $inputs['favoritable_id'] = $project->id;
+        return $this->favoriteService->addToFavorite($inputs);
+    }
+
+    public function removeFavorite(Project $project)
+    {
+        return $this->favoriteService->removeFavorite($project);
+    }
     public function deleteProject(Project $project)
     {
         return $this->projectRepository->delete($project);
