@@ -9404,8 +9404,8 @@
                         "description": "Filter by category. Possible values: ",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "paid,unpaid"
+                            "type": "integer",
+                            "example": 1
                         }
                     }
                 ],
@@ -9614,7 +9614,7 @@
                     "Project"
                 ],
                 "summary": "Delete a Project",
-                "description": "This endpoint allows the user to `delete an existing Project`.",
+                "description": "This endpoint allows the admin to `delete an existing Project` Due to a violation of the site rules.",
                 "operationId": "deleteProject",
                 "parameters": [
                     {
@@ -28191,6 +28191,28 @@
                 "summary": "Retrieve list of Projects",
                 "description": "Retrieve list of all `Projects`",
                 "operationId": "2db00220beccf3e25bc258f830ea857b",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by project status. Possible values: pending, processing , completed, canceled",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "processing,canceled"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "Filter by category. Possible values: ",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "A list of Projects",
@@ -28379,6 +28401,28 @@
                 "summary": "Retrieve list of the auth user's Projects",
                 "description": "Retrieve list of all `auth user's Projects`",
                 "operationId": "dcb572aea22100bdc2b1bf67edd7e129",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by project status. Possible values: pending, processing , completed, canceled",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "processing,canceled"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "Filter by category. Possible values: ",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "A list of auth user's Projects",
@@ -35847,11 +35891,15 @@
                         "type": "decimal",
                         "example": 7000000
                     },
-                    "deleted_at": {
-                        "description": "delete datetime",
+                    "status": {
+                        "description": "1 => pending, 2 => in progress , 3 => completed, 4 => canceled",
                         "type": "string",
-                        "format": "datetime",
-                        "example": "2025-02-22T14:30:00Z"
+                        "example": "تکمیل شده"
+                    },
+                    "is_full_time": {
+                        "description": "1 => yes, 2 => no",
+                        "type": "string",
+                        "example": "بله"
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -35864,16 +35912,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "is_full_time_value": {
-                        "description": "1 => yes, 2 => no",
-                        "type": "string",
-                        "example": "بله"
-                    },
-                    "status_value": {
-                        "description": "1 => pending, 2 => in progress , 3 => completed, 4 => canceled",
-                        "type": "string",
-                        "example": "تکمیل شده"
                     },
                     "employer": {
                         "properties": {

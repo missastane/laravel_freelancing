@@ -13,10 +13,9 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    protected $projectService;
-    public function __construct(ProjectService $projectService)
+    use ApiResponseTrait;
+    public function __construct(protected ProjectService $projectService)
     {
-        $this->projectService = $projectService;
     }
 
     /**
@@ -38,7 +37,7 @@ class ProjectController extends Controller
      *         in="query",
      *         description="Filter by category. Possible values: ",
      *         required=false,
-     *         @OA\Schema(type="string", example="paid,unpaid")
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -80,7 +79,7 @@ class ProjectController extends Controller
         return $this->projectService->getProjects($request->all());
     }
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/admin/market/project/show/{project}",
      *     summary="Get details of a specific Project",
@@ -133,14 +132,14 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return $this->projectService->showProject($project);
+        return $this->success($this->projectService->showProject($project));
     }
 
-     /**
+    /**
      * @OA\Delete(
      *     path="/api/admin/market/project/delete/{project}",
      *     summary="Delete a Project",
-     *     description="This endpoint allows the user to `delete an existing Project`.",
+     *     description="This endpoint allows the admin to `delete an existing Project` Due to a violation of the site rules.",
      *     operationId="deleteProject",
      *     tags={"Project"},
      *     security={{"bearerAuth": {}}},
@@ -195,6 +194,12 @@ class ProjectController extends Controller
      */
     public function delete(Project $project)
     {
-       return $this->projectService->deleteProject($project);
+        try {
+            $this->projectService->deleteProject($project);
+            return $this->success(null, 'پروژه با موفقیت حذف شد');
+        } catch (Exception $e) {
+            return $this->error();
+        }
+
     }
 }

@@ -34,6 +34,20 @@ class ProjectController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     *  @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter by project status. Possible values: pending, processing , completed, canceled",
+     *         required=false,
+     *         @OA\Schema(type="string", example="processing,canceled")
+     *     ),
+     *     @OA\Parameter(
+     *         name="category_id",
+     *         in="query",
+     *         description="Filter by category. Possible values: ",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="A list of Projects",
@@ -113,6 +127,20 @@ class ProjectController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     *  @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter by project status. Possible values: pending, processing , completed, canceled",
+     *         required=false,
+     *         @OA\Schema(type="string", example="processing,canceled")
+     *     ),
+     *     @OA\Parameter(
+     *         name="category_id",
+     *         in="query",
+     *         description="Filter by category. Possible values: ",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="A list of auth user's Projects",

@@ -10,6 +10,7 @@ use App\Jobs\SendNotificationForNewProject;
 use App\Jobs\SendNotificationForUpdatingProject;
 use App\Models\Market\Project;
 use App\Models\User\User;
+use App\Notifications\RemoveProjectNotification;
 use App\Repositories\Contracts\Market\ProjectCategoryRepositoryInterface;
 use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
 use App\Repositories\Contracts\Market\ProposalRepositoryInterface;
@@ -152,6 +153,10 @@ class ProjectService
     }
     public function deleteProject(Project $project)
     {
-        return $this->projectRepository->delete($project);
+        $this->projectRepository->delete($project);
+        if(auth()->user()->active_role === 'admin'){
+            $project->employer->notify(new RemoveProjectNotification('پروژه شما به دلیل نقص قوانین سایت توسط ادمین حذف شد'));
+        }
+        return true;
     }
 }

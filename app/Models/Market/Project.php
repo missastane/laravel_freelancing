@@ -18,11 +18,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     @OA\Property(property="description", type="string", example= "در این پروژه ما می خواهیم که یک پلتفرم را با فریم ورک لاراول پیاده سازی و اجرا کنیم."),
  *     @OA\Property(property="duration_time", type="integer", example=15),
  *     @OA\Property(property="amount", type="decimal", example=7000000.000),
- *     @OA\Property(property="deleted_at", type="string", format="datetime",description="delete datetime", example="2025-02-22T14:30:00Z"),
+ *     @OA\Property(property="status", type="string", description="1 => pending, 2 => in progress , 3 => completed, 4 => canceled", example="تکمیل شده"),
+ *     @OA\Property(property="is_full_time", type="string", description="1 => yes, 2 => no", example="بله"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="is_full_time_value", type="string", description="1 => yes, 2 => no", example="بله"),
- *     @OA\Property(property="status_value", type="string", description="1 => pending, 2 => in progress , 3 => completed, 4 => canceled", example="تکمیل شده"),
  *     @OA\Property(
  *          property="employer",
  *          type="object",
