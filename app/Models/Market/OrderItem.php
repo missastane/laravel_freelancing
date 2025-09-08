@@ -63,9 +63,9 @@ class OrderItem extends Model
     {
         return $this->hasMany(FinalFile::class);
     }
-    public function milestone()
+    public function mileestone()
     {
-        return $this->belongsTo(ProposalMilstone::class);
+        return $this->belongsTo(ProposalMilestone::class);
     }
     protected function casts()
     {
@@ -74,11 +74,6 @@ class OrderItem extends Model
             'delivered_at' => 'datetime',
             'locked_at' => 'datetime',
         ];
-    }
-    public function setDueDateAttribute()
-    {
-        $dueDate = now('Asia/Tehran')->addDays($this->total_duration_time)->getTimestamp();
-        return $dueDate;
     }
 
     public function getStatusValueAttribute()

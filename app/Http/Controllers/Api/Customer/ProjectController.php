@@ -29,7 +29,7 @@ class ProjectController extends Controller
      * @OA\Get(
      *     path="/api/project",
      *     summary="Retrieve list of Projects",
-     *     description="Retrieve list of all `Projects`",
+     *     description="Retrieve list of all `Projects` with optional filtering",
      *     tags={"Customer-Project"},
      *     security={
      *         {"bearerAuth": {}}
@@ -122,7 +122,7 @@ class ProjectController extends Controller
      * @OA\Get(
      *     path="/api/project/user-projects",
      *     summary="Retrieve list of the auth user's Projects",
-     *     description="Retrieve list of all `auth user's Projects`",
+     *     description="Retrieve list of all `auth user's Projects` with optional filtering",
      *     tags={"Customer-Project"},
      *     security={
      *         {"bearerAuth": {}}
@@ -371,8 +371,6 @@ class ProjectController extends Controller
             $inputs = $request->all();
             $project = $this->projectService->storeProject($inputs);
             return $this->success(null, 'پروژه با موفقیت ثبت شد');
-        } catch (ProjectAddLimitException $e) {
-            throw $e;
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -686,18 +684,18 @@ class ProjectController extends Controller
      */
     public function toggleFulltime(Project $project)
     {
-        if (Gate::denies('toggleFullTime')) {
-            return $this->error('شما مجاز به انجام این عملیات نیستید. برای استفاده از این حالت باید ابتدا اشتراک خریداری فرمایید');
-        }
-        try {
-            $message = $this->projectService->toggleFullTime($project);
-            if ($message) {
-                return $this->success(null, $message);
-            }
-            return $this->error();
-        } catch (Exception $e) {
-            return $this->error();
-        }
+        // if (Gate::denies('toggleFullTime')) {
+        //     return $this->error('شما مجاز به انجام این عملیات نیستید. برای استفاده از این حالت باید ابتدا اشتراک خریداری فرمایید');
+        // }
+        // try {
+        //     $message = $this->projectService->toggleFullTime($project);
+        //     if ($message) {
+        //         return $this->success(null, $message);
+        //     }
+        //     return $this->error();
+        // } catch (Exception $e) {
+        //     return $this->error();
+        // }
     }
 
     /**

@@ -36,7 +36,7 @@ class Favorite extends Model
             case 'َApp\\Models\\Market\\Proposal':
                 $result = Proposal::where('id', $this->favoritable_id)
                     ->select('id', 'description', 'total_amount', 'total_duration_time', 'status')
-                    ->with('milstones', 'user:id,username')->get();
+                    ->with('milestones', 'user:id,username')->get();
                 break;
             case 'َApp\\Models\\Market\\Project':
                 $result = Project::where('id', $this->favoritable_id)

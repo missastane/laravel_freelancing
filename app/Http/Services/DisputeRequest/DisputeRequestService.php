@@ -31,7 +31,7 @@ class DisputeRequestService
     public function createDisputeTicket(DisputeRequest $disputeRequest, array $data)
     {
         $orderItem = $disputeRequest->orderItem;
-        $title = $orderItem->milstone->title;
+        $title = $orderItem->milestone->title;
         $orderId = $orderItem->order_id;
         $ticket = $this->ticketRepository->create([
             'user_id' => auth()->user()->id,

@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->decimal('amount', 20, 3);
             $table->bigInteger('duration_days');
             $table->integer('commission_rate');
-            $table->string('target_type');
             $table->integer('max_target_per_month');
             $table->integer('max_notification_per_month');
             $table->integer('max_email_per_month');

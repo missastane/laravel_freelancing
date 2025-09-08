@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Proposal;
 
+use App\Http\Resources\Market\ShowProposalResource;
 use App\Http\Services\Chat\ChatService;
 use App\Models\Market\Conversation;
 use App\Models\Market\Project;
@@ -10,11 +11,9 @@ use App\Models\User\User;
 use App\Notifications\AddNewProposal;
 use App\Notifications\ProposalUpdatedNotification;
 use App\Notifications\WithdrawProposalNotification;
-use App\Repositories\Contracts\Market\ProposalMilstoneRepositoryInterface;
+use App\Repositories\Contracts\Market\ProposalMilestoneRepositoryInterface;
 use App\Repositories\Contracts\Market\ProposalRepositoryInterface;
-use App\Traits\ApiResponseTrait;
 use Exception;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use App\Http\Services\Notification\SubscriptionUsageManagerService;
 class ProposalService
@@ -23,40 +22,65 @@ class ProposalService
     public function __construct(
         protected ProposalApprovalService $proposalApprovalService,
         protected ProposalRepositoryInterface $proposalRepository,
-        protected ProposalMilstoneRepositoryInterface $proposalMilstoneRepository,
+        protected ProposalMilestoneRepositoryInterface $proposalMilstoneRepository,
         protected ChatService $chatService
     ) {
         $this->user = auth()->user();
     }
-    public function getProposals(Project $project = null, User $user = null, array $data): Paginator|Project
+    public function getProposals(string $status)
     {
-        return $this->proposalRepository->getProposals($project, $user, $data);
+        return $this->proposalRepository->getProposals($status);
     }
 
+    public function getProjectProposals(Project $project, string $status)
+    {
+        return $this->proposalRepository->getProjectProposals($project, $status);
+    }
     public function storeProposal(Project $project, array $data)
     {
         $user = auth()->user();
-
+        $exists = $this->proposalRepository->existsForProjectAndFreelancer($project->id, $user->id);
+        if ($exists) {
+            throw new Exception("شما قبلاً برای این پروژه پیشنهاد ارسال کرده‌اید.");
+        }
         $usageService = app(SubscriptionUsageManagerService::class, ['user' => $user]);
 
         if (!$usageService->canUse('target_create')) {
-            throw new Exception("شما به حداکثر تعداد مجاز ایجاد پیشنهاد رسیده‌اید.");
+            throw new Exception("شما به حداکثر تعداد مجاز ایجاد پیشنهاد رسیده‌اید.", 429);
         }
-        $proposal = DB::transaction(function ($project) use ($data) {
+        $proposal = DB::transaction(function () use ($project, $data, $usageService) {
             $user = auth()->user();
             $proposal = $this->proposalRepository->create([
                 'project_id' => $project->id,
                 'freelancer_id' => $user->id,
                 'description' => $data['description']
             ]);
-            foreach ($data['milstones'] as $index => $milstone) {
-                $this->proposalMilstoneRepository->create($proposal, [
-                    'title' => $milstone['title'],
-                    'description' => $milstone['description'],
-                    'amount' => $milstone['amount'],
-                    'duration_time' => $milstone['duration_time'],
+            $totalAmount = 0;
+            $totalDuration = 0;
+            $currentDate = now();
+
+            foreach ($data['milestones'] as $index => $milestone) {
+                $dueDate = $currentDate->copy()->addDays((int) $milestone['duration_time']);
+                $this->proposalMilstoneRepository->create([
+                    'proposal_id' => $proposal->id,
+                    'title' => $milestone['title'],
+                    'description' => $milestone['description'],
+                    'amount' => $milestone['amount'],
+                    'duration_time' => $milestone['duration_time'],
+                    'due_date' => $dueDate,
                 ]);
+                $totalAmount += (int) $milestone['amount'];
+                $totalDuration += (int) $milestone['duration_time'];
+                $currentDate = $dueDate;
             }
+            // \Log::info($totalAmount);
+            // \Log::info(now()->addDays($totalDuration));
+
+            $this->proposalRepository->update($proposal, [
+                'total_amount' => $totalAmount,
+                'due_date' => now()->addDays($totalDuration),
+            ]);
+            $usageService->increamentUsage('target_create');
             return $proposal;
         });
         $employer = $project->employer;
@@ -73,32 +97,46 @@ class ProposalService
         return $this->chatService->getOrCreateConversationForProposal($proposal);
     }
 
-    public function showProposal(Proposal $proposal): array
+    public function showProposal(Proposal $proposal)
     {
         $conversation = $this->getConversation($proposal);
-        return [
+        $result = [
             'proposal' => $this->proposalRepository->showProposal($proposal),
             'conversation' => $conversation ? $conversation : null
         ];
+        return new ShowProposalResource($result);
     }
 
     public function updateProposal(Proposal $proposal, array $data): Proposal
     {
-        $updatedProposal = DB::transaction(function ($proposal) use ($data) {
+        $updatedProposal = DB::transaction(function () use ($proposal, $data) {
             $this->proposalRepository->update($proposal, [
                 'description' => $data['description']
             ]);
-            if ($data['milstones']) {
+            $totalAmount = 0;
+            $totalDuration = 0;
+            $currentDate = now();
+            if ($data['milestones']) {
                 $this->proposalMilstoneRepository->deleteProposlMilestones($proposal);
-                foreach ($data['milstones'] as $index => $milstone) {
-                    $this->proposalMilstoneRepository->create($proposal, [
-                        'title' => $milstone['title'],
-                        'description' => $milstone['description'],
-                        'amount' => $milstone['amount'],
-                        'duration_time' => $milstone['duration_time'],
+                foreach ($data['milestones'] as $index => $milestone) {
+                    $dueDate = $currentDate->copy()->addDays((int) $milestone['duration_time']);
+                    $this->proposalMilstoneRepository->create([
+                        'proposal_id' => $proposal->id,
+                        'title' => $milestone['title'],
+                        'description' => $milestone['description'],
+                        'amount' => $milestone['amount'],
+                        'duration_time' => $milestone['duration_time'],
+                        'due_date' => $dueDate,
                     ]);
+                    $totalAmount += (int) $milestone['amount'];
+                    $totalDuration += (int) $milestone['duration_time'];
+                    $currentDate = $dueDate;
                 }
             }
+            $this->proposalRepository->update($proposal, [
+                'total_amount' => $totalAmount,
+                'due_date' => now()->addDays($totalDuration),
+            ]);
             return $proposal;
         });
         $employer = $proposal->project->employer;

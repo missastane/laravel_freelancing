@@ -22,13 +22,11 @@ class ChatService
 {
     // just employers can send message to all freelancers. then create a conversation begins with employers
 
-    protected User $user;
     public function __construct(
         protected ConversationRepositoryInterface $conversationRepository,
         protected MessageRepositoryInterface $messageRepository,
         protected MediaStorageService $mediaStorageService
     ) {
-        $this->user = auth()->user();
     }
 
     public function getConversationMessages(Conversation $conversation)
@@ -37,14 +35,13 @@ class ChatService
     }
     public function getOrCreateConversationForProposal(Proposal $proposal)
     {
-        $conversation = $this->conversationRepository->getConversationIfExists(Proposal::class, $proposal->id);
-
+        $conversation = $this->conversationRepository->getConversationIfExists($proposal->freelancer_id, $proposal->project->user_id);
         if ($conversation) {
             return $conversation;
         }
         if (auth()->user()->active_role === 'employer') {
             return $this->createConversation(
-                $proposal->freelancer_id,
+                $proposal->freelancer,
                 $proposal
             );
         } else {
@@ -56,13 +53,16 @@ class ChatService
     public function createConversation($freelancer, $context)
     {
         try {
-            $employer = $this->user;
+            $employer = auth()->user();
+            \Log::info('employerId : '.$employer->id);
+            \Log::info('freelancerId : '.$freelancer->id);
             $conversation = $this->conversationRepository->create([
                 'employer_id' => $employer->id,
-                'freelancer_id' => $freelancer->id,
-                'conversation_context' => $context,
+                'employee_id' => $freelancer->id,
+                'conversation_context' => get_class($context),
                 'conversation_context_id' => $context->id
             ]);
+            \Log::info($conversation);
             return $conversation;
         } catch (Throwable $e) {
             throw new Exception('خطا در ایجاد مکالمه جدید', 500);
@@ -95,7 +95,7 @@ class ChatService
     }
     public function sendMessage(Conversation $conversation, array $data)
     {
-        $user = $this->user;
+        $user = auth()->user();
 
         $newMessage = DB::transaction(function () use ($conversation, $data, $user) {
             $message = $this->createNewMessage($conversation->id, $data, $user->id);
@@ -110,7 +110,7 @@ class ChatService
 
     public function replyToMessage(Message $message, array $data)
     {
-        $user = $this->user;
+        $user = auth()->user();
         $newMessage = DB::transaction(function () use ($message, $data, $user) {
             $answeredMessage = $this->createNewMessage($message->conversation_id, $data, $user->id, $message->id);
             $this->storeMessageFiles($answeredMessage, $data, $message->conversation_id);

@@ -11336,13 +11336,6 @@
                                         "type": "integer",
                                         "example": 10
                                     },
-                                    "target_type": {
-                                        "description": "1 => project, 2 => proposal",
-                                        "enum": [
-                                            1,
-                                            2
-                                        ]
-                                    },
                                     "max_target_per_month": {
                                         "type": "integer",
                                         "example": 20
@@ -28189,7 +28182,7 @@
                     "Customer-Project"
                 ],
                 "summary": "Retrieve list of Projects",
-                "description": "Retrieve list of all `Projects`",
+                "description": "Retrieve list of all `Projects` with optional filtering",
                 "operationId": "2db00220beccf3e25bc258f830ea857b",
                 "parameters": [
                     {
@@ -28399,7 +28392,7 @@
                     "Customer-Project"
                 ],
                 "summary": "Retrieve list of the auth user's Projects",
-                "description": "Retrieve list of all `auth user's Projects`",
+                "description": "Retrieve list of all `auth user's Projects` with optional filtering",
                 "operationId": "dcb572aea22100bdc2b1bf67edd7e129",
                 "parameters": [
                     {
@@ -29951,18 +29944,18 @@
                 "tags": [
                     "Customer-Proposal"
                 ],
-                "summary": "Retrieve list of Proposals a project by employer",
-                "description": "Retrieve list of all Proposals a project by employer`",
+                "summary": "Retrieve list of Proposals of a freelancer",
+                "description": "Retrieve list of all Proposals` of a freelancer",
                 "operationId": "197ccc153bea63bcbbd490b2f138283d",
                 "parameters": [
                     {
-                        "name": "project",
-                        "in": "path",
-                        "description": "ID of the Project to fetch",
-                        "required": true,
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by proposal status. Possible values: pending, approved , rejected, withdrown",
+                        "required": false,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "string",
+                            "example": "pending"
                         }
                     }
                 ],
@@ -29975,11 +29968,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -29993,17 +29987,120 @@
                                                         "$ref": "#/components/schemas/Proposal"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -30042,14 +30139,269 @@
                 ]
             }
         },
-        "/api/proposal/add-to-favorite": {
+        "/api/proposal/{project}": {
+            "get": {
+                "tags": [
+                    "Customer-Proposal"
+                ],
+                "summary": "Retrieve list of Proposals a project by employer",
+                "description": "Retrieve list of all Proposals a project by employer`",
+                "operationId": "e45333a0950269443b9bb68f9f9a982f",
+                "parameters": [
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "Filter by project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by proposal status. Possible values: pending, approved , rejected, withdrown",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pending"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of Proposals",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "freelancer": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "username": {
+                                                                        "type": "string",
+                                                                        "example": "missastane"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "این پیشنهاد منه"
+                                                            },
+                                                            "total_amount": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "due_date": {
+                                                                "description": "تاریخ تحویل نهایی",
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025-09-06T18:43:45.000000Z"
+                                                            },
+                                                            "status": {
+                                                                "description": "وضعیت پیشنهاد",
+                                                                "type": "string",
+                                                                "example": "در حال بررسی"
+                                                            },
+                                                            "milestones": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "$ref": "#/components/schemas/ProposalMilestone"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/proposal/add-to-favorite/{proposal}": {
             "post": {
                 "tags": [
                     "Customer-Proposal"
                 ],
                 "summary": "Add a Proposal to Favorites by employers",
                 "description": "In this method employers can Add a Proposal to Favorites",
-                "operationId": "82420fbd2852f4f4b2aedfe0541313da",
+                "operationId": "ca6a7ea6d7bfb922e7bea3172d1d5b4e",
                 "parameters": [
                     {
                         "name": "proposal",
@@ -30212,7 +30564,144 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Proposal"
+                                            "properties": {
+                                                "project": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "برنامه نویسی لاراول"
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "برنامه-نویسی-لاراول"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "در این پروژه ما می خواهیم که یک پلتفرم را با فریم ورک لاراول پیاده سازی و اجرا کنیم."
+                                                        },
+                                                        "duration_time": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "amount": {
+                                                            "type": "decimal",
+                                                            "example": 7000000
+                                                        },
+                                                        "status": {
+                                                            "description": "1 => pending, 2 => in progress , 3 => completed, 4 => canceled",
+                                                            "type": "string",
+                                                            "example": "تکمیل شده"
+                                                        },
+                                                        "created_at": {
+                                                            "description": "creation datetime",
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-02-22T10:00:00Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "description": "update datetime",
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-02-22T10:00:00Z"
+                                                        },
+                                                        "employer": {
+                                                            "properties": {
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "ایمان"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "proposal": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "freelancer": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "missastane"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "این پیشنهاد منه"
+                                                        },
+                                                        "total_amount": {
+                                                            "type": "string",
+                                                            "example": null,
+                                                            "nullable": true
+                                                        },
+                                                        "due_date": {
+                                                            "description": "تاریخ تحویل نهایی",
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-09-06T18:43:45.000000Z"
+                                                        },
+                                                        "status": {
+                                                            "description": "وضعیت پیشنهاد",
+                                                            "type": "string",
+                                                            "example": "در حال بررسی"
+                                                        },
+                                                        "milestones": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/ProposalMilestone"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "conversation": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "employer": {
+                                                            "properties": {
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "ایمان"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "freelancer": {
+                                                            "properties": {
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "ایمان"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "status": {
+                                                            "description": "1 => pending, 2 => in progress , 3 => completed, 4 => canceled",
+                                                            "type": "string",
+                                                            "example": "تکمیل شده"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -30268,18 +30757,30 @@
                 ]
             }
         },
-        "/api/proposal/store": {
+        "/api/proposal/store/{project}": {
             "post": {
                 "tags": [
                     "Customer-Proposal"
                 ],
                 "summary": "Store a new Proposal by freelancer",
                 "description": "In this method freelancers can Store a new Proposal",
-                "operationId": "8323b7e816ad3cffd16d3614e4f74475",
+                "operationId": "27bb879fee6a70cd44af3f2c24e3a3c9",
+                "parameters": [
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "description": "Filter by project",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "description": {
@@ -30288,7 +30789,7 @@
                                         "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\-\\،,?!.]+$",
                                         "example": "این تیکت منه"
                                     },
-                                    "milstones": {
+                                    "milestones": {
                                         "type": "array",
                                         "items": {
                                             "properties": {
@@ -30454,10 +30955,22 @@
                 "summary": "Update an existing Proposal by freelancer",
                 "description": "In this method freelancers can Update an existing Proposal",
                 "operationId": "1a7d30558dd6188cbf554924fba6e83c",
+                "parameters": [
+                    {
+                        "name": "proposal",
+                        "in": "path",
+                        "description": "ID of the Proposal to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "description": {
@@ -30466,7 +30979,7 @@
                                         "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\-\\،,?!.]+$",
                                         "example": "این تیکت منه"
                                     },
-                                    "milstones": {
+                                    "milestones": {
                                         "type": "array",
                                         "items": {
                                             "properties": {
@@ -30652,6 +31165,18 @@
                 "summary": "Withdraw a Proposal by freelancer",
                 "description": "In this method freelancers can Withdraw a Proposal",
                 "operationId": "c03821323e290221167acc60d9b98d91",
+                "parameters": [
+                    {
+                        "name": "proposal",
+                        "in": "path",
+                        "description": "ID of the Proposal to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful Proposal Withdraw",
@@ -30666,127 +31191,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "پیشنهاد با موفقیت پس گرفته شده و لغو شد"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "You are not authorized to do this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "شما مجاز به انجام این عملیات نیستید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "route not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "مسیر مورد نظر پیدا نشد"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "false"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/proposal/approve/{proposal}": {
-            "put": {
-                "tags": [
-                    "Customer-Proposal"
-                ],
-                "summary": "Approve a Proposal by employer",
-                "description": "In this method employers can Approve a Proposal. Upon approval, the proposal status will be marked as `approved`. The project payment will also be locked in employer's wallet.",
-                "operationId": "ee60e7864a88dd32ef0d11cc83e5a559",
-                "responses": {
-                    "200": {
-                        "description": "successful Proposal Approve",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "پیشنهاد با موفقیت پذیرفته شد"
                                         },
                                         "data": {
                                             "type": "object",
@@ -35896,11 +36300,6 @@
                         "type": "string",
                         "example": "تکمیل شده"
                     },
-                    "is_full_time": {
-                        "description": "1 => yes, 2 => no",
-                        "type": "string",
-                        "example": "بله"
-                    },
                     "created_at": {
                         "description": "creation datetime",
                         "type": "string",
@@ -36081,6 +36480,22 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "project_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "project_title": {
+                        "type": "string",
+                        "example": "ترجمه فارسی به انگلیسی"
+                    },
+                    "project_price": {
+                        "type": "string",
+                        "example": "700000.000"
+                    },
+                    "project_days": {
+                        "type": "integer",
+                        "example": 5
+                    },
                     "description": {
                         "type": "string",
                         "example": "من می توانم پلتفرم درخواستی شما را با فریم ورک لاراول پیاده سازی و اجرا کنم."
@@ -36089,15 +36504,16 @@
                         "type": "decimal",
                         "example": 70000000
                     },
-                    "total_duration_time": {
-                        "type": "integer",
-                        "example": 15
-                    },
                     "due_date": {
                         "description": "due_date datetime",
                         "type": "string",
                         "format": "datetime",
                         "example": "2025-02-22T14:30:00Z"
+                    },
+                    "status_value": {
+                        "description": "1 => pending, 2 => approved, 3 => rejected",
+                        "type": "string",
+                        "example": "پذیرفته شده"
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -36111,40 +36527,42 @@
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
                     },
-                    "status_value": {
-                        "description": "1 => pending, 2 => approved, 3 => rejected",
+                    "milestones": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProposalMilestone"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProposalMilestone": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
                         "type": "string",
-                        "example": "پذیرفته شده"
+                        "example": "عنوان مرحله"
                     },
-                    "freelancer": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "ایمان"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "مدائنی"
-                            }
-                        },
-                        "type": "object"
+                    "description": {
+                        "type": "string",
+                        "example": "من می توانم در مرحله نخست پلتفرم درخواستی شما را با فریم ورک لاراول پیاده سازی و اجرا کنم."
                     },
-                    "project": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "title": {
-                                "type": "string",
-                                "example": "برنامه نویسی"
-                            }
-                        },
-                        "type": "object"
+                    "amount": {
+                        "type": "decimal",
+                        "example": 70000000
+                    },
+                    "duration_time": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "due_date": {
+                        "description": "due_date datetime",
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2025-02-22T14:30:00Z"
                     }
                 },
                 "type": "object"
@@ -37413,6 +37831,124 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "successful Proposal Approve",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "boolean",
+                                    "example": "true"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "پیشنهاد با موفقیت پذیرفته شد"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "401": {
+                "description": "Unauthenticated",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "boolean",
+                                    "example": "false"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "403": {
+                "description": "You are not authorized to do this action.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "boolean",
+                                    "example": false
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "شما مجاز به انجام این عملیات نیستید"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "route not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "boolean",
+                                    "example": "false"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "مسیر مورد نظر پیدا نشد"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "internal server error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "boolean",
+                                    "example": "false"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "proposal": {
+                "name": "proposal",
+                "in": "path",
+                "description": "ID of the Proposal to fetch",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "format": "int64"
+                }
             }
         },
         "securitySchemes": {

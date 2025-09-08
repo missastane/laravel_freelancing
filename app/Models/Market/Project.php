@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     @OA\Property(property="duration_time", type="integer", example=15),
  *     @OA\Property(property="amount", type="decimal", example=7000000.000),
  *     @OA\Property(property="status", type="string", description="1 => pending, 2 => in progress , 3 => completed, 4 => canceled", example="تکمیل شده"),
- *     @OA\Property(property="is_full_time", type="string", description="1 => yes, 2 => no", example="بله"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(
@@ -61,7 +60,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Project extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['user_id', 'project_category_id', 'title', 'slug', 'description', 'duration_time', 'amount', 'is_full_time', 'status'];
+    protected $fillable = ['user_id', 'project_category_id', 'title', 'slug', 'description', 'duration_time', 'amount', 'status'];
     protected $hidden = ['project_category_id', 'status', 'user_id', 'is_full_time'];
     public function employer()
     {
@@ -75,7 +74,7 @@ class Project extends Model
 
     public function proposals()
     {
-        return $this->hasMany(Proposal::class);
+        return $this->hasMany(Proposal::class,'project_id');
     }
     public function skills()
     {
@@ -141,13 +140,5 @@ class Project extends Model
         })->when(isset($filters['category_id']), function ($q) use ($filters) {
             $q->where('project_category_id', $filters['category_id']);
         });
-    }
-    public function getIsFullTimeValueAttribute()
-    {
-        if ($this->is_full_time === 2) {
-            return 'خیر';
-        } else {
-            return 'بله';
-        }
     }
 }

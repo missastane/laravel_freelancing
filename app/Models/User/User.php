@@ -192,7 +192,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Portfolio::class);
     }
 
-     public function skills()
+    public function skills()
     {
         return $this->belongsToMany(Skill::class);
     }
@@ -238,28 +238,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserSubscription::class);
     }
-    public function activeSubscription(): ?UserSubscription
+    public function activeSubscription()
     {
-        switch ($this->active_role) {
-            case 'freelancer':
-                $targetType = Proposal::class;
-                break;
-            case 'employer':
-                $targetType = Project::class;
-                break;
-            default:
-                $targetType = null;
-                break;
-        }
-
         return $this->subscriptions()
-            ->where('status', 2)
-            ->where('end_date', '>', now())
-            ->when($targetType, function ($q) use ($targetType) {
-                $q->whereHas('subscription', function ($q2) use ($targetType) {
-                    $q2->where('target_type', $targetType);
-                });
-            })
+            ->where('status', 2) // وضعیت فعال
+            ->where('end_date', '>', now()) // هنوز منقضی نشده
             ->latest('start_date')
             ->first();
     }

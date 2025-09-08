@@ -54,7 +54,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
     public function getOrderItems(Order $order)
     {
         $orderItems = OrderItem::where('order_id', $order->id)
-            ->with('milstone')->get();
+            ->with('milestone')->get();
         return $orderItems;
     }
 

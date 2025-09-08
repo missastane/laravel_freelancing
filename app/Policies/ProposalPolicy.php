@@ -8,21 +8,21 @@ use App\Models\User\User;
 
 class ProposalPolicy
 {
-    public function store(Project $project)
+
+    public function show(User $user, Proposal $proposal)
     {
-        return $project->status == 1;
+        return $proposal->freelancer_id == $user->id && $user->active_role === 'freelancer' || $proposal->project->user_id == $user->id  && $user->active_role === 'employer' || $user->active_role === 'admin';
+    }
+    public function update(User $user, Proposal $proposal)
+    {
+        return $proposal->status == 1 && $proposal->freelancer_id == $user->id;
+    }
+    public function withdraw(User $user, Proposal $proposal)
+    {
+        return $proposal->status == 1 && $proposal->freelancer_id == $user->id;
     }
 
-    public function update(Proposal $proposal)
-    {
-        return $proposal->status == 1;
-    }
-    public function withdraw(Proposal $proposal)
-    {
-        return $proposal->status == 1;
-    }
-
-    public function approve(Proposal $proposal)
+    public function approve(User $user, Proposal $proposal)
     {
         return $proposal->status == 1;
     }

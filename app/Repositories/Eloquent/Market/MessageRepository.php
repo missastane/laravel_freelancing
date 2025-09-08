@@ -14,6 +14,10 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
     use HasCreateTrait;
     use HasShowTrait;
     use HasDeleteTrait;
+    public function __construct(Message $model)
+    {
+        parent::__construct($model);
+    }
     public function showMessage(Message $message): Message
     {
         return $this->showWithRelations($message, ['files']);

@@ -17,7 +17,9 @@ interface ProposalRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getProposals(Project $project = null, User $user = null, array $data): Paginator|Project;
+     public function existsForProjectAndFreelancer($projectId, $freelancerId): bool;
+    public function getProposals(string $status);
+     public function getProjectProposals(Project $project, string $status);
     public function showProposal(Proposal $proposal): Proposal;
     public function updateWhere(array $conditions, array $data): int;
     public function getProjectProposalsStats(Project $project): array;

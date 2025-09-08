@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\Exceptions\Market\NotEnoughBalanceException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Freelancer\ProposalRequest;
 use App\Http\Services\Favorite\FavoriteService;
@@ -25,35 +26,72 @@ class ProposalController extends Controller
     /**
      * @OA\Get(
      *     path="/api/proposal",
-     *     summary="Retrieve list of Proposals a project by employer",
-     *     description="Retrieve list of all Proposals a project by employer`",
+     *     summary="Retrieve list of Proposals of a freelancer",
+     *     description="Retrieve list of all Proposals` of a freelancer",
      *     tags={"Customer-Proposal"},
      *     security={
      *         {"bearerAuth": {}}
      *     },
      *     @OA\Parameter(
-     *         name="project",
-     *         in="path",
-     *         description="ID of the Project to fetch",
-     *         required=true,
-     *         @OA\Schema(type="integer", format="int64")
+     *         name="status",
+     *         in="query",
+     *         description="Filter by proposal status. Possible values: pending, approved , rejected, withdrown",
+     *         required=false,
+     *         @OA\Schema(type="string", example="pending")
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="A list of Proposals",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Proposal"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -66,14 +104,117 @@ class ProposalController extends Controller
      *     )),
      * )
      */
-    public function index(Project $project, Request $request)
+    public function index(Request $request)
     {
-        return $this->proposalService->getProposals($project, null, $request->query('status'));
+        return $this->proposalService->getProposals($request->query('status'));
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/proposal/{project}",
+     *     summary="Retrieve list of Proposals a project by employer",
+     *     description="Retrieve list of all Proposals a project by employer`",
+     *     tags={"Customer-Proposal"},
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         description="Filter by project",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter by proposal status. Possible values: pending, approved , rejected, withdrown",
+     *         required=false,
+     *         @OA\Schema(type="string", example="pending")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of Proposals",
+     *        @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="data", type="array",
+     *                     @OA\Items(
+     *                      @OA\Property(property="id", type="integer", example=1),
+     *                      @OA\Property(property="freelancer", type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="username", type="string", example="missastane"),
+     *                       ),
+     *                      @OA\Property(property="description", type="string", example="این پیشنهاد منه"),
+     *                      @OA\Property(property="total_amount", type="string", nullable=true, example=null),
+     *                      @OA\Property(property="due_date", type="string", format="date-time", description="تاریخ تحویل نهایی", example="2025-09-06T18:43:45.000000Z"),
+     *                      @OA\Property(property="status", type="string", description="وضعیت پیشنهاد", example="در حال بررسی"),
+     *                      @OA\Property(property="milestones", type="array",
+     *                         @OA\Items(ref="#/components/schemas/ProposalMilestone")
+     *                        )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
+     *             )
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     * )
+     */
+    public function getProjectProposals(Project $project, Request $request)
+    {
+        return $this->proposalService->getProjectProposals($project, $request->query('status'));
+    }
+    /**
      * @OA\Post(
-     *     path="/api/proposal/add-to-favorite",
+     *     path="/api/proposal/add-to-favorite/{proposal}",
      *     summary="Add a Proposal to Favorites by employers",
      *     description="In this method employers can Add a Proposal to Favorites",
      *     tags={"Customer-Proposal"},
@@ -131,8 +272,8 @@ class ProposalController extends Controller
     {
         try {
             $inputs = [];
-            $inputs['context'] = Proposal::class;
-            $inputs['context_id'] = $proposal->id;
+            $inputs['favoritable_type'] = Proposal::class;
+            $inputs['favoritable_id'] = $proposal->id;
             $this->favoriteService->addToFavorite($inputs);
             return $this->success(null, "پیشنهاد با موفقیت به لیست علاقمندی ها اضافه شد", 201);
         } catch (Exception $e) {
@@ -161,7 +302,44 @@ class ProposalController extends Controller
      *             @OA\Property(property="status", type="boolean", example="true"),
      *             @OA\Property(property="message", type="string", example="null"),
      *             @OA\Property(property="data", type="object",
-     *               ref="#/components/schemas/Proposal"
+     *                @OA\Property(property="project", type="object",
+     *                   @OA\Property(property="id", type="integer", example=1),
+     *                   @OA\Property(property="title", type="string", example="برنامه نویسی لاراول"),
+     *                   @OA\Property(property="slug", type="string", example="برنامه-نویسی-لاراول"),
+     *                   @OA\Property(property="description", type="string", example= "در این پروژه ما می خواهیم که یک پلتفرم را با فریم ورک لاراول پیاده سازی و اجرا کنیم."),
+     *                   @OA\Property(property="duration_time", type="integer", example=15),
+     *                   @OA\Property(property="amount", type="decimal", example=7000000.000),
+     *                   @OA\Property(property="status", type="string", description="1 => pending, 2 => in progress , 3 => completed, 4 => canceled", example="تکمیل شده"),
+     *                   @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
+     *                   @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
+     *                   @OA\Property(property="employer", type="object",
+     *                      @OA\Property(property="username", type="string", example="ایمان"),
+     *                    )
+     *                 ),
+     *                 @OA\Property(property="proposal", type="object",
+     *                      @OA\Property(property="id", type="integer", example=1),
+     *                      @OA\Property(property="freelancer", type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="username", type="string", example="missastane"),
+     *                       ),
+     *                      @OA\Property(property="description", type="string", example="این پیشنهاد منه"),
+     *                      @OA\Property(property="total_amount", type="string", nullable=true, example=null),
+     *                      @OA\Property(property="due_date", type="string", format="date-time", description="تاریخ تحویل نهایی", example="2025-09-06T18:43:45.000000Z"),
+     *                      @OA\Property(property="status", type="string", description="وضعیت پیشنهاد", example="در حال بررسی"),
+     *                      @OA\Property(property="milestones", type="array",
+     *                         @OA\Items(ref="#/components/schemas/ProposalMilestone")
+     *                        )
+     *                 ),
+     *                 @OA\Property(property="conversation", type="object",
+     *                    @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="employer", type="object",
+     *                         @OA\Property(property="username", type="string", example="ایمان"),
+     *                      ),
+     *                     @OA\Property(property="freelancer", type="object",
+     *                         @OA\Property(property="username", type="string", example="ایمان"),
+     *                     ),
+     *                     @OA\Property(property="status", type="string", description="1 => pending, 2 => in progress , 3 => completed, 4 => canceled", example="تکمیل شده"),
+     *                  )
      *             )
      *         )
      *   ),
@@ -183,24 +361,32 @@ class ProposalController extends Controller
      */
     public function show(Proposal $proposal)
     {
-        return $this->proposalService->showProposal($proposal);
+        if (Gate::denies('show', $proposal)) {
+            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
+        }
+        return $this->success($this->proposalService->showProposal($proposal));
     }
 
     /**
      * @OA\Post(
-     *     path="/api/proposal/store",
+     *     path="/api/proposal/store/{project}",
      *     summary="Store a new Proposal by freelancer",
      *     description="In this method freelancers can Store a new Proposal",
      *     tags={"Customer-Proposal"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="project",
+     *         in="path",
+     *         description="Filter by project",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 type="object",
+     *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
-     *             @OA\Property(property="milstones", type="array", minItems=1,
+     *             @OA\Property(property="milestones", type="array", minItems=1,
      *                @OA\Items(
      *                  @OA\Property(property="title", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters and numbers. Any other characters will result in a validation error.", example="این تیکت منه"),
      *                  @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
@@ -209,7 +395,6 @@ class ProposalController extends Controller
      *               )
      *            )
      *          )
-     *        )
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -260,14 +445,14 @@ class ProposalController extends Controller
      */
     public function store(Project $project, ProposalRequest $request)
     {
-        if (Gate::denies('store', $project)) {
+        if (Gate::denies('storeProposal', $project)) {
             return $this->error('کارفرما قبلا فریلنسری را برای این پروژه استخدام کرده است', 403);
         }
         try {
             $this->proposalService->storeProposal($project, $request->all());
-            return $this->success(null, 'پشنهاد با موفقیت افزوده شد', 201);
+            return $this->success(null, 'پیشنهاد با موفقیت افزوده شد', 201);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -278,23 +463,27 @@ class ProposalController extends Controller
      *     description="In this method freelancers can Update an existing Proposal",
      *     tags={"Customer-Proposal"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="proposal",
+     *         in="path",
+     *         description="ID of the Proposal to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 type="object",
+     *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
-     *             @OA\Property(property="milstones", type="array", minItems=1,
+     *             @OA\Property(property="milestones", type="array", minItems=1,
      *                @OA\Items(
-     *             @OA\Property(property="title", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters and numbers. Any other characters will result in a validation error.", example="این تیکت منه"),
-     *             @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
-     *             @OA\Property(property="duration_time", type="integer", description="per day", example=5),
-     *             @OA\Property(property="amount", type="integer", description="currency is tooman", example=700000),
-     *              )
+     *                  @OA\Property(property="title", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\ ]+$", description="This field can only contain Persian and English letters and numbers. Any other characters will result in a validation error.", example="این تیکت منه"),
+     *                  @OA\Property(property="description", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *                  @OA\Property(property="duration_time", type="integer", description="per day", example=5),
+     *                  @OA\Property(property="amount", type="integer", description="currency is tooman", example=700000),
+     *               )
      *            )
-     *         )
-     *       )
+     *          )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -370,6 +559,13 @@ class ProposalController extends Controller
      *     description="In this method freelancers can Withdraw a Proposal",
      *     tags={"Customer-Proposal"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="proposal",
+     *         in="path",
+     *         description="ID of the Proposal to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="successful Proposal Withdraw",
@@ -426,12 +622,19 @@ class ProposalController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Pt(
      *     path="/api/proposal/approve/{proposal}",
      *     summary="Approve a Proposal by employer",
      *     description="In this method employers can Approve a Proposal. Upon approval, the proposal status will be marked as `approved`. The project payment will also be locked in employer's wallet.",
      *     tags={"Customer-Proposal"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="proposal",
+     *         in="path",
+     *         description="ID of the Proposal to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="successful Proposal Approve",
@@ -477,13 +680,15 @@ class ProposalController extends Controller
     public function approve(Proposal $proposal)
     {
         if (Gate::denies('approve', $proposal)) {
-            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
+            return $this->error('شما مجاز به انجام این عملیات افتضاح نیستید', 403);
         }
         try {
             $this->proposalService->approveProposal($proposal);
             return $this->success(null, 'پیشنهاد با موفقیت پذیرفته شد', 201);
+        } catch (NotEnoughBalanceException $e) {
+            throw $e;
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

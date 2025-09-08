@@ -2,6 +2,10 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\EmployerProposalsResource;
+use App\Http\Resources\Market\FreelancerProposalResource;
+use App\Http\Resources\Market\ProposalResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Project;
 use App\Models\Market\Proposal;
 use App\Models\User\User;
@@ -25,19 +29,33 @@ class ProposalRepository extends BaseRepository implements ProposalRepositoryInt
         parent::__construct($proposal);
     }
 
+    public function existsForProjectAndFreelancer($projectId, $freelancerId): bool
+    {
+        return $this->model
+            ->where('project_id', $projectId)
+            ->where('freelancer_id', $freelancerId)
+            ->exists();
+    }
     public function showProposal(Proposal $proposal): Proposal
     {
-        return $this->showWithRelations($proposal, ['project']);
+        return $this->showWithRelations($proposal, ['project','milestones']);
     }
 
-    public function getProposals(Project $project = null, User $user = null, array $data): Paginator|Project
+    public function getProposals(string $status)
     {
         $user = $user ?? auth()->user();
-        $freelancerProposals = $this->model->where('freelancer_id', $user->id)->filterByStatus($data)->with('project')
-            ->orderBy('created_at', 'desc')->simplePaginate(20);
-        $employerProposal = $project->load('proposals');
-        $proposals = $user->active_role === 'freelancer' ? $freelancerProposals : $employerProposal;
-        return $proposals;
+        $freelancerProposals = $this->model->where('freelancer_id', $user->id)->filterByStatus($status)->with('project', 'milestones')
+            ->orderBy('created_at', 'desc')->paginate(15);
+        return new BaseCollection($freelancerProposals, ProposalResource::class, null);
+    }
+    public function getProjectProposals(Project $project, string $status)
+    {
+        $employerProposal = $project->proposals()
+            ->filterByStatus($status)->with('milestones')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        // return $employerProposal;
+        return new BaseCollection($employerProposal, EmployerProposalsResource::class, null);
     }
 
     public function updateWhere(array $conditions, array $data): int

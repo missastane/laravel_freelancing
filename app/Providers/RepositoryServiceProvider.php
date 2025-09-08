@@ -7,10 +7,14 @@ use App\Repositories\Contracts\Content\PostRepositoryInterface;
 use App\Repositories\Contracts\Content\TagRepositoryInterface;
 use App\Repositories\Contracts\Locale\CityRepositoryInterface;
 use App\Repositories\Contracts\Locale\ProvinceRepositoryInterface;
+use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
 use App\Repositories\Contracts\Market\FileRepositoryInterface;
+use App\Repositories\Contracts\Market\MessageRepositoryInterface;
+use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderRepositoryInterface;
 use App\Repositories\Contracts\Market\ProjectCategoryRepositoryInterface;
 use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
+use App\Repositories\Contracts\Market\ProposalMilestoneRepositoryInterface;
 use App\Repositories\Contracts\Market\ProposalRepositoryInterface;
 use App\Repositories\Contracts\Market\SkillRepositoryInterface;
 use App\Repositories\Contracts\Market\SubscriptionDefaultFeatureRepositoryInterface;
@@ -37,9 +41,13 @@ use App\Repositories\Eloquent\Content\PostRepository;
 use App\Repositories\Eloquent\Content\TagRepository;
 use App\Repositories\Eloquent\Locale\CityRepository;
 use App\Repositories\Eloquent\Locale\ProvinceRepository;
+use App\Repositories\Eloquent\Market\ConversationRepository;
+use App\Repositories\Eloquent\Market\MessageRepository;
+use App\Repositories\Eloquent\Market\OrderItemRepository;
 use App\Repositories\Eloquent\Market\OrderRepository;
 use App\Repositories\Eloquent\Market\ProjectCategoryRepository;
 use App\Repositories\Eloquent\Market\ProjectRepository;
+use App\Repositories\Eloquent\Market\ProposalMilestoneRepository;
 use App\Repositories\Eloquent\Market\ProposalRepository;
 use App\Repositories\Eloquent\Market\SkillRepository;
 use App\Repositories\Eloquent\Market\SubscriptionDefaultFeatureRepository;
@@ -80,10 +88,12 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(WalletRepositoryInterface::class, WalletRepository::class);
         $this->app->bind(FileRepositoryInterface::class, FileRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(OrderItemRepositoryInterface::class, OrderItemRepository::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
         $this->app->bind(ProjectCategoryRepositoryInterface::class, ProjectCategoryRepository::class);
         $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
         $this->app->bind(ProposalRepositoryInterface::class, ProposalRepository::class);
+        $this->app->bind(ProposalMilestoneRepositoryInterface::class, ProposalMilestoneRepository::class);
         $this->app->bind(FavoriteRepositoryInterface::class, FavoriteRepository::class);
         $this->app->bind(SkillRepositoryInterface::class, SkillRepository::class);
         $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
@@ -97,6 +107,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(TicketPriorityRepositoryInterface::class, TicketPriorityRepository::class);
         $this->app->bind(TicketMessageRepositoryInterface::class, TicketMessageRepository::class);
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
+        $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
+        $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
     }
 
     /**

@@ -36,5 +36,9 @@ class ProjectPolicy
         return $project->employer->id == $user->id || $user->hasRole('admin');
     }
 
+    public function storeProposal(User $user, Project $project)
+    {
+        return $project->status == 1;
+    }
 
 }

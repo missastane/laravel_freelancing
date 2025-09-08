@@ -50,7 +50,6 @@ class SubscriptionService
         return DB::transaction(function () use ($data) {
             $subscription = $this->subscriptionRepository->updateOrCreate([
                 'name' => $data['name'],
-                'target_type' => $data['target_type'] == 1 ? Project::class : Proposal::class,
             ], [
                 'amount' => $data['amount'],
                 'duration_days' => $data['duration_days'],

@@ -10,7 +10,7 @@ class Conversation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['employer_id', 'employee_id', 'conversation_context', 'conversation_context_id'];
+    protected $fillable = ['employer_id', 'employee_id', 'status', 'conversation_context', 'conversation_context_id'];
 
     public function messages()
     {
@@ -30,5 +30,14 @@ class Conversation extends Model
     public function hasUser(User $user)
     {
         return $this->freelancer_id === $user->id || $this->employer_id === $user->id;
+    }
+
+    public function getStatusValueAttribute()
+    {
+        if ($this->status == 1) {
+            return 'مکالمه آزاد';
+        } else {
+            return 'مکالمه بسته شده';
+        }
     }
 }

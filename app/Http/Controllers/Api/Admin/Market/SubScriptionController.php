@@ -120,7 +120,6 @@ class SubScriptionController extends Controller
      *             @OA\Property(property="amount", type="integer", example=300000),
      *             @OA\Property(property="duration_days", type="integer", example=30),
      *             @OA\Property(property="commission_rate", type="integer", example=10),
-     *             @OA\Property(property="target_type", enum={1,2}, description="1 => project, 2 => proposal"),
      *             @OA\Property(property="max_target_per_month", type="integer", example=20),
      *             @OA\Property(property="max_notification_per_month", type="integer", example=20),
      *             @OA\Property(property="max_email_per_month", type="integer", example=20),

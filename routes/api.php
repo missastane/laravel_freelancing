@@ -333,7 +333,8 @@ Route::middleware(['auth:api'])->group(function () {
         });
     });
     Route::prefix('proposal')->group(function () {
-        Route::get('/{Project}', [CustomerProposalController::class, 'index']);
+        Route::get('/', [CustomerProposalController::class, 'index']);
+        Route::get('/{project}', [CustomerProposalController::class, 'getProjectProposals']);
         Route::get('/show/{proposal}', [CustomerProposalController::class, 'show']);
         Route::post('/add-to-favorite/{proposal}', [CustomerProposalController::class, 'addToFavorite']);
         Route::post('/store/{project}', [CustomerProposalController::class, 'store']);

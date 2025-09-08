@@ -34,7 +34,6 @@ class Subscription extends Model
         'amount',
         'duration_days',
         'commission_rate',
-        'target_type',
         'max_target_per_month',
         'max_notification_per_month',
         'max_email_per_month',

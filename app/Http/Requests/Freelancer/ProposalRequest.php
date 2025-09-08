@@ -22,24 +22,23 @@ class ProposalRequest extends FormRequest
      */
     public function rules(): array
     {
-        $route = Route::currentRouteName();
-        if ($route === 'proposal.store') {
+        if ($this->isMethod('post')) {
             return [
                 'description' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،_\.?؟ ]+$/u'],
-                'milstones' => ['required', 'array', 'min:1'],
-                'milstones.*.title' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي ]+$/u'],
-                'milstones.*.description' => ['required', 'string', 'min:5', 'max:600', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،_\.?؟ ]+$/u'],
-                'milstones.*.amount' => ['required', 'numeric'],
-                'milstones.*.duration_time' => ['required', 'integer'],
+                'milestones' => ['required', 'array', 'min:1'],
+                'milestones.*.title' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي ]+$/u'],
+                'milestones.*.description' => ['required', 'string', 'min:5', 'max:600', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،_\.?؟ ]+$/u'],
+                'milestones.*.amount' => ['required', 'numeric'],
+                'milestones.*.duration_time' => ['required', 'integer'],
             ];
         } else {
             return [
                 'description' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،_\.?؟ ]+$/u'],
-                'milstones' => ['nullable', 'array'],
-                'milstones.*.title' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي ]+$/u'],
-                'milstones.*.description' => ['required', 'string', 'min:5', 'max:600', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،_\.?؟ ]+$/u'],
-                'milstones.*.amount' => ['required', 'numeric'],
-                'milstones.*.duration_time' => ['required', 'integer'],
+                'milestones' => ['nullable', 'array'],
+                'milestones.*.title' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي ]+$/u'],
+                'milestones.*.description' => ['required', 'string', 'min:5', 'max:600', 'regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،_\.?؟ ]+$/u'],
+                'milestones.*.amount' => ['required', 'numeric'],
+                'milestones.*.duration_time' => ['required', 'integer'],
             ];
         }
 
@@ -49,11 +48,11 @@ class ProposalRequest extends FormRequest
     {
         return [
             'description' => 'توضیحات',
-            'milstones' => 'مراحل پشنهاد',
-            'milstones.*.title' => 'عنوان مرحله',
-            'milstones.*.description' => 'توضیح مرحله',
-            'milstones.*.amount' => 'مبلغ',
-            'milstones.*.duration_time' => 'زمان مرحله',
+            'milestones' => 'مراحل پشنهاد',
+            'milestones.*.title' => 'عنوان مرحله',
+            'milestones.*.description' => 'توضیح مرحله',
+            'milestones.*.amount' => 'مبلغ',
+            'milestones.*.duration_time' => 'زمان مرحله',
         ];
     }
 }

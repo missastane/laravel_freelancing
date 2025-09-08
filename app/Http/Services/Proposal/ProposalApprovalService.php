@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Proposal;
 
+use App\Exceptions\Market\NotEnoughBalanceException;
 use App\Exceptions\Market\WalletLockException;
 use App\Http\Services\Chat\ChatService;
 use App\Models\Market\Order;
@@ -41,7 +42,7 @@ class ProposalApprovalService
 
     public function approveProposal(Proposal $proposal)
     {
-        $updatedProposal =  DB::transaction(function () use ($proposal) {
+        $updatedProposal = DB::transaction(function () use ($proposal) {
             $this->validateWallet($proposal);
             $this->lockFunds($proposal);
             $this->updateProposals($proposal);
@@ -53,14 +54,14 @@ class ProposalApprovalService
             return $proposal;
         });
         $freelancer = $proposal->freelancer;
-        $freelancer->notify(new ApproveProposalNotification($updatedProposal,"کارفرما پیشنهاد شما را برای پروژه {$proposal->project()->title} پذیرفت"));
+        $freelancer->notify(new ApproveProposalNotification($updatedProposal, "کارفرما پیشنهاد شما را برای پروژه {$proposal->project->title} پذیرفت"));
         return $updatedProposal;
     }
 
     protected function validateWallet(Proposal $proposal)
     {
         if (!$this->walletRepository->hasEnoughBalance($this->client->id, $proposal->total_amount)) {
-            throw new Exception("موجودی کیف پول شما برای انجام این عملیات کافی نیست", 403);
+            throw new NotEnoughBalanceException();
         }
     }
 
@@ -94,6 +95,7 @@ class ProposalApprovalService
         return $this->orderRepository->create([
             'proposal_id' => $proposal->id,
             'freelancer_id' => $proposal->freelancer_id,
+            'employer_id' => $this->client->id,
             'project_id' => $proposal->project_id,
             'total_price' => $proposal->total_amount,
             'due_date' => $proposal->due_date
@@ -102,14 +104,14 @@ class ProposalApprovalService
 
     protected function createOrderItems(Order $order, Proposal $proposal)
     {
-        $platformFeePercent = $proposal->freelancer->activeSubscription
+        $platformFeePercent = $proposal->freelancer->activeSubscription()
             ? $proposal->freelancer->activeSubscription->subscription->commission_rate
             : 10; // درصد پیش‌فرض
 
         foreach ($proposal->milestones as $milestone) {
             $platformFee = ($milestone->amount * $platformFeePercent) / 100;
             $freelancerAmount = $milestone->amount - $platformFee;
-
+            \Log::info($milestone->due_date);
             $this->orderItemRepository->create([
                 'order_id' => $order->id,
                 'proposal_milestone_id' => $milestone->id,
@@ -124,9 +126,9 @@ class ProposalApprovalService
 
     protected function ensureConversation(Order $order)
     {
-        $conversation = $this->conversationRepository->getConversationIfExists(Order::class, $order->id);
+        $conversation = $this->conversationRepository->getConversationIfExists($order->freelancer_id, $order->employer_id);
         if (!$conversation) {
-            $this->chatService->createConversation($order->freelancer_id, $order);
+            $this->chatService->createConversation($order->freelancer, $order);
         }
     }
 

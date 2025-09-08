@@ -53,14 +53,7 @@ class ProjectService
     {
         $user = auth()->user();
 
-        // اینجا از سرویس محدودیت استفاده می‌کنیم
-        $usageService = app(SubscriptionUsageManagerService::class, ['user' => $user]);
-
-        if (!$usageService->canUse('target_create')) {
-            throw new ProjectAddLimitException();
-        }
-
-        $project = DB::transaction(function () use ($data, $user, $usageService) {
+        $project = DB::transaction(function () use ($data, $user) {
             $data['user_id'] = $user->id;
             $data['slug'] = 'slug';
 
@@ -75,8 +68,6 @@ class ProjectService
             );
 
             $this->projectRepository->syncSkills($project, $data['skills']);
-
-            $usageService->increamentUsage('target_create');
 
             return $project;
         });
@@ -129,14 +120,14 @@ class ProjectService
 
     public function toggleFullTime(Project $project)
     {
-        $project->is_full_time = $project->is_full_time === 1 ? 2 : 1;
-        if ($project->save()) {
-            $message = $project->is_full_time == 1 ?
-                'پروژه به حالت تمام وقت درآمد' :
-                'پروژه از حالت تمام وقت خارج شد';
-            return $message;
-        }
-        return null;
+        // $project->is_full_time = $project->is_full_time === 1 ? 2 : 1;
+        // if ($project->save()) {
+        //     $message = $project->is_full_time == 1 ?
+        //         'پروژه به حالت تمام وقت درآمد' :
+        //         'پروژه از حالت تمام وقت خارج شد';
+        //     return $message;
+        // }
+        // return null;
     }
 
     public function addToFavorite(Project $project)

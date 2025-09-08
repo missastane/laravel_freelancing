@@ -26,7 +26,6 @@ class SubscriptionRequest extends FormRequest
             'amount' => 'required|numeric',
             'duration_days' => 'required|integer',
             'commission_rate' => 'required|integer|min:0|max:99',
-            'target_type' => 'required|in:1,2', // 1 => project,  2 => proposal
             'max_target_per_month' => 'required|integer',
             'max_notification_per_month' => 'required|integer',
             'max_email_per_month' => 'required|integer',
@@ -48,7 +47,6 @@ class SubscriptionRequest extends FormRequest
             'amount' => 'قیمت',
             'duration_days' => 'تعداد روزهای اشتراک',
             'commission_rate' => 'درصد کارمزد سایت',
-            'target_type' => 'طرح متعلق به کارفرماست یا فریلنسر',
             'max_target_per_month' => 'حداکثر تعداد پیشنهاد یا پروژه در ماه',
             'max_notification_per_month' => 'حداکثر ارسال اعلان در ماه',
             'max_email_per_month' => 'حداکثر ارسال ایمیل در ماه',
