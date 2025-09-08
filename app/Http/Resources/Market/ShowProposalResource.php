@@ -53,7 +53,7 @@ class ShowProposalResource extends JsonResource
                     'due_date' => $milestone->due_date
                 ])
             ],
-            'conversation' => [
+            'conversation' => $this['conversation'] ?[
                 'id' => $this['conversation']->id,
                 'employer' => auth()->user()->user_type == 2
                     ? [
@@ -74,7 +74,7 @@ class ShowProposalResource extends JsonResource
                         'username' => $this['conversation']->freelancer->username,
                     ],
                 'status' => $this['conversation']->status_value
-            ]
+            ] : null
         ];
     }
 }

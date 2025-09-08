@@ -10657,20 +10657,33 @@
                 "summary": "Retrieve list of a user's Proposals",
                 "description": "Retrieve list of all of `a user's Proposals`",
                 "operationId": "9a6a55ced7913d112c22b3f791eeff86",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by proposal status. Possible values: pending, approved , rejected, withdrown",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pending"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "A list of a user's Proposals",
+                        "description": "A list of Proposals",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -10684,17 +10697,120 @@
                                                         "$ref": "#/components/schemas/Proposal"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -10718,26 +10834,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "You are not authorized to do this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "شما مجاز به انجام این عملیات نیستید"
                                         }
                                     },
                                     "type": "object"
@@ -10789,7 +10885,144 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Proposal"
+                                            "properties": {
+                                                "project": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "برنامه نویسی لاراول"
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "برنامه-نویسی-لاراول"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "در این پروژه ما می خواهیم که یک پلتفرم را با فریم ورک لاراول پیاده سازی و اجرا کنیم."
+                                                        },
+                                                        "duration_time": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "amount": {
+                                                            "type": "decimal",
+                                                            "example": 7000000
+                                                        },
+                                                        "status": {
+                                                            "description": "1 => pending, 2 => in progress , 3 => completed, 4 => canceled",
+                                                            "type": "string",
+                                                            "example": "تکمیل شده"
+                                                        },
+                                                        "created_at": {
+                                                            "description": "creation datetime",
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-02-22T10:00:00Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "description": "update datetime",
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-02-22T10:00:00Z"
+                                                        },
+                                                        "employer": {
+                                                            "properties": {
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "ایمان"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "proposal": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "freelancer": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "missastane"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "این پیشنهاد منه"
+                                                        },
+                                                        "total_amount": {
+                                                            "type": "string",
+                                                            "example": null,
+                                                            "nullable": true
+                                                        },
+                                                        "due_date": {
+                                                            "description": "تاریخ تحویل نهایی",
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-09-06T18:43:45.000000Z"
+                                                        },
+                                                        "status": {
+                                                            "description": "وضعیت پیشنهاد",
+                                                            "type": "string",
+                                                            "example": "در حال بررسی"
+                                                        },
+                                                        "milestones": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/ProposalMilestone"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "conversation": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "employer": {
+                                                            "properties": {
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "ایمان"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "freelancer": {
+                                                            "properties": {
+                                                                "username": {
+                                                                    "type": "string",
+                                                                    "example": "ایمان"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "status": {
+                                                            "description": "1 => pending, 2 => in progress , 3 => completed, 4 => canceled",
+                                                            "type": "string",
+                                                            "example": "تکمیل شده"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -31420,6 +31653,139 @@
                                         "message": {
                                             "type": "string",
                                             "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/proposal/delete-favorite/{proposal}": {
+            "delete": {
+                "tags": [
+                    "Customer-Proposal"
+                ],
+                "summary": "Delete a Proposal From Favorites",
+                "description": "This endpoint allows the employer to `delete a Proposal from favorites list`.",
+                "operationId": "8478cebb4543e63ef838e52f83f77b93",
+                "parameters": [
+                    {
+                        "name": "proposal",
+                        "in": "path",
+                        "description": "The ID of the Proposal to be deleted from favorites",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Proposal deleted successfully form favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "پیشنهاد با موفقیت از لیست علاقمندی ها حذف شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید"
                                         }
                                     },
                                     "type": "object"

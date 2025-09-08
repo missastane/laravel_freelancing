@@ -4,6 +4,7 @@ namespace App\Http\Services\Proposal;
 
 use App\Http\Resources\Market\ShowProposalResource;
 use App\Http\Services\Chat\ChatService;
+use App\Http\Services\Favorite\FavoriteService;
 use App\Models\Market\Conversation;
 use App\Models\Market\Project;
 use App\Models\Market\Proposal;
@@ -23,7 +24,8 @@ class ProposalService
         protected ProposalApprovalService $proposalApprovalService,
         protected ProposalRepositoryInterface $proposalRepository,
         protected ProposalMilestoneRepositoryInterface $proposalMilstoneRepository,
-        protected ChatService $chatService
+        protected ChatService $chatService,
+        protected FavoriteService $favoriteService
     ) {
         $this->user = auth()->user();
     }
@@ -157,6 +159,17 @@ class ProposalService
         return $proposal;
     }
 
+    public function addProposalToFavorite(Proposal $proposal)
+    {
+        $inputs = [];
+        $inputs['favoritable_type'] = Proposal::class;
+        $inputs['favoritable_id'] = $proposal->id;
+        return $this->favoriteService->addToFavorite($inputs);
+    }
+    public function removeFavorite(Proposal $proposal)
+    {
+        return $this->favoriteService->removeFavorite($proposal);
+    }
     public function delete(Proposal $proposal)
     {
         return $this->proposalRepository->delete($proposal);

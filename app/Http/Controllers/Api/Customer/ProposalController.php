@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\Exceptions\FavoriteNotExistException;
 use App\Exceptions\Market\NotEnoughBalanceException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Freelancer\ProposalRequest;
+use App\Http\Requests\ProposalStatusRequest;
 use App\Http\Services\Favorite\FavoriteService;
 use App\Http\Services\Proposal\ProposalService;
 use App\Models\Market\Project;
@@ -104,7 +106,7 @@ class ProposalController extends Controller
      *     )),
      * )
      */
-    public function index(Request $request)
+    public function index(ProposalStatusRequest $request)
     {
         return $this->proposalService->getProposals($request->query('status'));
     }
@@ -208,7 +210,7 @@ class ProposalController extends Controller
      *     )),
      * )
      */
-    public function getProjectProposals(Project $project, Request $request)
+    public function getProjectProposals(Project $project, ProposalStatusRequest $request)
     {
         return $this->proposalService->getProjectProposals($project, $request->query('status'));
     }
@@ -270,17 +272,84 @@ class ProposalController extends Controller
      */
     public function addToFavorite(Proposal $proposal)
     {
+        if(Gate::denies('favorite',$proposal)){
+            return $this->error('شما مجاز به انجام این عملیات نیستید',403);
+        }
         try {
-            $inputs = [];
-            $inputs['favoritable_type'] = Proposal::class;
-            $inputs['favoritable_id'] = $proposal->id;
-            $this->favoriteService->addToFavorite($inputs);
+            $this->proposalService->addProposalToFavorite($proposal);
             return $this->success(null, "پیشنهاد با موفقیت به لیست علاقمندی ها اضافه شد", 201);
         } catch (Exception $e) {
             return $this->error();
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/proposal/delete-favorite/{proposal}",
+     *     summary="Delete a Proposal From Favorites",
+     *     description="This endpoint allows the employer to `delete a Proposal from favorites list`.",
+     *     tags={"Customer-Proposal"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="proposal",
+     *         in="path",
+     *         description="The ID of the Proposal to be deleted from favorites",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Proposal deleted successfully form favorites",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="پیشنهاد با موفقیت از لیست علاقمندی ها حذف شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *         )
+     *     )
+     * )
+     */
+    public function removeFromFavorite(Proposal $proposal)
+    {
+        try {
+            $this->proposalService->removeFavorite($proposal);
+            return $this->success(null, 'پیشنهاد با موفقیت از لیست علاقمندی ها حذف شد');
+        } catch (FavoriteNotExistException $e) {
+            throw $e;
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
     /**
      * @OA\Get(
      *     path="/api/proposal/show/{proposal}",

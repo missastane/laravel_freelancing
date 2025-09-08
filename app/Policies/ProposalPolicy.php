@@ -9,9 +9,13 @@ use App\Models\User\User;
 class ProposalPolicy
 {
 
+    public function favorite(User $user, Proposal $proposal)
+    {
+        return $user->id == $proposal->project->user_id;
+    }
     public function show(User $user, Proposal $proposal)
     {
-        return $proposal->freelancer_id == $user->id && $user->active_role === 'freelancer' || $proposal->project->user_id == $user->id  && $user->active_role === 'employer' || $user->active_role === 'admin';
+        return $proposal->freelancer_id == $user->id && $user->active_role === 'freelancer' || $proposal->project->user_id == $user->id && $user->active_role === 'employer' || $user->active_role === 'admin';
     }
     public function update(User $user, Proposal $proposal)
     {
