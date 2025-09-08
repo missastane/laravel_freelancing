@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\Content\CommentController;
+use App\Http\Controllers\Api\Admin\Market\FeatureTypeController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketPriorityController;
 use App\Http\Controllers\Api\Customer\CommentController as CustomerCommentController;
 use App\Http\Controllers\API\Admin\Content\PostCategoryController;
@@ -111,6 +112,13 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
 
     });
     Route::prefix('market')->group(function () {
+        Route::prefix('feature')->group(function () {
+            Route::get('/',[FeatureTypeController::class, 'index']);
+            Route::post('/store',[FeatureTypeController::class, 'store']);
+            Route::get('/show/{featureType}',[FeatureTypeController::class, 'show']);
+            Route::put('/update/{featureType}',[FeatureTypeController::class, 'update']);
+            Route::delete('/delete/{featureType}',[FeatureTypeController::class, 'delete']);
+        });
         Route::prefix('order')->group(function () {
             Route::get('/', [OrderController::class, 'index']);
             Route::get('/user-orders/{user}', [OrderController::class, 'getUserOrders']);

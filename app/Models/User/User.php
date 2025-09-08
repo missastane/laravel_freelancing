@@ -15,6 +15,7 @@ use App\Models\Market\Subscription;
 use App\Models\Market\UserEducation;
 use App\Models\Market\UserSubscription;
 use App\Models\Market\WorkExperience;
+use App\Models\Payment\FeaturePerchased;
 use App\Models\Payment\Payment;
 use App\Models\Payment\Wallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -238,6 +239,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserSubscription::class);
     }
+    
+    public function featurePerchased()
+    {
+        return $this->hasMany(FeaturePerchased::class, 'user_id');
+    }
+
     public function activeSubscription()
     {
         return $this->subscriptions()

@@ -8,6 +8,7 @@ use App\Repositories\Contracts\Content\TagRepositoryInterface;
 use App\Repositories\Contracts\Locale\CityRepositoryInterface;
 use App\Repositories\Contracts\Locale\ProvinceRepositoryInterface;
 use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
+use App\Repositories\Contracts\Market\FeatureTypeRepositoryInterface;
 use App\Repositories\Contracts\Market\FileRepositoryInterface;
 use App\Repositories\Contracts\Market\MessageRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
@@ -42,6 +43,7 @@ use App\Repositories\Eloquent\Content\TagRepository;
 use App\Repositories\Eloquent\Locale\CityRepository;
 use App\Repositories\Eloquent\Locale\ProvinceRepository;
 use App\Repositories\Eloquent\Market\ConversationRepository;
+use App\Repositories\Eloquent\Market\FeatureTypeRepository;
 use App\Repositories\Eloquent\Market\MessageRepository;
 use App\Repositories\Eloquent\Market\OrderItemRepository;
 use App\Repositories\Eloquent\Market\OrderRepository;
@@ -109,6 +111,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
         $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
         $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
+        $this->app->bind(FeatureTypeRepositoryInterface::class, FeatureTypeRepository::class);
     }
 
     /**
