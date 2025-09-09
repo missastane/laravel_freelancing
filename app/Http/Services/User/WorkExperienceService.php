@@ -3,7 +3,7 @@
 namespace App\Http\Services\User;
 
 use App\Models\Market\WorkExperience;
-use App\Repositories\Contracts\Market\WorkExperienceRepositoryInterface;
+use App\Repositories\Contracts\User\WorkExperienceRepositoryInterface;
 
 class WorkExperienceService
 {

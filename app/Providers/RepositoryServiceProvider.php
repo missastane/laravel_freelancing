@@ -37,6 +37,7 @@ use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
+use App\Repositories\Contracts\User\WorkExperienceRepositoryInterface;
 use App\Repositories\Eloquent\Content\FileRepository;
 use App\Repositories\Eloquent\Content\PostCategoryRepository;
 use App\Repositories\Eloquent\Content\PostRepository;
@@ -72,6 +73,7 @@ use App\Repositories\Eloquent\User\PermissionRepository;
 use App\Repositories\Eloquent\User\RoleRepository;
 use App\Repositories\Eloquent\User\UserEducationRepository;
 use App\Repositories\Eloquent\User\UserRepository;
+use App\Repositories\Eloquent\User\WorkExperienceRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -83,6 +85,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(UserEducationRepositoryInterface::class, UserEducationRepository::class);
+        $this->app->bind(WorkExperienceRepositoryInterface::class, WorkExperienceRepository::class);
         $this->app->bind(OTPRepositoryInterface::class, OTPRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);

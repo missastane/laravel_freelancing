@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\WorkExperienceResource;
 use App\Models\Market\WorkExperience;
 use App\Repositories\Contracts\User\WorkExperienceRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -21,16 +23,18 @@ class WorkExperienceRepository extends BaseRepository implements WorkExperienceR
     {
         parent::__construct($model);
     }
-    public function getUserExperiences(): Paginator
+    public function getUserExperiences()
     {
         $workExperiences = $this->model->where('user_id', auth()->id())
-            ->orderBy('created_at')->simplePaginate(15);
-        return $workExperiences;
+            ->with('province')
+            ->orderBy('created_at')->paginate(15);
+        return new BaseCollection($workExperiences, WorkExperienceResource::class, null);
     }
 
     public function showExperience(WorkExperience $workExperience)
     {
-        return $this->showWithRelations($workExperience,['freelancer:id,first_name,last_name']);
+        $result = $this->showWithRelations($workExperience, ['province']);
+        return new WorkExperienceResource($result);
     }
 
 }

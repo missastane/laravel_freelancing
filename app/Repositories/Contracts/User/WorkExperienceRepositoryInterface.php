@@ -16,6 +16,6 @@ interface WorkExperienceRepositoryInterface extends
     DeletableRepositoryInterface,
     UpdatableRepositoryInterface
 {
-    public function getUserExperiences(): Paginator;
+    public function getUserExperiences();
      public function showExperience(WorkExperience $workExperience);
 }
