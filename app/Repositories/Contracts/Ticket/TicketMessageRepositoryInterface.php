@@ -14,5 +14,5 @@ ShowableRepositoryInterface,
 UpdatableRepositoryInterface,
 DeletableRepositoryInterface
 {
-    public function showTicketMessage(TicketMessage $ticketMessage):TicketMessage;
+    public function showTicketMessage(TicketMessage $ticketMessage);
 }

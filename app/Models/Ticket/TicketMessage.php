@@ -12,34 +12,31 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     schema="TicketMessage",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="author", type="string", example="useraname"),
+ *     @OA\Property(property="author_role", type="string", example="کارفرما"),
  *     @OA\Property(property="message", type="string", example="هنوزم پول به حسابم واریز نشده"),
- *     @OA\Property(property="deleted_at", type="string", format="date-time", description="delete datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="parent", type="object", 
+ *       @OA\Property(property="id", type="integer", example=1),
+ *       @OA\Property(property="message", type="string", example="هنوزم پول به حسابم واریز نشده"),
+ *       @OA\Property(property="files", type="array", 
+ *          @OA\Items(type="object", 
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="file_name", type="string", example="fileName"),
+ *             @OA\Property(property="file_path", type="string", example="path/file.extension"),
+ *             @OA\Property(property="mime_type", type="string", example="image/jpg"),
+ *          ),
+ *       ),
+ *     ),
+ *     @OA\Property(property="files", type="array", 
+ *          @OA\Items(type="object", 
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="file_name", type="string", example="fileName"),
+ *             @OA\Property(property="file_path", type="string", example="path/file.extension"),
+ *             @OA\Property(property="mime_type", type="string", example="image/jpg"),
+ *          ),
+ *       ),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="author_type_value", type="string", description="type: 1 => employer, 2 => freelancer, 3 => admin", example="ادمین"),
- *     @OA\Property(
- *          property="ticket",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="subject", type="string", example="عدم بازگشت پول به حساب کارفرما"),
- *               )
- *            ),
- *     @OA\Property(
- *          property="author",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="راضیه"),
- *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
- *               )
- *            ),
- *     @OA\Property(
- *          property="parent",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="message", type="string", example="هنوزم پول به حسابم واریز نشده"),
- *               )
- *            ),
- * 
  * )
  */
 class TicketMessage extends Model
@@ -60,17 +57,20 @@ class TicketMessage extends Model
     }
     public function files()
     {
-        return $this->morphMany('App\Models\File', 'fillable');
+        return $this->morphMany('App\Models\Market\File', 'filable');
     }
     public function getAuthorTypeValueAttribute()
     {
-        switch ($this->user_type) {
+        switch ($this->author_type) {
             case 1:
                 $result = 'کارفرما';
+                break;
             case 2:
                 $result = 'فریلنسر';
+                break;
             case 3:
                 $result = 'ادمین';
+                break;
         }
         return $result;
     }

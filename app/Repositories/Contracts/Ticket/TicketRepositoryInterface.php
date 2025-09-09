@@ -15,7 +15,7 @@ interface TicketRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getAllTickets(array $data): Paginator;
-    public function getUserTickets(array $data): Paginator;
-    public function showTicket(Ticket $ticket): Ticket;
+    public function getAllTickets(string $status);
+    public function getUserTickets(string $status);
+    public function showTicket(Ticket $ticket);
 }

@@ -24,7 +24,7 @@ class TicketRequest extends FormRequest
         return [
             'priority_id' => 'required|exists:ticket_priorities,id',
             'department_id' => 'required|exists:ticket_departments,id',
-            'ticket_type' => 'required|in:1,3',
+            'ticket_type' => 'required|in:1,2,3',
             'subject' => 'required|min:2|max:255|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي ]+$/u',
             'message' => 'required|min:2|max:500|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،\.?؟! ]+$/u',
             'files' => 'nullable|required_without:message',

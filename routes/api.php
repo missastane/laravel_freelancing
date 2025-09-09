@@ -360,6 +360,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/options', [CustomerTicketController::class, 'options']);
         Route::post('/store', [CustomerTicketController::class, 'store']);
         Route::get('/show/{ticket}', [CustomerTicketController::class, 'show']);
+        Route::get('/show-message/{ticketMessage}', [CustomerTicketController::class, 'showMessage']);
         Route::post('/reply/{ticketMessage}', [CustomerTicketController::class, 'replyTicketMessage']);
     });
     Route::prefix('subscription')->middleware('freelancer')->group(function () {

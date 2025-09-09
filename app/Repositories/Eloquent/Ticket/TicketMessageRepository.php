@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Ticket;
 
+use App\Http\Resources\Ticket\TicketMessageResource;
 use App\Models\Ticket\TicketMessage;
 use App\Repositories\Contracts\Ticket\TicketMessageRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -21,9 +22,10 @@ class TicketMessageRepository extends BaseRepository implements TicketMessageRep
         parent::__construct($model);
     }
 
-    public function showTicketMessage(TicketMessage $ticketMessage):TicketMessage
+    public function showTicketMessage(TicketMessage $ticketMessage)
     {
-        return $this->showWithRelations($ticketMessage);
+        $result = $this->showWithRelations($ticketMessage);
+        return new TicketMessageResource($result);
     }
 
 }

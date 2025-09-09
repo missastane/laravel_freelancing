@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\Ticket;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\Ticket\TicketWithMessagesResource;
 use App\Models\Ticket\Ticket;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -23,24 +25,26 @@ class TicketRepository extends BaseRepository implements TicketRepositoryInterfa
         parent::__construct($model);
     }
 
-    public function getAllTickets(array $data): Paginator
+    public function getAllTickets(string $status)
     {
-        $tickets = $this->model->query()->filterByStatus($data)
+        $tickets = $this->model->query()->filterByStatus($status)->with('ticketMessages')
             ->orderBy('created_at', 'desc')->simplePaginate(15);
-        return $tickets;
+        return new BaseCollection($tickets, TicketWithMessagesResource::class, null);
     }
 
-    public function getUserTickets(array $data): Paginator
+    public function getUserTickets(string $status)
     {
         $tickets = $this->model->where('user_id', auth()->id())
-            ->filterByStatus($data)->orderBy('created_at', 'desc')
-            ->simplePaginate(15);
-        return $tickets;
+            ->filterByStatus($status)->with('ticketMessages')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        return new BaseCollection($tickets, TicketWithMessagesResource::class, null);
     }
 
-    public function showTicket(Ticket $ticket): Ticket
+    public function showTicket(Ticket $ticket)
     {
-        return $this->showWithRelations($ticket,['ticketMessages']);
+        $result = $this->showWithRelations($ticket, ['ticketMessages']);
+        return new TicketWithMessagesResource($result);
     }
 
 

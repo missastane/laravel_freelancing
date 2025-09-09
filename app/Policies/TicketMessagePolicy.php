@@ -15,8 +15,13 @@ class TicketMessagePolicy
         //
     }
 
-    public function update(User $user,TicketMessage $ticketMessage)
+    public function update(User $user, TicketMessage $ticketMessage)
     {
-        return $ticketMessage->author_type == 3 || $ticketMessage->author_id == $user->id;
+        return $ticketMessage->author_type == 3 && $ticketMessage->author_id == $user->id;
+    }
+
+    public function reply(User $user, TicketMessage $ticketMessage)
+    {
+        return $ticketMessage->ticket->status !== 3;
     }
 }

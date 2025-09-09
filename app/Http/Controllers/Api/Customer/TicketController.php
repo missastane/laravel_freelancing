@@ -14,6 +14,7 @@ use App\Models\Ticket\TicketMessage;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class TicketController extends Controller
 {
@@ -42,18 +43,55 @@ class TicketController extends Controller
      *         response=200,
      *         description="A list of Tickets",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Ticket"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -77,7 +115,7 @@ class TicketController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->success($this->ticketService->getUserTickets($request->query('status')));
+        return $this->ticketService->getUserTickets($request->query('status'));
     }
 
     /**
@@ -95,22 +133,22 @@ class TicketController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example="true"),
      *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
-     *                   @OA\Items(
+     *             @OA\Property(property="data", type="array",
+     *                   @OA\Items(type="object",
      *                      @OA\Property(property="departments", type="array",
-     *                        @OA\Items(ref="#/components/schemas/TicketDepartment")
+     *                        @OA\Items(type="object",
+     *                          @OA\Property(property="id", type="integer", example=1),
+     *                          @OA\Property(property="name", type="string", example="مالی"),
+     *                       )
      *                     ),
      *                     @OA\Property(property="priorities", type="array",
-     *                        @OA\Items(ref="#/components/schemas/TicketPriority")
+     *                        @OA\Items(type="object",
+     *                          @OA\Property(property="id", type="integer", example=1),
+     *                          @OA\Property(property="name", type="string", example="بسیار زیاد"),
+     *                      )
      *                      )
      *                    )
      *               ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
-     *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
-     *             )
      *         )
      *     ),
      *  @OA\Response(
@@ -150,7 +188,11 @@ class TicketController extends Controller
      *             @OA\Schema(
      *                 type="object",
      *                
-     *             @OA\Property(property="message", type="string", pattern="^[a-zA-Z\u0600-\u06FF0-9\s\-\،,?!.]+$", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="subject", type="string", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (-). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="ticket_type", type="integer", enum={1,2,3}, description="1 => support, 2 => report , 3 => financial", example="support"),
+     *             @OA\Property(property="priority_id", type="integer", example=1),
+     *             @OA\Property(property="department_id", type="integer", example=1),
+     *             @OA\Property(property="message", type="string", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.-). Any other characters will result in a validation error.", example="این تیکت منه"),
      *             @OA\Property(property="files[]", type="array", 
      *                  @OA\Items(type="string", format="binary"), description="Upload a single media file.")
      *              )
@@ -210,7 +252,7 @@ class TicketController extends Controller
             $this->ticketService->newTicketStore($request->all(), $author_type);
             return $this->success(null, 'تیکت با موفقیت ثبت شد');
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -407,6 +449,9 @@ class TicketController extends Controller
      */
     public function replyTicketMessage(TicketMessage $ticketMessage, TicketMessageRequest $request)
     {
+         if(Gate::denies('reply',$ticketMessage)){
+            return $this->error('به دلیل بسته شدن تیکت شما اجازه ارسال پیام ندارید',403);
+        }
         try {
             $inputs = $request->all();
             $authorType = auth()->user()->active_role === 'freelancer' ? 2 : 1;

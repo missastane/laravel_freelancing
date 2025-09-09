@@ -25,9 +25,9 @@ class TicketService
         protected TicketDepartmentRepositoryInterface $ticketDepartmentRepository
     ) {
     }
-    public function getAllTickets(array $data): Paginator
+    public function getAllTickets(string $status)
     {
-        return $this->ticketRepository->getAllTickets($data);
+        return $this->ticketRepository->getAllTickets($status);
     }
 
     public function options(): array
@@ -39,9 +39,9 @@ class TicketService
             'priorities' => $priorities
         ];
     }
-    public function getUserTickets(array $data): Paginator
+    public function getUserTickets(string $status)
     {
-        return $this->ticketRepository->getUserTickets($data);
+        return $this->ticketRepository->getUserTickets($status);
     }
     public function newTicketStore(array $data, int $authorType)
     {
@@ -96,7 +96,7 @@ class TicketService
 
 
     }
-    public function showTicket(Ticket $ticket): Ticket
+    public function showTicket(Ticket $ticket)
     {
         return $this->ticketRepository->showTicket($ticket);
     }

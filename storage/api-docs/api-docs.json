@@ -15364,11 +15364,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -15382,17 +15383,120 @@
                                                         "$ref": "#/components/schemas/Ticket"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -15478,45 +15582,44 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "departments": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/TicketDepartment"
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "departments": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "مالی"
                                                                 }
                                                             },
-                                                            "priorities": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/TicketPriority"
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "priorities": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "بسیار زیاد"
                                                                 }
-                                                            }
-                                                        },
-                                                        "type": "object"
+                                                            },
+                                                            "type": "object"
+                                                        }
                                                     }
                                                 },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 15
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 45
-                                                }
-                                            },
-                                            "type": "object"
+                                                "type": "object"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -15984,14 +16087,14 @@
                 ]
             }
         },
-        "/api/admin/ticke/update/{ticketMessage}": {
-            "put": {
+        "/api/admin/ticket/update/{ticketMessage}": {
+            "post": {
                 "tags": [
                     "Ticket"
                 ],
                 "summary": "Update a Ticket Message by admin",
                 "description": "In this method admins can Update an existing Ticket Message",
-                "operationId": "52344741d77ad6db6e87537078c137bb",
+                "operationId": "f25a651448251313a14a34827ea447b5",
                 "parameters": [
                     {
                         "name": "ticketMessage",
@@ -33109,11 +33212,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -33127,17 +33231,120 @@
                                                         "$ref": "#/components/schemas/Ticket"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -33221,45 +33428,44 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "departments": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/TicketDepartment"
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "departments": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "مالی"
                                                                 }
                                                             },
-                                                            "priorities": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/TicketPriority"
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "priorities": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "بسیار زیاد"
                                                                 }
-                                                            }
-                                                        },
-                                                        "type": "object"
+                                                            },
+                                                            "type": "object"
+                                                        }
                                                     }
                                                 },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 15
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 45
-                                                }
-                                            },
-                                            "type": "object"
+                                                "type": "object"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -33329,10 +33535,32 @@
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
-                                    "message": {
-                                        "description": "This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.",
+                                    "subject": {
+                                        "description": "This field can only contain Persian and English letters, Persian and English numbers, and symbols (-). Any other characters will result in a validation error.",
                                         "type": "string",
-                                        "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\-\\،,?!.]+$",
+                                        "example": "این تیکت منه"
+                                    },
+                                    "ticket_type": {
+                                        "description": "1 => support, 2 => report , 3 => financial",
+                                        "type": "integer",
+                                        "enum": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "example": "support"
+                                    },
+                                    "priority_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "department_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "message": {
+                                        "description": "This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.-). Any other characters will result in a validation error.",
+                                        "type": "string",
                                         "example": "این تیکت منه"
                                     },
                                     "files[]": {
@@ -38629,15 +38857,34 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "user": {
+                        "type": "string",
+                        "example": "username"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "example": "بسیار زیاد"
+                    },
+                    "department": {
+                        "type": "string",
+                        "example": "مالی"
+                    },
+                    "dispute_request": {
+                        "type": "string",
+                        "example": "عدم بازگشت پول به حساب کارفرما"
+                    },
+                    "ticket_type": {
+                        "type": "string",
+                        "example": "مالی"
+                    },
                     "subject": {
                         "type": "string",
                         "example": "عدم بازگشت پول به حساب کارفرما"
                     },
-                    "deleted_at": {
-                        "description": "delete datetime",
+                    "status": {
+                        "description": "status: 1 => open, 2 => answered, 3 => closed",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
+                        "example": "باز"
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -38656,66 +38903,11 @@
                         "type": "string",
                         "example": "مالی"
                     },
-                    "status_value": {
-                        "description": "status: 1 => open, 2 => answered, 3 => closed",
-                        "type": "string",
-                        "example": ""
-                    },
-                    "user": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "راضیه"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "آذری آستانه"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "priority": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "بسیار زیاد"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "department": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "پشتیبانی"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "disputeRequest": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "reason": {
-                                "type": "string",
-                                "example": "عدم تحویل به موقع فریلنسر"
-                            }
-                        },
-                        "type": "object"
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TicketMessage"
+                        }
                     }
                 },
                 "type": "object"
@@ -38762,15 +38954,78 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "author": {
+                        "type": "string",
+                        "example": "useraname"
+                    },
+                    "author_role": {
+                        "type": "string",
+                        "example": "کارفرما"
+                    },
                     "message": {
                         "type": "string",
                         "example": "هنوزم پول به حسابم واریز نشده"
                     },
-                    "deleted_at": {
-                        "description": "delete datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
+                    "parent": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "هنوزم پول به حسابم واریز نشده"
+                            },
+                            "files": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "file_name": {
+                                            "type": "string",
+                                            "example": "fileName"
+                                        },
+                                        "file_path": {
+                                            "type": "string",
+                                            "example": "path/file.extension"
+                                        },
+                                        "mime_type": {
+                                            "type": "string",
+                                            "example": "image/jpg"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "file_name": {
+                                    "type": "string",
+                                    "example": "fileName"
+                                },
+                                "file_path": {
+                                    "type": "string",
+                                    "example": "path/file.extension"
+                                },
+                                "mime_type": {
+                                    "type": "string",
+                                    "example": "image/jpg"
+                                }
+                            },
+                            "type": "object"
+                        }
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -38783,54 +39038,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "author_type_value": {
-                        "description": "type: 1 => employer, 2 => freelancer, 3 => admin",
-                        "type": "string",
-                        "example": "ادمین"
-                    },
-                    "ticket": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "subject": {
-                                "type": "string",
-                                "example": "عدم بازگشت پول به حساب کارفرما"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "author": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "راضیه"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "آذری آستانه"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "parent": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "message": {
-                                "type": "string",
-                                "example": "هنوزم پول به حسابم واریز نشده"
-                            }
-                        },
-                        "type": "object"
                     }
                 },
                 "type": "object"

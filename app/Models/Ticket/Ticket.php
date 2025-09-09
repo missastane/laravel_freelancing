@@ -14,42 +14,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     schema="Ticket",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="user", type="string", example="username"),
+ *     @OA\Property(property="priority", type="string", example="بسیار زیاد"),
+ *     @OA\Property(property="department", type="string", example="مالی"),
+ *     @OA\Property(property="dispute_request", type="string", example="عدم بازگشت پول به حساب کارفرما"),
+ *     @OA\Property(property="ticket_type", type="string", example="مالی"),
  *     @OA\Property(property="subject", type="string", example="عدم بازگشت پول به حساب کارفرما"),
- *     @OA\Property(property="deleted_at", type="string", format="date-time", description="delete datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="status", type="string",description="status: 1 => open, 2 => answered, 3 => closed", example="باز"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="ticket_type_value", type="string",description="type: 1 => support, 2 => report , 3 => financial, 4 => complain", example="مالی"),
- *     @OA\Property(property="status_value", type="string",description="status: 1 => open, 2 => answered, 3 => closed", example=""),
- *     @OA\Property(
- *          property="user",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="راضیه"),
- *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
+ *     @OA\Property(property="messages", type="array",
+ *                  @OA\Items(ref="#/components/schemas/TicketMessage"),
  *               )
- *            ),
- *    @OA\Property(
- *          property="priority",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="name", type="string", example="بسیار زیاد"),
- *               )
- *            ),
- *   @OA\Property(
- *          property="department",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="name", type="string", example="پشتیبانی"),
- *               )
- *            ),
- *   @OA\Property(
- *          property="disputeRequest",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="reason", type="string", example="عدم تحویل به موقع فریلنسر"),
- *               )
- *            ),
- * 
  * )
  */
 class Ticket extends Model

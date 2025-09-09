@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('ticket_id')->constrained('tickets')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('author_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('message');
-            $table->foreignId('parent_id')->constrained('ticket_messages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('ticket_messages')->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('author_type')->default(1)->comment('1 => employer, 2 => freelancer, 3 => admin');
             $table->softDeletes();
             $table->timestamps();
