@@ -5,6 +5,16 @@ namespace App\Models\Market;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="UserSubscription",
+ *     type="object",
+ *     @OA\Property(property="start_date", type="string", format="date-time", description="start datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="end_date", type="string", format="date-time", description="end datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="status", type="string", example="فعال"),
+ *     @OA\Property(property="active_plan", type="object", ref="#/components/schemas/Subscription"),
+ * )
+ */
 class UserSubscription extends Model
 {
     protected $fillable = ['user_id', 'subscription_id', 'start_date', 'end_date', 'status'];

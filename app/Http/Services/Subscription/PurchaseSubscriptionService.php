@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Services\Subscription;
+use App\Exceptions\Market\NotEnoughBalanceException;
+use App\Http\Resources\Market\SubscriptionUserDetailResource;
 use App\Models\Market\Subscription;
 use App\Models\Market\UserSubscription;
 use App\Models\Payment\Wallet;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class PurchaseSubscriptionService
 {
     public function __construct(
-        protected SubscriptionRepositoryInterface $subscriptionRepository,
+        // protected SubscriptionRepositoryInterface $subscriptionRepository,
         protected WalletRepositoryInterface $walletRepository,
         protected WalletTransactionRepositoryInterface $walletTransactionRepository,
         protected UserSubscriptionRepositoryInterface $userSubscriptionRepository
@@ -24,12 +26,12 @@ class PurchaseSubscriptionService
     public function checkWalletBalance(Subscription $subscription)
     {
         if (!$this->walletRepository->hasEnoughBalance(auth()->id(), $subscription->amount)) {
-            throw new Exception("موجودی کیف پول شما برای انجام این عملیات کافی نیست", 403);
+            throw new NotEnoughBalanceException();
         }
     }
     public function renewSubscription(UserSubscription $oldSubscription, Subscription $subscription)
     {
-        $this->subscriptionRepository->update($oldSubscription, [
+        $this->userSubscriptionRepository->update($oldSubscription, [
             'end_date' => $oldSubscription->end_date->addDays($subscription->duration_days)
         ]);
         $message = "طرح {$subscription->name} تمدید شد و تا تاریخ {$oldSubscription->end_date} معتبر است";
@@ -104,6 +106,7 @@ class PurchaseSubscriptionService
                 ];
             }
             $this->updateWallet($this->walletRepository->findByUserId($user->id), $subscription, $newSubscription);
+            $result['data'] = new SubscriptionUserDetailResource($result['data']->load('subscription'));
             return $result;
         });
     }

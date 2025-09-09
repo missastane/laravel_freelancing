@@ -32581,11 +32581,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -32599,17 +32600,120 @@
                                                         "$ref": "#/components/schemas/Subscription"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -32692,7 +32796,7 @@
                                             "example": null
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Subscription"
+                                            "$ref": "#/components/schemas/UserSubscription"
                                         }
                                     },
                                     "type": "object"
@@ -32748,14 +32852,14 @@
                 ]
             }
         },
-        "/api/subscription/puchase/{subscription}": {
+        "/api/subscription/purchase/{subscription}": {
             "post": {
                 "tags": [
                     "Customer-Subscription"
                 ],
                 "summary": "Puchase a Subscription by customers",
                 "description": "In this method customers Puchase a Subscription",
-                "operationId": "14b811203ff388ce8c8636b259e1921a",
+                "operationId": "d1531462948e6dcb20c5767c86bfeabe",
                 "parameters": [
                     {
                         "name": "subscription",
@@ -32784,8 +32888,7 @@
                                             "example": "پلن با موفقیت خریداری شد"
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "nullable": true
+                                            "$ref": "#/components/schemas/UserSubscription"
                                         }
                                     },
                                     "type": "object"
@@ -37945,13 +38048,6 @@
                         "type": "integer",
                         "example": 30
                     },
-                    "target_type": {
-                        "description": "1 => project, 2 => proposal",
-                        "enum": [
-                            1,
-                            2
-                        ]
-                    },
                     "max_target_per_month": {
                         "type": "integer",
                         "example": 20
@@ -37972,12 +38068,6 @@
                         "type": "integer",
                         "example": 20
                     },
-                    "deleted_at": {
-                        "description": "delete datetime",
-                        "type": "string",
-                        "format": "datetime",
-                        "example": "2025-02-22T14:30:00Z"
-                    },
                     "created_at": {
                         "description": "creation datetime",
                         "type": "string",
@@ -37989,6 +38079,12 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
+                    },
+                    "features": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubscriptionFeature"
+                        }
                     }
                 },
                 "type": "object"
@@ -38015,19 +38111,7 @@
                         "type": "string",
                         "example": "عدد"
                     },
-                    "created_at": {
-                        "description": "creation datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "updated_at": {
-                        "description": "update datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "is_limited_value": {
+                    "is_limited": {
                         "description": "1 => yes, 2 => no",
                         "type": "string",
                         "example": "بله"
@@ -38104,6 +38188,30 @@
                             }
                         },
                         "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserSubscription": {
+                "properties": {
+                    "start_date": {
+                        "description": "start datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "end_date": {
+                        "description": "end datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "فعال"
+                    },
+                    "active_plan": {
+                        "$ref": "#/components/schemas/Subscription"
                     }
                 },
                 "type": "object"

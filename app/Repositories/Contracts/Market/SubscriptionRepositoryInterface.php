@@ -9,8 +9,8 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface SubscriptionRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getAllSubscriptions(): Paginator;
-    public function getAllowedSubscriptionPlans(): Paginator;
+    public function getAllSubscriptions();
+    public function getAllowedSubscriptionPlans();
     public function userActivePlan();
     public function firstOrCreate(array $attributes, array $values);
     public function showSubscription(Subscription $subscription);

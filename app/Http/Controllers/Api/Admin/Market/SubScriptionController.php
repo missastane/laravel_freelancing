@@ -102,7 +102,7 @@ class SubScriptionController extends Controller
      */
     public function index()
     {
-        return $this->success($this->subscriptionService->getAllSubscriptions());
+        return $this->subscriptionService->getAllSubscriptions();
     }
 
     /**

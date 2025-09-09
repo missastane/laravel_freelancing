@@ -21,12 +21,12 @@ class SubscriptionService
         protected SubscriptionFeatureRepositoryInterface $subscriptionFeatureRepository
     ) {
     }
-    public function getAllSubscriptions(): Paginator
+    public function getAllSubscriptions()
     {
         $subscriptions = $this->subscriptionRepository->getAllSubscriptions();
         return $subscriptions;
     }
-    public function getAllowedSubscriptionPlans(): Paginator
+    public function getAllowedSubscriptionPlans()
     {
         return $this->subscriptionRepository->getAllowedSubscriptionPlans();
     }

@@ -2,6 +2,9 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\SubscriptionUserDetailResource;
+use App\Http\Resources\Market\SubscriptionWithFeatureResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Subscription;
 use App\Models\Market\SubscriptionFeature;
 use App\Repositories\Contracts\Market\SubscriptionRepositoryInterface;
@@ -17,37 +20,30 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
         parent::__construct($model);
     }
 
-    public function getAllSubscriptions(): Paginator
+    public function getAllSubscriptions()
     {
         $subscriptions = $this->all();
-        return $subscriptions;
+        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class,null);
     }
 
-    public function getAllowedSubscriptionPlans(): Paginator
+    public function getAllowedSubscriptionPlans()
     {
         $user = auth()->user();
-        $query = match ($user->active_role) {
-            'freelancer' => $this->model->where('user_type', 2),
-            'employer' => $this->model->where('user_type', 1)
-        };
-        $subscriptions = $query->with('subscriptionFeatures')
+        $subscriptions = $this->model->with('features')
             ->orderBy('amount', 'desc')->paginate(5);
-        return $subscriptions;
+        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class,null);
     }
 
     public function showSubscription(Subscription $subscription)
     {
         $result = $this->showWithRelations($subscription, ['features']);
-        $result->features->makeHidden('is_limited')->append('is_limited_value');
-        return $result;
+        return new SubscriptionWithFeatureResource($result);
     }
     public function userActivePlan()
     {
         $user = auth()->user();
-        $role = '';
-        $subscription = $user->activeSubscription($role);
-        $role = $user->active_role === 'freelancer' ? 'freelancer' : 'employer';
-        return $subscription;
+        $subscription = $user->activeSubscription();
+        return new SubscriptionUserDetailResource($subscription->load('subscription'));
     }
 
     public function firstOrCreate(array $attributes, array $values)

@@ -362,7 +362,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/show/{ticket}', [CustomerTicketController::class, 'show']);
         Route::post('/reply/{ticketMessage}', [CustomerTicketController::class, 'replyTicketMessage']);
     });
-    Route::prefix('subscription')->group(function () {
+    Route::prefix('subscription')->middleware('freelancer')->group(function () {
         Route::get('/', [CustomerSubscriptionController::class, 'index']);
         Route::get('/active-plan', [CustomerSubscriptionController::class, 'activePlan']);
         Route::post('/purchase/{subscription}', [CustomerSubscriptionController::class, 'purchase']);

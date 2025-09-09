@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\Exceptions\Market\NotEnoughBalanceException;
 use App\Http\Controllers\Controller;
 use App\Http\Services\Subscription\SubscriptionService;
 use App\Models\Market\Subscription;
@@ -28,17 +29,56 @@ class SubscriptionController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Subscriptions that auth user can buy them",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
+     *      @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
      *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
-     *                     @OA\Items(ref="#/components/schemas/Subscription")
+     *                     @OA\Items(
+     *                      ref="#/components/schemas/Subscription"
+     *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -62,7 +102,7 @@ class SubscriptionController extends Controller
      */
     public function index()
     {
-        return $this->success($this->subscriptionService->getAllowedSubscriptionPlans());
+        return $this->subscriptionService->getAllowedSubscriptionPlans();
     }
 
     /**
@@ -78,7 +118,7 @@ class SubscriptionController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example=null),
-     *             @OA\Property(property="data", ref="#/components/schemas/Subscription")
+     *             @OA\Property(property="data", ref="#/components/schemas/UserSubscription")
      *         )
      *     ),
      *     @OA\Response(
@@ -106,7 +146,7 @@ class SubscriptionController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/subscription/puchase/{subscription}",
+     *     path="/api/subscription/purchase/{subscription}",
      *     summary="Puchase a Subscription by customers",
      *     description="In this method customers Puchase a Subscription",
      *     tags={"Customer-Subscription"},
@@ -124,7 +164,7 @@ class SubscriptionController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="bool", example="true"),
      *             @OA\Property(property="message", type="string", example="پلن با موفقیت خریداری شد"),
-     *             @OA\Property(property="data", type="object", nullable=true)
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/UserSubscription")
      *         )
      *     ),
      *  @OA\Response(
@@ -165,8 +205,10 @@ class SubscriptionController extends Controller
         try {
             $result = $this->subscriptionService->purchaseSubscription($subscription);
             return $this->success($result['data'], $result['message'], $result['code']);
-        } catch (Exception $e) {
-            return $this->error();
+        } catch (NotEnoughBalanceException $e) {
+            throw $e;
+        }catch (Exception $e) {
+            return $this->error($e->getMessage());
         }
     }
 

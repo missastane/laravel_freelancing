@@ -14,9 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *     @OA\Property(property="feature_persian_key", type="string", example="پیشنهاد اختصاصی"),
  *     @OA\Property(property="feature_value", type="string", example="10"),
  *     @OA\Property(property="feature_value_type", type="string", example="عدد"),
- *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="is_limited_value", type="string", description="1 => yes, 2 => no", example="بله")
+ *     @OA\Property(property="is_limited", type="string", description="1 => yes, 2 => no", example="بله")
  * )
  */
 class SubscriptionFeature extends Model
