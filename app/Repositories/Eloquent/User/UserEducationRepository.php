@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\UserEducationResource;
 use App\Models\Market\UserEducation;
 use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -21,17 +23,18 @@ class UserEducationRepository extends BaseRepository implements UserEducationRep
     {
         parent::__construct($model);
     }
-    public function getUserEducations(): Paginator
+    public function getUserEducations()
     {
         $user = auth()->user();
-        $userEducations = $this->model->where('user_id', $user->id)
-            ->orderBy('created_at')->simplePaginate(15);
-        return $userEducations;
+        $userEducations = $this->model->where('user_id', $user->id)->with('province')
+            ->orderBy('created_at')->paginate(15);
+        return new BaseCollection($userEducations, UserEducationResource::class,null);
     }
 
     public function showEducation(UserEducation $userEducation)
     {
-        return $this->showWithRelations($userEducation, ['freelancer:id,first_name,last_name']);
+        $result = $this->showWithRelations($userEducation, ['province']);
+        return new UserEducationResource($result);
     }
 
 }

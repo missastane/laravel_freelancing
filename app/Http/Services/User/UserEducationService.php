@@ -4,7 +4,7 @@ namespace App\Http\Services\User;
 
 use App\Models\Market\UserEducation;
 use App\Repositories\Contracts\Locale\ProvinceRepositoryInterface;
-use App\Repositories\Contracts\Market\UserEducationRepositoryInterface;
+use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
 
 class UserEducationService
@@ -16,7 +16,7 @@ class UserEducationService
     {
     }
 
-    public function getUserEducations(): Paginator
+    public function getUserEducations()
     {
         return $this->userEducationRepository->getUserEducations();
     }

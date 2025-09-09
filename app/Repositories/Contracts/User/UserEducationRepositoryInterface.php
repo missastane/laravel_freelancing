@@ -15,7 +15,7 @@ interface UserEducationRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getUserEducations(): Paginator;
+    public function getUserEducations();
     public function showEducation(UserEducation $userEducation);
 
 }
