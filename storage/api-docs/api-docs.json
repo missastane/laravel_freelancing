@@ -35759,11 +35759,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -35777,17 +35778,120 @@
                                                         "$ref": "#/components/schemas/Portfolio"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -35872,9 +35976,23 @@
                                             "type": "string",
                                             "format": "binary"
                                         }
+                                    },
+                                    "skills[]": {
+                                        "description": "Id of skills to sync with project.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
                                     }
                                 },
                                 "type": "object"
+                            },
+                            "encoding": {
+                                "skills[]": {
+                                    "style": "form",
+                                    "explode": true
+                                }
                             }
                         }
                     }
@@ -36094,13 +36212,13 @@
             }
         },
         "/api/user-portfolio/update/{portfolio}": {
-            "put": {
+            "post": {
                 "tags": [
                     "Customer-Portfolio"
                 ],
                 "summary": "Update an existing Portfolio by freelancer",
                 "description": "In this method freelancers can Update an existing User Portfolio",
-                "operationId": "d028522c898ad6db436e813da5b6e82c",
+                "operationId": "6149bcba221e8d5951ea27453b43cee8",
                 "parameters": [
                     {
                         "name": "portfolio",
@@ -36151,9 +36269,27 @@
                                             "type": "string",
                                             "format": "binary"
                                         }
+                                    },
+                                    "skills[]": {
+                                        "description": "Id of skills to sync with project.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    },
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PUT"
                                     }
                                 },
                                 "type": "object"
+                            },
+                            "encoding": {
+                                "skills[]": {
+                                    "style": "form",
+                                    "explode": true
+                                }
                             }
                         }
                     }
@@ -37967,43 +38103,14 @@
                         "example": "این نمونه ای از پروژه لاراولی است که با لاراول 11 نوشته شده است"
                     },
                     "banner": {
-                        "properties": {
-                            "indexArray": {
-                                "properties": {
-                                    "large": {
-                                        "type": "string",
-                                        "format": "uri",
-                                        "example": "images\\\\market\\\\product\\\\12\\\\2025\\\\02\\\\03\\\\1738570484\\\\1738570484_large.jpg"
-                                    },
-                                    "medium": {
-                                        "type": "string",
-                                        "format": "uri",
-                                        "example": "images\\\\market\\\\product\\\\12\\\\2025\\\\02\\\\03\\\\1738570484\\\\1738570484_medium.jpg"
-                                    },
-                                    "small": {
-                                        "type": "string",
-                                        "format": "uri",
-                                        "example": "images\\\\market\\\\product\\\\12\\\\2025\\\\02\\\\03\\\\1738570484\\\\1738570484_small.jpg"
-                                    }
-                                },
-                                "type": "object"
-                            },
-                            "directory": {
-                                "type": "string",
-                                "example": "images\\\\market\\\\product\\\\12\\\\2025\\\\02\\\\03\\\\1738570484"
-                            },
-                            "currentImage": {
-                                "type": "string",
-                                "example": "medium"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "deleted_at": {
-                        "description": "delete datetime",
                         "type": "string",
-                        "format": "datetime",
-                        "example": "2025-02-22T14:30:00Z"
+                        "format": "uri",
+                        "example": "path/benner.extension"
+                    },
+                    "status": {
+                        "description": "1 => active in profile, 2 => none active in profile",
+                        "type": "string",
+                        "example": "فعال در پروفایل"
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -38016,24 +38123,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "status": {
-                        "description": "1 => active in profile, 2 => none active in profile",
-                        "type": "string",
-                        "example": "فعال در پروفایل"
-                    },
-                    "freelancer": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "username": {
-                                "type": "string",
-                                "example": "ایمان"
-                            }
-                        },
-                        "type": "object"
                     },
                     "files": {
                         "type": "array",
@@ -38070,10 +38159,6 @@
                                 "persian_title": {
                                     "type": "string",
                                     "example": "اسم فایل"
-                                },
-                                "original_title": {
-                                    "type": "string",
-                                    "example": "englishName"
                                 }
                             },
                             "type": "object"

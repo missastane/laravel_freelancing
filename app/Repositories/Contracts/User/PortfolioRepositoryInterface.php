@@ -15,6 +15,7 @@ interface PortfolioRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getUserPortfolios():Paginator;
+    public function getUserPortfolios();
     public function showPortfolio(Portfolio $portfolio);
+    public function syncSkills(Portfolio $portfolio, array $skills);
 }

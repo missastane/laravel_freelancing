@@ -2,6 +2,7 @@
 
 namespace App\Models\Market;
 
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,26 +14,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="title", type="string", example="نمونه کار لاراول"),
  *     @OA\Property(property="description", type="string", example="این نمونه ای از پروژه لاراولی است که با لاراول 11 نوشته شده است"),
- *     @OA\Property(property="banner",type="object",
- *        @OA\Property(property="indexArray",type="object",
- *           @OA\Property(property="large", type="string", format="uri", example="images\\market\\product\\12\\2025\\02\\03\\1738570484\\1738570484_large.jpg"),
- *           @OA\Property(property="medium", type="string", format="uri", example="images\\market\\product\\12\\2025\\02\\03\\1738570484\\1738570484_medium.jpg"),
- *           @OA\Property(property="small", type="string", format="uri", example="images\\market\\product\\12\\2025\\02\\03\\1738570484\\1738570484_small.jpg")
- *        ),
- *        @OA\Property(property="directory",type="string",example="images\\market\\product\\12\\2025\\02\\03\\1738570484"),
- *        @OA\Property(property="currentImage",type="string",example="medium")
- *      ),
- *     @OA\Property(property="deleted_at", type="string", format="datetime",description="delete datetime", example="2025-02-22T14:30:00Z"),
+ *     @OA\Property(property="banner", type="string", format="uri", example="path/benner.extension"),
+ *     @OA\Property(property="status", type="string", description="1 => active in profile, 2 => none active in profile", example="فعال در پروفایل"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="status", type="string", description="1 => active in profile, 2 => none active in profile", example="فعال در پروفایل"),
- *     @OA\Property(
- *          property="freelancer",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="username", type="string", example="ایمان"),
- *               )
- *            ),
+ *   
  *    @OA\Property(
  *          property="files",
  *          type="array",
@@ -49,7 +35,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *                @OA\Items(  
  *                   @OA\Property(property="id", type="integer", example=3),
  *                   @OA\Property(property="persian_title", type="string", example="اسم فایل"),
- *                   @OA\Property(property="original_title", type="string", example="englishName"),
  *                )
  *     )
  * )
@@ -66,11 +51,15 @@ class Portfolio extends Model
     }
     public function skills()
     {
-        return $this->belongsToMany(Portfolio::class);
+        return $this->belongsToMany(Skill::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function files()
     {
-        return $this->morphMany('App\Models\File', 'fillable');
+        return $this->morphMany('App\Models\Market\File', 'filable');
     }
     public function getStatusValueAttribute()
     {

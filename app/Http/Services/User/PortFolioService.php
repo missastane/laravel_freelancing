@@ -8,7 +8,7 @@ use App\Models\Market\Portfolio;
 use App\Repositories\Contracts\User\PortfolioRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class PortFolioService
+class PortfolioService
 {
     public function __construct(
         protected PortfolioRepositoryInterface $portfolioRepository,
@@ -44,6 +44,7 @@ class PortFolioService
                 "files/portfolios/{$portfolio->id}",
                 "public"
             );
+            $this->portfolioRepository->syncSkills($portfolio,$data['skills']);
             return $portfolio;
         });
     }
@@ -65,6 +66,7 @@ class PortFolioService
                 "files/portfolios/{$portfolio->id}",
                 "public"
             );
+            $this->portfolioRepository->syncSkills($portfolio,$data['skills']);
             return $this->portfolioRepository->update($portfolio, $data);
         });
     }

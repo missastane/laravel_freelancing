@@ -28,8 +28,8 @@ class ProjectRequest extends FormRequest
                 'project_category_id' => 'required|exists:project_categories,id',
                 'duration_time' => 'required|integer',
                 'amount' => 'required|numeric',
-                'files.*' => 'file|mimes:png,jpg,jpeg,gif,pdf,doc,docs,mp4,mkv.avi|max:20480',
-                'files' => 'required|array|min:1',
+                'files.*' => 'nullable|file|mimes:png,jpg,jpeg,gif,pdf,doc,docs,mp4,mkv.avi|max:20480',
+                'files' => 'nullable|array|min:1',
                 'skills' => 'required|array|min:1',
                 'skills.*' => 'required|integer|exists:skills,id'
             ];

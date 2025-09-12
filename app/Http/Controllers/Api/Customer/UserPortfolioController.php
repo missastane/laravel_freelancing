@@ -4,21 +4,16 @@ namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Freelancer\PortfolioRequest;
-use App\Http\Services\File\FileService;
-use App\Http\Services\Image\ImageService;
 use App\Http\Services\User\PortFolioService;
-use App\Models\Market\File;
 use App\Models\Market\Portfolio;
-use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class UserPortfolioController extends Controller
 {
     use ApiResponseTrait;
 
-    public function __construct(protected PortFolioService $portFolioService)
+    public function __construct(protected PortfolioService $portfolioService)
     {
     }
 
@@ -35,18 +30,55 @@ class UserPortfolioController extends Controller
      *         response=200,
      *         description="A list of freelancer's Portfolios",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Portfolio"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -61,7 +93,7 @@ class UserPortfolioController extends Controller
      */
     public function index()
     {
-        return $this->success($this->portFolioService->getUserPortfolios());
+        return $this->portfolioService->getUserPortfolios();
     }
 
     /**
@@ -84,8 +116,17 @@ class UserPortfolioController extends Controller
      *             @OA\Property(property="status", type="integer", enum={1, 2}, description="1 = active in profile, 2 = inactive in profile", example=1),
      *             @OA\Property(property="files[]", type="array", 
      *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."
-     *                )
-     *              )
+     *              ),
+     *             @OA\Property(property="skills[]", description="Id of skills to sync with project.", type="array", 
+     *                  @OA\Items(type="integer",example=2),
+     *               )
+     *              ),
+     *                encoding={
+     *                 "skills[]": {
+     *                     "style": "form",
+     *                     "explode": true
+     *                 }
+     *             }
      *          )
      *     ),
      *     @OA\Response(
@@ -138,7 +179,7 @@ class UserPortfolioController extends Controller
     public function store(PortfolioRequest $request)
     {
         try {
-            $this->portFolioService->storePortfolio($request->all());
+            $this->portfolioService->storePortfolio($request->all());
             return $this->success(null, 'نمونه کار با موفقیت ثبت شد');
         } catch (Exception $e) {
             return $this->error();
@@ -188,11 +229,11 @@ class UserPortfolioController extends Controller
      */
     public function show(Portfolio $portfolio)
     {
-        return $this->success($this->portFolioService->showPortfolio($portfolio));
+        return $this->success($this->portfolioService->showPortfolio($portfolio));
     }
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *     path="/api/user-portfolio/update/{portfolio}",
      *     summary="Update an existing Portfolio by freelancer",
      *     description="In this method freelancers can Update an existing User Portfolio",
@@ -217,9 +258,18 @@ class UserPortfolioController extends Controller
      *             @OA\Property(property="banner", type="string", format="binary"),
      *             @OA\Property(property="status", type="integer", enum={1, 2}, description="1 = active in profile, 2 = inactive in profile", example=1),
      *             @OA\Property(property="files[]", type="array", 
-     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."
-     *                )
-     *              )
+     *                  @OA\Items(type="string", format="binary"), description="Upload a single media file."),
+     *             @OA\Property(property="skills[]", description="Id of skills to sync with project.", type="array", 
+     *                  @OA\Items(type="integer",example=2),
+     *               ),
+     *             @OA\Property(property="_method", type="string", example="PUT")
+     *              ),
+     *                encoding={
+     *                 "skills[]": {
+     *                     "style": "form",
+     *                     "explode": true
+     *                 }
+     *             }
      *          )
      *     ),
      *     @OA\Response(
@@ -272,7 +322,7 @@ class UserPortfolioController extends Controller
     public function update(Portfolio $portfolio, PortfolioRequest $request)
     {
         try {
-            $this->portFolioService->updatePortfolio($portfolio, $request->all());
+            $this->portfolioService->updatePortfolio($portfolio, $request->all());
             return $this->success(null, 'نمونه کار با موفقیت بروزرسانی شد');
         } catch (Exception $e) {
             return $this->error();
@@ -331,7 +381,7 @@ class UserPortfolioController extends Controller
     public function changeStatus(Portfolio $portfolio)
     {
         try {
-            $message = $this->portFolioService->changeStatus($portfolio);
+            $message = $this->portfolioService->changeStatus($portfolio);
             if ($message) {
                 return $this->success(null, $message);
             }
@@ -400,7 +450,7 @@ class UserPortfolioController extends Controller
     public function delete(Portfolio $portfolio)
     {
         try {
-            $this->portFolioService->deletePortfolio($portfolio);
+            $this->portfolioService->deletePortfolio($portfolio);
             return $this->success(null, 'نمونه کار با موفقیت حذف شد');
         } catch (Exception $e) {
             return $this->error();

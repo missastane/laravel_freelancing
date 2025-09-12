@@ -385,12 +385,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/delete/{workExperience}', [UserExperienceController::class, 'delete']);
     });
     Route::prefix('user-portfolio')->group(function () {
-        Route::get('/', [UserExperienceController::class, 'index']);
-        Route::patch('/status/{portfolio}', [UserExperienceController::class, 'changeStatus']);
-        Route::post('/store', [UserExperienceController::class, 'store']);
-        Route::get('/show/{portfolio}', [UserExperienceController::class, 'show']);
-        Route::put('/update/{portfolio}', [UserExperienceController::class, 'update']);
-        Route::delete('/delete/{portfolio}', [UserExperienceController::class, 'delete']);
+        Route::get('/', [UserPortfolioController::class, 'index']);
+        Route::patch('/status/{portfolio}', [UserPortfolioController::class, 'changeStatus']);
+        Route::post('/store', [UserPortfolioController::class, 'store']);
+        Route::get('/show/{portfolio}', [UserPortfolioController::class, 'show']);
+        Route::put('/update/{portfolio}', [UserPortfolioController::class, 'update']);
+        Route::delete('/delete/{portfolio}', [UserPortfolioController::class, 'delete']);
     });
     Route::prefix('user-rating')->group(function () {
         Route::get('/show/{user}', [UserRatingController::class, 'show']);

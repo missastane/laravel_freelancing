@@ -31,6 +31,8 @@ class PortfolioRequest extends FormRequest
                 'status' => 'required|numeric|in:1,2',
                 'files.*' => 'file|mimes:png,jpg,jpeg,gif,pdf,doc,docs,mp4,mkv.avi|max:20480',
                 'files' => 'required|array|min:1',
+                'skills' => 'required|array|min:1',
+                'skills.*' => 'required|integer|exists:skills,id'
             ];
         } else {
             return [
@@ -38,8 +40,10 @@ class PortfolioRequest extends FormRequest
                 'description' => 'required|max:1000|min:5|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،?!? ]+$/u',
                 'banner' => 'image|mimes:png,jpg,jpeg,gif',
                 'status' => 'required|numeric|in:1,2',
-                'files.*' => 'file|mimes:png,jpg,jpeg,gif,pdf,doc,docs,mp4,mkv.avi|max:20480',
-                'files' => 'array|min:1',
+                'files.*' => 'nullable|file|mimes:png,jpg,jpeg,gif,pdf,doc,docs,mp4,mkv.avi|max:20480',
+                'files' => 'nullable|array',
+                'skills' => 'required|array|min:1',
+                'skills.*' => 'required|integer|exists:skills,id'
             ];
         }
     }
@@ -52,6 +56,8 @@ class PortfolioRequest extends FormRequest
             'status' => 'وضعیت',
             'files.*' => 'فایل',
             'files' => 'فایل ها',
+            'skills' => 'مهارت ها',
+            'skill.*' => 'مهارت',
         ];
     }
 }

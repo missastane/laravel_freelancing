@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('skill_portfolio', function (Blueprint $table) {
+        Schema::create('portfolio_skill', function (Blueprint $table) {
             $table->id();
             $table->foreignId('skill_id')->constrained('skills')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('portfolio_id')->constrained('portfolios')->cascadeOnUpdate()->cascadeOnDelete();
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('skill_portfolio');
+        Schema::dropIfExists('portfolio_skill');
     }
 };

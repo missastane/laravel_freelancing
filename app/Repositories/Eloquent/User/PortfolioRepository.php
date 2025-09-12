@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\PortfolioResource;
 use App\Models\Market\Portfolio;
 use App\Repositories\Contracts\User\PortfolioRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -21,15 +23,21 @@ class PortfolioRepository extends BaseRepository implements PortfolioRepositoryI
     {
         parent::__construct($model);
     }
-    public function getUserPortfolios(): Paginator
+    public function getUserPortfolios()
     {
         $portfolios = $this->model->where('user_id', auth()->id())
-            ->with('files', 'freelancer:id,username')
-            ->orderBy('created_at', 'desc')->simplePaginate(15);
-            return $portfolios;
+            ->with('files', 'skills')
+            ->orderBy('created_at', 'desc')->paginate(15);
+        return new BaseCollection($portfolios, PortfolioResource::class, null);
     }
     public function showPortfolio(Portfolio $portfolio)
     {
-        return $this->showWithRelations($portfolio,['files', 'freelancer:id,username']);
+        $result = $this->showWithRelations($portfolio, ['files', 'skills']);
+        return new PortfolioResource($result);
+    }
+
+    public function syncSkills(Portfolio $portfolio, array $skills)
+    {
+        return $portfolio->skills()->sync($skills);
     }
 }
