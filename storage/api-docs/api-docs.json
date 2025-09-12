@@ -38856,6 +38856,18 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "owner_first_name": {
+                        "type": "string",
+                        "example": "ایمان"
+                    },
+                    "owner_last_name": {
+                        "type": "string",
+                        "example": "مدائنی"
+                    },
+                    "owner_national_code": {
+                        "type": "string",
+                        "example": "2731234568"
+                    },
                     "balance": {
                         "type": "integer",
                         "example": 300000
@@ -38863,6 +38875,10 @@
                     "locked_balance": {
                         "type": "integer",
                         "example": 300000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "ریال"
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -38875,27 +38891,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "currency_value": {
-                        "type": "string",
-                        "example": "ریال"
-                    },
-                    "user": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "راضیه"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "آذری آستانه"
-                            }
-                        },
-                        "type": "object"
                     }
                 },
                 "type": "object"

@@ -35,6 +35,7 @@ use App\Repositories\Contracts\User\NotificationRepositoryInterface;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\PortfolioRepositoryInterface;
+use App\Repositories\Contracts\User\RatingRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -72,6 +73,7 @@ use App\Repositories\Eloquent\User\NotificationRepository;
 use App\Repositories\Eloquent\User\OTPRepository;
 use App\Repositories\Eloquent\User\PermissionRepository;
 use App\Repositories\Eloquent\User\PortfolioRepository;
+use App\Repositories\Eloquent\User\RatingRepository;
 use App\Repositories\Eloquent\User\RoleRepository;
 use App\Repositories\Eloquent\User\UserEducationRepository;
 use App\Repositories\Eloquent\User\UserRepository;
@@ -120,6 +122,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
         $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
         $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
+        $this->app->bind(RatingRepositoryInterface::class, RatingRepository::class);
         $this->app->bind(FeatureTypeRepositoryInterface::class, FeatureTypeRepository::class);
     }
 

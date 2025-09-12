@@ -166,6 +166,7 @@ class ProposalService
         $inputs['favoritable_id'] = $proposal->id;
         return $this->favoriteService->addToFavorite($inputs);
     }
+    
     public function removeFavorite(Proposal $proposal)
     {
         return $this->favoriteService->removeFavorite($proposal);

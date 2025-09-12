@@ -12,7 +12,7 @@ interface WalletRepositoryInterface extends
     ShowableRepositoryInterface,
     UpdatableRepositoryInterface
 {
-    public function findByUserId($id): Wallet;
+    public function findByUserId($id);
     public function hasEnoughBalance(int $userId, int $amount): bool;
     public function increamentBalance(Wallet $wallet, int $amount): int;
     public function decreamentBalance(Wallet $wallet, int $amount): int;

@@ -272,8 +272,8 @@ class ProposalController extends Controller
      */
     public function addToFavorite(Proposal $proposal)
     {
-        if(Gate::denies('favorite',$proposal)){
-            return $this->error('شما مجاز به انجام این عملیات نیستید',403);
+        if (Gate::denies('favorite', $proposal)) {
+            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
         }
         try {
             $this->proposalService->addProposalToFavorite($proposal);

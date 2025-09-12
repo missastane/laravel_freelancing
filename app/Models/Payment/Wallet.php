@@ -12,20 +12,14 @@ use Illuminate\Database\Eloquent\Model;
  *     schema="Wallet",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="owner_first_name", type="string", example="ایمان"),
+ *     @OA\Property(property="owner_last_name", type="string", example="مدائنی"),
+ *     @OA\Property(property="owner_national_code", type="string", example="2731234568"),
  *     @OA\Property(property="balance", type="integer", example=300000),
  *     @OA\Property(property="locked_balance", type="integer", example=300000),
+ *     @OA\Property(property="currency", type="string", example="ریال"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="currency_value", type="string", example="ریال"),
- *     @OA\Property(
- *          property="user",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="راضیه"),
- *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
- *               )
- *            ),
- * 
  * )
  */
 class Wallet extends Model

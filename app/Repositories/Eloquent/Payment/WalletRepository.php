@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Payment;
 
+use App\Http\Resources\Payment\WalletResource;
 use App\Models\Payment\Wallet;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -19,10 +20,10 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
         parent::__construct($model);
     }
 
-    public function findByUserId($id): Wallet
+    public function findByUserId($id)
     {
         $wallet = Wallet::where('user_id', $id)->first();
-        return $wallet;
+        return new WalletResource($wallet);
     }
 
     public function hasEnoughBalance(int $userId, int $amount): bool

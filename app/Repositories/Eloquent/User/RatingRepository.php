@@ -18,9 +18,8 @@ class RatingRepository extends BaseRepository implements RatingRepositoryInterfa
 
     public function getContextRates(string $context, int $contextId): Paginator
     {
-        $rates = $this->model->where(['ratable_type', 'ratable_id'], [$context, $contextId])
-            ->makeHidden(['ratable_type', 'ratable_id'])
-            ->simplePaginate(15);
+        $rates = $this->model->where(['ratable_type' => $context, 'ratable_id' => $contextId])
+            ->paginate(15);
         return $rates;
     }
     public function isAlreadyRated(string $context, int $contextId, ?int $orderId = null): bool
