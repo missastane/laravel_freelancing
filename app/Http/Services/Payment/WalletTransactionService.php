@@ -14,16 +14,16 @@ class WalletTransactionService
     ) {
     }
 
-    public function getAllTransactions(array $data): Paginator
+    public function getAllTransactions(string|null $type)
     {
-        return $this->walletTransactionRepository->getAllTransactions($data);
+        return $this->walletTransactionRepository->getAllTransactions($type);
     }
-    public function getUserWalletTransactions(?User $user, array $data): Paginator
+    public function getUserWalletTransactions(?User $user, string|null $type)
     {
-        return $this->walletTransactionRepository->getUserWalletTransactions($user, $data);
+        return $this->walletTransactionRepository->getUserWalletTransactions($user, $type);
     }
 
-    public function showTransaction(WalletTransaction $walletTransaction): WalletTransaction
+    public function showTransaction(WalletTransaction $walletTransaction)
     {
         return $this->walletTransactionRepository->showTransaction($walletTransaction);
     }

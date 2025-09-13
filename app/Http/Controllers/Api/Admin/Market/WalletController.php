@@ -16,7 +16,7 @@ class WalletController extends Controller
     }
     /**
      * @OA\Get(
-     *     path="/api/admin/wallet",
+     *     path="/api/admin/market/wallet",
      *     summary="Get details of a auth admin's Wallet Dtails",
      *     description="Returns the auth admin's `Wallet` details",
      *     tags={"Wallet"},

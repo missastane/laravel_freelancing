@@ -4,6 +4,7 @@ namespace App\Models\Payment;
 
 use App\Models\Market\OrderItem;
 use App\Models\Market\Subscription;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,13 +14,12 @@ use Illuminate\Database\Eloquent\Model;
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="amount", type="integer", example=300000),
+ *     @OA\Property(property="type", type="string", description="related type:it maybe one of these: Payment::class, OrderItem::class, Subscription::class", example="پلن اشتراک جدید"),
  *     @OA\Property(property="description", type="string", example="آزادسازی پول بلوکه شده به کیف پول فریلنسر"),
- *     @OA\Property(property="related_id", type="integer", example=12),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="transaction_type_value", type="string", description="transaction type : it returns values like this: 1 => increase, 2 => decrease, 3 => hold, 4 => release, 5 => refund, 6 => commision", example="شارژ کیف پول"),
- *     @OA\Property(property="related_type_value", type="string", description="related type:it maybe one of these: Payment::class, OrderItem::class, Subscription::class", example="پلن اشتراک جدید"),
- * 
+ *     @OA\Property(property="wallet_balance", type="integer", example=300000),
+ *     @OA\Property(property="wallet_locked_balance", type="integer", example=300000),
+ *     @OA\Property(property="wallet_currency", type="string", example="ریال"),
  * )
  */
 class WalletTransaction extends Model
@@ -29,6 +29,11 @@ class WalletTransaction extends Model
     public function wallet()
     {
         return $this->belongsTo(Wallet::class, 'wallet_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOneThrough(User::class,Wallet::class,'id','id','wallet_id','user_id');
     }
 
     public function getTransactionTypeValueAttribute()
@@ -55,7 +60,7 @@ class WalletTransaction extends Model
         }
         return $result;
     }
-    public function getRelatedTypeAttribute()
+    public function getRelatedTypeValueAttribute()
     {
         switch ($this->related_type) {
             case 'App\\Models\\Payment\\Payment':
@@ -67,6 +72,8 @@ class WalletTransaction extends Model
             case 'App\\Models\\Market\\Subscription':
                 $result = 'پلن اشتراک جدید';
                 break;
+            default:
+                $result = 'نامشخص';
         }
         return $result;
     }
@@ -82,9 +89,8 @@ class WalletTransaction extends Model
             'refund' => 5,
             'commission' => 6
         ];
-
         // if the type is valid filters query
-        if (isset($transactionTypes[$type])) {
+        if ($type && isset($transactionTypes[$type])) {
             return $query->where('transaction_type', $transactionTypes[$type]);
         }
         // return all the payments

@@ -13,7 +13,7 @@ interface WalletTransactionRepositoryInterface extends
     CreatableRepositoryInterface,
     ShowableRepositoryInterface
 {
-    public function getAllTransactions(array $data): Paginator;
-    public function getUserWalletTransactions(?User $user = null, array $data): Paginator;
-    public function showTransaction(WalletTransaction $walletTransaction): WalletTransaction;
+    public function getAllTransactions(?string $type);
+    public function getUserWalletTransactions(?User $user = null, ?string $type);
+    public function showTransaction(WalletTransaction $walletTransaction);
 }

@@ -3,6 +3,11 @@
 namespace App\Repositories\Eloquent\Payment;
 ;
 
+use App\Http\Resources\Payment\TransactionResource;
+use App\Http\Resources\Payment\TransactionUserResource;
+use App\Http\Resources\Payment\TransactionWalletResource;
+use App\Http\Resources\Payment\WalletResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Payment\WalletTransaction;
 use App\Models\User\User;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
@@ -20,26 +25,32 @@ class WalletTransactionRepository extends BaseRepository implements WalletTransa
         parent::__construct($model);
     }
 
-    public function getAllTransactions(array $data): Paginator
+    public function getAllTransactions(?string $type)
     {
-        $transactions = WalletTransaction::filterByType($data)
-            ->orderBy('created_at', 'desc')
-            ->with('user:id,first_name,last_name,national_code')->simplePaginate(15);
-        return $transactions;
+        $transactions = $this->model->filterByType($type)
+            ->with('wallet')
+            ->latest()
+            ->paginate(15);
+        return new BaseCollection($transactions, TransactionResource::class, null);
     }
 
-    public function getUserWalletTransactions(?User $user = null, array $data): Paginator
+    public function getUserWalletTransactions(?User $user = null, ?string $type)
     {
-        $user = $user ? $user : auth()->user();
-        $transactions = WalletTransaction::where('user_id', $user->id)
-            ->with('user:id,first_name,last_name,national_code')
-            ->orderBy('created_at', 'desc')->simplePaginate(15);
-        return $transactions;
+        $user = $user ?? auth()->user();
+
+        $transactions = $this->model
+            ->where('wallet_id', $user->wallet->id)
+            ->filterByType($type)
+            ->with('wallet')
+            ->latest()
+            ->paginate(15);
+        return new BaseCollection($transactions, TransactionResource::class, null);
     }
+
 
     public function showTransaction(WalletTransaction $walletTransaction): WalletTransaction
     {
-        return $this->showWithRelations($walletTransaction,['user:id,username']);
+        return $this->showWithRelations($walletTransaction, ['user:id,username']);
     }
 
 

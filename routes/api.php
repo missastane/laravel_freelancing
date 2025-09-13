@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\Content\CommentController;
 use App\Http\Controllers\Api\Admin\Market\FeatureTypeController;
+use App\Http\Controllers\Api\Admin\Market\WalletController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketPriorityController;
 use App\Http\Controllers\Api\Customer\CommentController as CustomerCommentController;
 use App\Http\Controllers\API\Admin\Content\PostCategoryController;
@@ -162,7 +163,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::delete('/delete/{subscription}', [SubScriptionController::class, 'delete']);
         });
         Route::prefix('wallet')->group(function () {
-            Route::get('/', [WalletTransactionController::class, 'showWallet']);
+            Route::get('/', [WalletController::class, 'showWallet']);
         });
         Route::prefix('wallet-transaction')->group(function () {
             Route::get('/', [WalletTransactionController::class, 'index']);
@@ -372,25 +373,31 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('user-education')->group(function () {
         Route::get('/', [UserEducationController::class, 'index']);
         Route::get('/options', [UserEducationController::class, 'options']);
-        Route::post('/store', [UserEducationController::class, 'store']);
         Route::get('/show/{userEducation}', [UserEducationController::class, 'show']);
-        Route::put('/update/{userEducation}', [UserEducationController::class, 'update']);
-        Route::delete('/delete/{userEducation}', [UserEducationController::class, 'delete']);
+        Route::middleware('freelancer')->group(function () {
+            Route::post('/store', [UserEducationController::class, 'store']);
+            Route::put('/update/{userEducation}', [UserEducationController::class, 'update']);
+            Route::delete('/delete/{userEducation}', [UserEducationController::class, 'delete']);
+        });
     });
     Route::prefix('user-experience')->group(function () {
         Route::get('/', [UserExperienceController::class, 'index']);
-        Route::post('/store', [UserExperienceController::class, 'store']);
         Route::get('/show/{workExperience}', [UserExperienceController::class, 'show']);
-        Route::put('/update/{workExperience}', [UserExperienceController::class, 'update']);
-        Route::delete('/delete/{workExperience}', [UserExperienceController::class, 'delete']);
+        Route::middleware('freelancer')->group(function () {
+            Route::post('/store', [UserExperienceController::class, 'store']);
+            Route::put('/update/{workExperience}', [UserExperienceController::class, 'update']);
+            Route::delete('/delete/{workExperience}', [UserExperienceController::class, 'delete']);
+        });
     });
     Route::prefix('user-portfolio')->group(function () {
         Route::get('/', [UserPortfolioController::class, 'index']);
-        Route::patch('/status/{portfolio}', [UserPortfolioController::class, 'changeStatus']);
-        Route::post('/store', [UserPortfolioController::class, 'store']);
         Route::get('/show/{portfolio}', [UserPortfolioController::class, 'show']);
-        Route::put('/update/{portfolio}', [UserPortfolioController::class, 'update']);
-        Route::delete('/delete/{portfolio}', [UserPortfolioController::class, 'delete']);
+        Route::middleware('freelancer')->group(function () {
+            Route::post('/store', [UserPortfolioController::class, 'store']);
+            Route::patch('/status/{portfolio}', [UserPortfolioController::class, 'changeStatus']);
+            Route::put('/update/{portfolio}', [UserPortfolioController::class, 'update']);
+            Route::delete('/delete/{portfolio}', [UserPortfolioController::class, 'delete']);
+        });
     });
     Route::prefix('user-rating')->group(function () {
         Route::get('/show/{user}', [UserRatingController::class, 'show']);
