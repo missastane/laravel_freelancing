@@ -27535,8 +27535,7 @@
                                             "example": "پیام با موفقیت پاسخ داده شد"
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "nullable": true
+                                            "$ref": "#/components/schemas/Message"
                                         }
                                     },
                                     "type": "object"
@@ -38909,11 +38908,42 @@
                 },
                 "type": "object"
             },
+            "Conversation": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "employer": {
+                        "type": "string",
+                        "example": "ali001"
+                    },
+                    "freelancer": {
+                        "type": "string",
+                        "example": "ali006"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "مکالمه آزاد"
+                    },
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "Message": {
                 "properties": {
                     "id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "sender": {
+                        "type": "string",
+                        "example": "ali001"
                     },
                     "message": {
                         "type": "string",
@@ -38925,121 +38955,28 @@
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
                     },
-                    "message_context": {
-                        "type": "string",
-                        "example": "App\\\\Models\\\\Market\\\\Proposal"
-                    },
-                    "message_context_id": {
-                        "type": "integer",
-                        "example": 8
-                    },
-                    "deleted_at": {
-                        "description": "deletion datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "created_at": {
-                        "description": "creation datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "updated_at": {
-                        "description": "update datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "message_type_value": {
-                        "description": "1 => text, 2 => multimedia, 3 => mixed",
-                        "type": "string",
-                        "example": "مالتی مدیا"
-                    },
-                    "conversation": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "employer": {
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "example": 3
-                                    },
-                                    "username": {
-                                        "type": "string",
-                                        "example": "ali001"
-                                    }
-                                },
-                                "type": "object"
-                            },
-                            "freelancer": {
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "example": 3
-                                    },
-                                    "username": {
-                                        "type": "string",
-                                        "example": "reza031"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "sender": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "username": {
-                                "type": "string",
-                                "example": "ali001"
-                            }
-                        },
-                        "type": "object"
-                    },
                     "parent": {
                         "properties": {
                             "id": {
                                 "type": "integer",
-                                "example": 3
+                                "example": 1
+                            },
+                            "sender": {
+                                "type": "string",
+                                "example": "ali001"
                             },
                             "message": {
                                 "type": "string",
-                                "example": "ali001"
+                                "example": "چه نوع ویرایشی مد نظرتون هست؟"
+                            },
+                            "sent_date": {
+                                "description": "sent datetime",
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-02-22T10:00:00Z"
                             }
                         },
                         "type": "object"
-                    },
-                    "files": {
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "example": 3
-                                },
-                                "file_name": {
-                                    "type": "string",
-                                    "example": "fileName"
-                                },
-                                "file_path": {
-                                    "type": "string",
-                                    "example": "2356489"
-                                },
-                                "mime_type": {
-                                    "type": "string",
-                                    "example": "image/jpg"
-                                }
-                            },
-                            "type": "object"
-                        }
                     }
                 },
                 "type": "object"

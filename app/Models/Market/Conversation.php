@@ -6,6 +6,19 @@ use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="Conversation",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="employer", type="string", example="ali001"),
+ *     @OA\Property(property="freelancer", type="string", example="ali006"),
+ *     @OA\Property(property="status", type="string", example="مکالمه آزاد"),
+ *     @OA\Property(property="messages", type="array",
+ *        @OA\Items(ref="#/components/schemas/Message"),
+ *      )
+ * )
+ */
 class Conversation extends Model
 {
     use HasFactory;

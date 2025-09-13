@@ -172,8 +172,6 @@ class MessageController extends Controller
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {
-            // \Log::info($request->all());
-            // \Log::info($conversation);
             $newMessage = $this->chatService->sendMessage($conversation, $request->all());
             return $this->success($newMessage, 'پیام با موفقیت ارسال شد', 201);
         } catch (Exception $e) {
@@ -214,7 +212,7 @@ class MessageController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="bool", example="true"),
      *             @OA\Property(property="message", type="string", example="پیام با موفقیت پاسخ داده شد"),
-     *             @OA\Property(property="data", type="object", nullable=true)
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Message")
      *         )
      *     ),
      *  @OA\Response(
