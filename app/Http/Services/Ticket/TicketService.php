@@ -2,7 +2,9 @@
 
 namespace App\Http\Services\Ticket;
 
+use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Public\MediaStorageService;
+use App\Models\Market\File;
 use App\Models\Ticket\Ticket;
 use App\Models\Ticket\TicketDepartment;
 use App\Models\Ticket\TicketMessage;
@@ -22,7 +24,8 @@ class TicketService
         protected MediaStorageService $mediaStorageService,
         protected TicketMessageRepositoryInterface $ticketMessageRepository,
         protected TicketPriorityRepositoryInterface $ticketPriorityRepository,
-        protected TicketDepartmentRepositoryInterface $ticketDepartmentRepository
+        protected TicketDepartmentRepositoryInterface $ticketDepartmentRepository,
+        protected FileManagementService $fileManagementService
     ) {
     }
     public function getAllTickets(string $status)
@@ -127,7 +130,11 @@ class TicketService
         } else {
             return false;
         }
+    }
 
+    public function deleteTicketFile(File $file)
+    {
+        return $this->fileManagementService->deleteFile($file);
     }
     public function deleteTicket(Ticket $ticket)
     {

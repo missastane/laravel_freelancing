@@ -4,6 +4,7 @@ namespace App\Http\Services\User;
 
 use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Public\MediaStorageService;
+use App\Models\Market\File;
 use App\Models\Market\Portfolio;
 use App\Repositories\Contracts\User\PortfolioRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -83,6 +84,10 @@ class PortfolioService
         return null;
     }
 
+    public function deletePortfolioFile(File $file)
+    {
+        return $this->fileManagementService->deleteFile($file);
+    }
     public function deletePortfolio(Portfolio $portfolio)
     {
         return DB::transaction(function () use ($portfolio) {

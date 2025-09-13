@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Gate;
 class TicketController extends Controller
 {
     use ApiResponseTrait;
-    public function __construct(protected TicketService $ticketService)
-    {
+    public function __construct(
+        protected TicketService $ticketService,
+
+    ) {
     }
 
     /**
@@ -449,14 +451,83 @@ class TicketController extends Controller
      */
     public function replyTicketMessage(TicketMessage $ticketMessage, TicketMessageRequest $request)
     {
-         if(Gate::denies('reply',$ticketMessage)){
-            return $this->error('به دلیل بسته شدن تیکت شما اجازه ارسال پیام ندارید',403);
+        if (Gate::denies('reply', $ticketMessage)) {
+            return $this->error('به دلیل بسته شدن تیکت شما اجازه ارسال پیام ندارید', 403);
         }
         try {
             $inputs = $request->all();
             $authorType = auth()->user()->active_role === 'freelancer' ? 2 : 1;
             $this->ticketService->replyToTicket($ticketMessage, $inputs, $authorType);
             return $this->success(null, 'پاسخ تیکت با موفقیت ثبت شد');
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/ticket/delete-file/{file}",
+     *     summary="Delete a File of a Ticket",
+     *     description="This endpoint allows the user to `delete an existing File of a Ticket`.",
+     *     tags={"Customer-Ticket"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="file",
+     *         in="path",
+     *         description="The ID of the File to be deleted",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Ticket's File deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="فایل با موفقیت حذف شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *         )
+     *     )
+     * )
+     */
+    public function deleteFile(File $file)
+    {
+        if (Gate::denies('deleteFile', $file)) {
+            return $this->error('شما مجاز به حذف این فایل نیستید', 403);
+        }
+        try {
+            $this->ticketService->deleteTicketFile($file);
+            return $this->success(null, 'فایل با موفقیت حذف شد');
         } catch (Exception $e) {
             return $this->error();
         }

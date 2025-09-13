@@ -4,16 +4,21 @@ namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Freelancer\PortfolioRequest;
+use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\User\PortFolioService;
+use App\Models\Market\File;
 use App\Models\Market\Portfolio;
 use App\Traits\ApiResponseTrait;
 use Exception;
+use Illuminate\Support\Facades\Gate;
 
 class UserPortfolioController extends Controller
 {
     use ApiResponseTrait;
 
-    public function __construct(protected PortfolioService $portfolioService)
+    public function __construct(
+        protected PortfolioService $portfolioService
+        )
     {
     }
 
@@ -391,11 +396,79 @@ class UserPortfolioController extends Controller
         }
     }
 
+       /**
+     * @OA\Delete(
+     *     path="/api/user-portfolio/delete-file/{file}",
+     *     summary="Delete a File of a Portfolio by freelancer",
+     *     description="This endpoint allows the freelancer to `delete an existing File of a Portfolio`.",
+     *     tags={"Customer-Portfolio"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="file",
+     *         in="path",
+     *         description="The ID of the File to be deleted",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Portfolio's File deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="فایل با موفقیت حذف شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *         )
+     *     )
+     * )
+     */
+    public function deleteFile(File $file)
+    {
+        if(Gate::denies('deleteFile',$file)){
+            return $this->error('شما مجاز به حذف این فایل نیستید',403);
+        }
+        try {
+            $this->portfolioService->deletePortfolioFile($file);
+            return $this->success(null, 'فایل با موفقیت حذف شد');
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
     /**
      * @OA\Delete(
      *     path="/api/user-portfolio/delete/{portfolio}",
-     *     summary="Delete a User Portfolio",
-     *     description="This endpoint allows the user to `delete an existing User Portfolio`.",
+     *     summary="Delete a Portfolio by freelancer",
+     *     description="This endpoint allows the freelancer to `delete an existing User Portfolio`.",
      *     tags={"Customer-Portfolio"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(

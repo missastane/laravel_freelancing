@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('file_type');
             $table->bigInteger('file_size');
             $table->tinyInteger('is_final_delivery')->default(2)->comment('1 => yes, 2 => no');
+            $table->foreignId('uploaded_by')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -294,6 +294,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/send/{conversation}', [MessageController::class, 'send']);
         Route::post('/reply/{message}', [MessageController::class, 'replyTo']);
         Route::delete('/delete/{message}', [MessageController::class, 'delete']);
+        Route::delete('/delete-file/{file}', [MessageController::class, 'deleteFile']);
     });
     Route::prefix('notification')->group(function () {
         Route::get('/', [CustomerNotificationController::class, 'index']);
@@ -335,6 +336,8 @@ Route::middleware(['auth:api'])->group(function () {
             Route::patch('/toggle-full-time/{project}', [CustomerProjectController::class, 'toggleFulltime']);
             Route::put('/update/{project}', [CustomerProjectController::class, 'update']);
             Route::delete('/delete/{project}', [CustomerProjectController::class, 'delete']);
+            Route::delete('/delete-file/{file}', [CustomerProjectController::class, 'deleteFile']);
+
         });
         Route::middleware('freelancer')->group(function () {
             Route::post('/add-to-favorite/{project}', [CustomerProjectController::class, 'addToFavorite']);
@@ -363,6 +366,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/show/{ticket}', [CustomerTicketController::class, 'show']);
         Route::get('/show-message/{ticketMessage}', [CustomerTicketController::class, 'showMessage']);
         Route::post('/reply/{ticketMessage}', [CustomerTicketController::class, 'replyTicketMessage']);
+        Route::delete('/delete-file/{file}', [CustomerTicketController::class, 'deleteFile']);
+
     });
     Route::prefix('subscription')->middleware('freelancer')->group(function () {
         Route::get('/', [CustomerSubscriptionController::class, 'index']);
@@ -397,6 +402,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::patch('/status/{portfolio}', [UserPortfolioController::class, 'changeStatus']);
             Route::put('/update/{portfolio}', [UserPortfolioController::class, 'update']);
             Route::delete('/delete/{portfolio}', [UserPortfolioController::class, 'delete']);
+            Route::delete('/delete-file/{file}', [UserPortfolioController::class, 'deleteFile']);
         });
     });
     Route::prefix('user-rating')->group(function () {

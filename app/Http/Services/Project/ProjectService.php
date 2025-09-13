@@ -5,9 +5,11 @@ namespace App\Http\Services\Project;
 use App\Exceptions\ProjectAddLimitException;
 use App\Exceptions\ProjectViewLimitException;
 use App\Http\Services\Favorite\FavoriteService;
+use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Public\MediaStorageService;
 use App\Jobs\SendNotificationForNewProject;
 use App\Jobs\SendNotificationForUpdatingProject;
+use App\Models\Market\File;
 use App\Models\Market\Project;
 use App\Models\User\User;
 use App\Notifications\RemoveProjectNotification;
@@ -29,7 +31,8 @@ class ProjectService
         protected SkillRepositoryInterface $skillRepository,
         protected UserRepositoryInterface $userRepository,
         protected ProposalRepositoryInterface $proposalRepository,
-        protected FavoriteService $favoriteService
+        protected FavoriteService $favoriteService,
+        protected FileManagementService $fileManagementService
     ) {
     }
 
@@ -141,6 +144,10 @@ class ProjectService
     public function removeFavorite(Project $project)
     {
         return $this->favoriteService->removeFavorite($project);
+    }
+    public function deleteProjectFile(File $file)
+    {
+        return $this->fileManagementService->deleteFile($file);
     }
     public function deleteProject(Project $project)
     {

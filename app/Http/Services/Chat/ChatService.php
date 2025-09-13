@@ -4,6 +4,7 @@ namespace App\Http\Services\Chat;
 
 use App\Events\NewMessageEvent;
 use App\Http\Services\File\FileService;
+use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Public\MediaStorageService;
 use App\Models\Market\Conversation;
 use App\Models\Market\File;
@@ -25,7 +26,8 @@ class ChatService
     public function __construct(
         protected ConversationRepositoryInterface $conversationRepository,
         protected MessageRepositoryInterface $messageRepository,
-        protected MediaStorageService $mediaStorageService
+        protected MediaStorageService $mediaStorageService,
+        protected FileManagementService $fileManagementService
     ) {
     }
 
@@ -54,15 +56,12 @@ class ChatService
     {
         try {
             $employer = auth()->user();
-            \Log::info('employerId : '.$employer->id);
-            \Log::info('freelancerId : '.$freelancer->id);
             $conversation = $this->conversationRepository->create([
                 'employer_id' => $employer->id,
                 'employee_id' => $freelancer->id,
                 'conversation_context' => get_class($context),
                 'conversation_context_id' => $context->id
             ]);
-            \Log::info($conversation);
             return $conversation;
         } catch (Throwable $e) {
             throw new Exception('خطا در ایجاد مکالمه جدید', 500);
@@ -120,6 +119,11 @@ class ChatService
         // broadcasting message
         broadcast(new NewMessageEvent($newMessage))->toOthers();
         return $this->messageRepository->showMessage($newMessage);
+    }
+
+    public function deleteMessageFile(File $file)
+    {
+        return $this->fileManagementService->deleteFile($file);
     }
 
     public function deleteMessage(Message $message)

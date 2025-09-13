@@ -84,7 +84,8 @@ class MediaStorageService
             'file_path' => $filePath,
             'file_type' => $fileFormat,
             'file_size' => $fileSize,
-            'mime_type' => $mimeType
+            'mime_type' => $mimeType,
+            'uploaded_by' => auth()->id()
         ]);
     }
 

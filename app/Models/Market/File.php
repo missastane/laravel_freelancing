@@ -19,7 +19,8 @@ class File extends Model
         'mime_type',
         'file_type',
         'file_size',
-        'is_final_delivery'
+        'is_final_delivery',
+        'uploaded_by'
     ];
 
     public function filable()
