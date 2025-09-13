@@ -12,5 +12,5 @@ interface MessageRepositoryInterface extends
     ShowableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function showMessage(Message $message): Message;
+    public function showMessage(Message $message);
 }

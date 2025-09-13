@@ -67,19 +67,21 @@ class ChatService
             throw new Exception('خطا در ایجاد مکالمه جدید', 500);
         }
     }
-    public function createNewMessage(int $conversationId, array $data, int $userId, int $parentId = null)
+    public function createNewMessage(Conversation $conversation, array $data, int $userId, int $parentId = null)
     {
         try {
             $newMessage = $this->messageRepository->create([
-                'conversation_id' => $conversationId,
+                'conversation_id' => $conversation->id,
                 'sender_id' => $userId,
                 'message' => $data['message'],
-                'send_date' => now(),
-                'parent_id' => $parentId
+                'sent_date' => now(),
+                'parent_id' => $parentId,
+                'message_context' => $conversation->conversation_context,
+                'message_context_id' => $conversation->conversation_context_id
             ]);
             return $newMessage;
         } catch (Throwable $e) {
-            throw new Exception('خطا در ایجاد پیام جدید', 500);
+            throw new Exception($e->getMessage(), 500);
         }
 
     }
@@ -95,9 +97,8 @@ class ChatService
     public function sendMessage(Conversation $conversation, array $data)
     {
         $user = auth()->user();
-
         $newMessage = DB::transaction(function () use ($conversation, $data, $user) {
-            $message = $this->createNewMessage($conversation->id, $data, $user->id);
+            $message = $this->createNewMessage($conversation, $data, $user->id,null);
             $this->storeMessageFiles($message, $data, $conversation->id);
             return $message;
         });
@@ -111,13 +112,13 @@ class ChatService
     {
         $user = auth()->user();
         $newMessage = DB::transaction(function () use ($message, $data, $user) {
-            $answeredMessage = $this->createNewMessage($message->conversation_id, $data, $user->id, $message->id);
+            $answeredMessage = $this->createNewMessage($message->conversation, $data, $user->id, $message->id);
             $this->storeMessageFiles($answeredMessage, $data, $message->conversation_id);
             return $answeredMessage;
         });
-
         // broadcasting message
         broadcast(new NewMessageEvent($newMessage))->toOthers();
+        \Log::info($newMessage->id);
         return $this->messageRepository->showMessage($newMessage);
     }
 

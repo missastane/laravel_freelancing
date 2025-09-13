@@ -26769,7 +26769,8 @@
         "/api/order/approve/final-file/{finalFile}": {
             "put": {
                 "tags": [
-                    "Order"
+                    "Customer-FinalFiles",
+                    "Customer-Order"
                 ],
                 "summary": "Approve final submitted file",
                 "description": "This endpoint is used by the client to approve the final file submitted by the freelancer. Upon approval, the orderItem status will be marked as `approved`. The project payment will also be released to the freelancer.",
@@ -26896,7 +26897,8 @@
         "/api/order/reject/final-file/{finalFile}": {
             "put": {
                 "tags": [
-                    "Order"
+                    "Customer-FinalFiles",
+                    "Customer-Order"
                 ],
                 "summary": "Reject final submitted file",
                 "description": "This endpoint is used by the client to reject the final file submitted by the freelancer. Upon approval, the orderItem status will be marked as `locked` and created a dispute request. The project will be locked until admin arbitration",
@@ -27023,7 +27025,8 @@
         "/api/order/revision/final-file/{finalFile}": {
             "put": {
                 "tags": [
-                    "Order"
+                    "Customer-FinalFiles",
+                    "Customer-Order"
                 ],
                 "summary": "Revision final submitted file",
                 "description": "This endpoint is used by the client to revision the final file submitted by the freelancer. Upon revision, the FinalFile status will be marked as `revision` and created a dispute request. The project will be continued by freelancer",
@@ -27150,7 +27153,7 @@
         "/api/message/{conversation}": {
             "get": {
                 "tags": [
-                    "Message"
+                    "Customer-Message"
                 ],
                 "summary": "Retrieve list of Messages of a conversation",
                 "description": "Retrieve list of all `Messages of a conversation`",
@@ -27286,7 +27289,7 @@
         "/api/message/send/{conversation}": {
             "post": {
                 "tags": [
-                    "Message"
+                    "Customer-Message"
                 ],
                 "summary": "Send a message to a conversation by customers",
                 "description": "In this method customers can send a Message to a conversation",
@@ -27473,7 +27476,7 @@
         "/api/message/reply/{message}": {
             "post": {
                 "tags": [
-                    "Message"
+                    "Customer-Message"
                 ],
                 "summary": "Reply to Message by customers",
                 "description": "In this method customers can Reply to an existing Message",
@@ -27660,7 +27663,7 @@
         "/api/message/delete-file/{file}": {
             "delete": {
                 "tags": [
-                    "Message"
+                    "Customer-Message"
                 ],
                 "summary": "Delete a File of a Message",
                 "description": "This endpoint allows the user to `delete an existing File of a Message`.",
@@ -27793,7 +27796,7 @@
         "/api/message/delete/{message}": {
             "delete": {
                 "tags": [
-                    "Message"
+                    "Customer-Message"
                 ],
                 "summary": "Delete a Message",
                 "description": "This endpoint allows the user to `delete an existing Message`.",
@@ -33199,6 +33202,139 @@
                                         "message": {
                                             "type": "string",
                                             "example": "پیشنهاد با موفقیت پس گرفته شده و لغو شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/proposal/approve/{proposal}": {
+            "post": {
+                "tags": [
+                    "Customer-Proposal"
+                ],
+                "summary": "Approve a Proposal by employer",
+                "description": "In this method employers can Approve a Proposal. Upon approval, the proposal status will be marked as `approved`. The project payment will also be locked in employer's wallet.",
+                "operationId": "091210218a8f8f148d69734d0f4481fa",
+                "parameters": [
+                    {
+                        "name": "proposal",
+                        "in": "path",
+                        "description": "ID of the Proposal to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful Proposal Approve",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "پیشنهاد با موفقیت پذیرفته شد"
                                         },
                                         "data": {
                                             "type": "object",
@@ -40640,124 +40776,6 @@
                 "type": "object"
             }
         },
-        "responses": {
-            "200": {
-                "description": "successful Proposal Approve",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "boolean",
-                                    "example": "true"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "پیشنهاد با موفقیت پذیرفته شد"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "nullable": true
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "401": {
-                "description": "Unauthenticated",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "boolean",
-                                    "example": "false"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "403": {
-                "description": "You are not authorized to do this action.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "boolean",
-                                    "example": false
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "شما مجاز به انجام این عملیات نیستید"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "404": {
-                "description": "route not found",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "boolean",
-                                    "example": "false"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "مسیر مورد نظر پیدا نشد"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "500": {
-                "description": "internal server error",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "boolean",
-                                    "example": "false"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            }
-        },
-        "parameters": {
-            "proposal": {
-                "name": "proposal",
-                "in": "path",
-                "description": "ID of the Proposal to fetch",
-                "required": true,
-                "schema": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -40963,8 +40981,16 @@
             "description": "Favorite"
         },
         {
-            "name": "Message",
-            "description": "Message"
+            "name": "Customer-FinalFiles",
+            "description": "Customer-FinalFiles"
+        },
+        {
+            "name": "Customer-Order",
+            "description": "Customer-Order"
+        },
+        {
+            "name": "Customer-Message",
+            "description": "Customer-Message"
         },
         {
             "name": "Customer-Notification",
@@ -40973,10 +40999,6 @@
         {
             "name": "OrderComment",
             "description": "OrderComment"
-        },
-        {
-            "name": "Customer-Order",
-            "description": "Customer-Order"
         },
         {
             "name": "PostComment",

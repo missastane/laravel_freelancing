@@ -70,6 +70,8 @@ class Message extends Model
         'message_type',
         'sent_date',
         'parent_id',
+        'message_context',
+        'message_context_id'
     ];
 
     protected function casts()
@@ -102,7 +104,7 @@ class Message extends Model
 
     public function files()
     {
-        return $this->morphMany('App\Models\File', 'fillable');
+        return $this->morphMany('App\Models\Market\File', 'filable');
     }
     public function getMessageTypeValueAttribute()
     {

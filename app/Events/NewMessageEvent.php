@@ -40,7 +40,6 @@ class NewMessageEvent implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        Log::info('event occured');
         return [
             'message' => new MessageResource($this->message),
         ];

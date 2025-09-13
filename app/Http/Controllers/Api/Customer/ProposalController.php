@@ -691,7 +691,7 @@ class ProposalController extends Controller
     }
 
     /**
-     * @OA\Pt(
+     * @OA\Post(
      *     path="/api/proposal/approve/{proposal}",
      *     summary="Approve a Proposal by employer",
      *     description="In this method employers can Approve a Proposal. Upon approval, the proposal status will be marked as `approved`. The project payment will also be locked in employer's wallet.",

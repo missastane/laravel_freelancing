@@ -2,6 +2,9 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\ConversationResource;
+use App\Http\Resources\Market\MessageResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Conversation;
 use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -30,11 +33,8 @@ class ConversationRepository extends BaseRepository implements ConversationRepos
     public function getConversationMessages(Conversation $conversation)
     {
         $conversation = $this->showWithRelations($conversation,['employer:id,username', 'freelancer:id,username']);
-        $messages = $this->showWithRelations($conversation->messages,['sender:id,username', 'parent:id,message', 'files:id,file_name,file_path,mime_type']);
-        return [
-            'conversation' => $conversation,
-            'messages' => $messages
-        ];
+        $messages = $conversation->messages->load(['sender:id,username', 'parent:id,message', 'files:id,file_name,file_path,mime_type']);
+        return new ConversationResource($conversation);
     }
 
 

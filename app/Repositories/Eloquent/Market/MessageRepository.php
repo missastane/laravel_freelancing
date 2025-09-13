@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\MessageResource;
 use App\Models\Market\Message;
 use App\Repositories\Contracts\Market\MessageRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -18,9 +19,10 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
     {
         parent::__construct($model);
     }
-    public function showMessage(Message $message): Message
+    public function showMessage(Message $message)
     {
-        return $this->showWithRelations($message, ['files']);
+       $result = $this->showWithRelations($message, ['files','parent']);
+       return new MessageResource($result);
     }
 
 }

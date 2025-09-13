@@ -10,9 +10,9 @@ class ConversationPolicy
     /**
      * Create a new policy instance.
      */
-    public function checkMembership(Conversation $conversation, User $user)
+    public function checkMembership(User $user, Conversation $conversation)
     {
-        if(!$conversation->hasUser($user)){
+        if (!$conversation->hasUser($user)) {
             return false;
         }
         return true;

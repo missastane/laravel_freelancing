@@ -23,7 +23,7 @@ class MessageController extends Controller
      *     path="/api/message/{conversation}",
      *     summary="Retrieve list of Messages of a conversation",
      *     description="Retrieve list of all `Messages of a conversation`",
-     *     tags={"Message"},
+     *     tags={"Customer-Message"},
      *     security={
      *         {"bearerAuth": {}}
      *     },
@@ -80,7 +80,7 @@ class MessageController extends Controller
      */
     public function index(Conversation $conversation)
     {
-        if (Gate::denies('checkMembership', [$conversation])) {
+        if (Gate::denies('checkMembership', $conversation)) {
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         return $this->chatService->getConversationMessages($conversation);
@@ -91,7 +91,7 @@ class MessageController extends Controller
      *     path="/api/message/send/{conversation}",
      *     summary="Send a message to a conversation by customers",
      *     description="In this method customers can send a Message to a conversation",
-     *     tags={"Message"},
+     *     tags={"Customer-Message"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="conversation",
@@ -172,10 +172,12 @@ class MessageController extends Controller
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {
+            // \Log::info($request->all());
+            // \Log::info($conversation);
             $newMessage = $this->chatService->sendMessage($conversation, $request->all());
             return $this->success($newMessage, 'پیام با موفقیت ارسال شد', 201);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -184,7 +186,7 @@ class MessageController extends Controller
      *     path="/api/message/reply/{message}",
      *     summary="Reply to Message by customers",
      *     description="In this method customers can Reply to an existing Message",
-     *     tags={"Message"},
+     *     tags={"Customer-Message"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="message",
@@ -266,8 +268,8 @@ class MessageController extends Controller
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {
-            $this->chatService->replyToMessage($message,$reuest->all());
-            return $this->success($message, 'پیام با موفقیت پاسخ داده شد', 201);
+            $answered = $this->chatService->replyToMessage($message,$reuest->all());
+            return $this->success($answered, 'پیام با موفقیت پاسخ داده شد', 201);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -278,7 +280,7 @@ class MessageController extends Controller
      *     path="/api/message/delete-file/{file}",
      *     summary="Delete a File of a Message",
      *     description="This endpoint allows the user to `delete an existing File of a Message`.",
-     *     tags={"Message"},
+     *     tags={"Customer-Message"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="file",
@@ -346,7 +348,7 @@ class MessageController extends Controller
      *     path="/api/message/delete/{message}",
      *     summary="Delete a Message",
      *     description="This endpoint allows the user to `delete an existing Message`.",
-     *     tags={"Message"},
+     *     tags={"Customer-Message"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="message",
