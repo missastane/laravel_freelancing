@@ -10,6 +10,6 @@ interface ConversationRepositoryInterface extends
     CreatableRepositoryInterface,
     ShowableRepositoryInterface
 {
-    public function getConversationIfExists(int $freelancerId, int $employerId):Conversation|null;
+    public function getConversationIfExists(int $freelancerId, int $employerId, string $context, int $contextId): Conversation|null;
     public function getConversationMessages(Conversation $conversation);
 }

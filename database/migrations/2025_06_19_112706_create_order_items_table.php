@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('proposal_milestone_id')->constrained('proposal_milstones')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('proposal_milestone_id')->constrained('proposal_milestones')->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => in progress, 3 => completed 4 => approved, 5 => rejected');
             $table->tinyInteger('locked_by')->nullable()->comment('	1 => employer, 2 => freelancer, 3 => admin');
             $table->tinyInteger('locked_reason')->nullable()->comment('1 => not answer, 2 => insult, 3 => poor quality, 4 => other');
@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->decimal('price',20,3);
             $table->decimal('freelancer_amount',20,3);
             $table->decimal('platform_fee',20,3);
-            $table->timestamp('due_date');
+            $table->timestamp('due_date')->useCurrent();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\Exceptions\Market\NotAllowedToSetFinalFile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Message\SendMessageRequest;
 use App\Http\Services\Chat\ChatService;
@@ -168,7 +169,7 @@ class MessageController extends Controller
      */
     public function send(Conversation $conversation, SendMessageRequest $request)
     {
-        if (Gate::denies('checkMembership', [$conversation])) {
+        if (Gate::denies('checkMembership', $conversation)) {
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {
@@ -179,6 +180,73 @@ class MessageController extends Controller
         }
     }
 
+     /**
+     * @OA\Post(
+     *     path="/api/message/set-final-file/{file}",
+     *     summary="Set a file as a Final File of an order item by freelancer",
+     *     description="In this method freelancers can set a file as a Final File of an order item",
+     *     tags={"Customer-Message"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="file",
+     *         in="path",
+     *         description="ID of the File to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="successful Final File Set",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="فایا با موفقیت برای کارفرما ارسال شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *      @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="امکان ارسال پیام به این مکالمه برای شما وجود ندارد")
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function setAsFinalFile(File $file)
+    {
+        try {
+            $this->chatService->seAsFinalFile($file);
+            return $this->success(null, 'فایل با موفقیت برای کارفرما ارسال شد', 201);
+        } catch (NotAllowedToSetFinalFile $e) {
+            throw $e;
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
     /**
      * @OA\Post(
      *     path="/api/message/reply/{message}",
@@ -266,14 +334,14 @@ class MessageController extends Controller
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {
-            $answered = $this->chatService->replyToMessage($message,$reuest->all());
+            $answered = $this->chatService->replyToMessage($message, $reuest->all());
             return $this->success($answered, 'پیام با موفقیت پاسخ داده شد', 201);
         } catch (Exception $e) {
             return $this->error();
         }
     }
 
-      /**
+    /**
      * @OA\Delete(
      *     path="/api/message/delete-file/{file}",
      *     summary="Delete a File of a Message",

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\Content\CommentRepositoryInterface;
 use App\Repositories\Contracts\Content\PostCategoryRepositoryInterface;
 use App\Repositories\Contracts\Content\PostRepositoryInterface;
 use App\Repositories\Contracts\Content\TagRepositoryInterface;
@@ -31,6 +32,7 @@ use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketMessageRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
+use App\Repositories\Contracts\User\DisputeRequestRepositoryInterface;
 use App\Repositories\Contracts\User\FavoriteRepositoryInterface;
 use App\Repositories\Contracts\User\NotificationRepositoryInterface;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
@@ -41,7 +43,8 @@ use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Repositories\Contracts\User\WorkExperienceRepositoryInterface;
-use App\Repositories\Eloquent\Content\FileRepository;
+use App\Repositories\Eloquent\Content\CommentRepository;
+use App\Repositories\Eloquent\Market\FileRepository;
 use App\Repositories\Eloquent\Content\PostCategoryRepository;
 use App\Repositories\Eloquent\Content\PostRepository;
 use App\Repositories\Eloquent\Content\TagRepository;
@@ -70,6 +73,7 @@ use App\Repositories\Eloquent\Ticket\TicketDepartmentRepository;
 use App\Repositories\Eloquent\Ticket\TicketMessageRepository;
 use App\Repositories\Eloquent\Ticket\TicketPriorityRepository;
 use App\Repositories\Eloquent\Ticket\TicketRepository;
+use App\Repositories\Eloquent\User\DisputeRequestRepository;
 use App\Repositories\Eloquent\User\FavoriteRepository;
 use App\Repositories\Eloquent\User\NotificationRepository;
 use App\Repositories\Eloquent\User\OTPRepository;
@@ -127,6 +131,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
         $this->app->bind(RatingRepositoryInterface::class, RatingRepository::class);
         $this->app->bind(FeatureTypeRepositoryInterface::class, FeatureTypeRepository::class);
+        $this->app->bind(DisputeRequestRepositoryInterface::class, DisputeRequestRepository::class);
+        $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
     }
 
     /**

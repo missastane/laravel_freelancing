@@ -21,6 +21,11 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
         return $this->model->query()->select('id', 'name')->get();
     }
 
+    public function firstOrCreate(string $role)
+    {
+        return $this->model->firstOrCreate(['name' => $role],['guard_name' => 'api']);
+    }
+    
     public function storeRole(array $data): Role
     {
         $name = $data['name'];

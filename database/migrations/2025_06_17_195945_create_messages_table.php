@@ -19,6 +19,8 @@ return new class extends Migration
             $table->tinyInteger('message_type')->default(1)->comment('1 => text, 2 => multimedia, 3 => mixed');
             $table->timestamp('sent_date');
             $table->foreignId('parent_id')->nullable()->constrained('messages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('message_context');
+            $table->unsignedBigInteger('message_context_id');
             $table->softDeletes();
             $table->timestamps();
         });

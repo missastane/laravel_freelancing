@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Payment;
 
+use App\Http\Resources\Payment\WalletResource;
 use App\Models\Market\OrderItem;
 use App\Models\Payment\Wallet;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
@@ -41,6 +42,7 @@ class WalletService
 
     public function showWallet()
     {
-        return $this->walletRepository->findByUserId(auth()->id());
+        $result = $this->walletRepository->findByUserId(auth()->id());
+        return new WalletResource($result);
     }
 }

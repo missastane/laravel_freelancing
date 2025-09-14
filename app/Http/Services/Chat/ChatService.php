@@ -37,7 +37,12 @@ class ChatService
     }
     public function getOrCreateConversationForProposal(Proposal $proposal)
     {
-        $conversation = $this->conversationRepository->getConversationIfExists($proposal->freelancer_id, $proposal->project->user_id);
+        $conversation = $this->conversationRepository->getConversationIfExists(
+            $proposal->freelancer_id,
+            $proposal->project->user_id,
+            Proposal::class,
+            $proposal->id
+        );
         if ($conversation) {
             return $conversation;
         }
@@ -98,7 +103,7 @@ class ChatService
     {
         $user = auth()->user();
         $newMessage = DB::transaction(function () use ($conversation, $data, $user) {
-            $message = $this->createNewMessage($conversation, $data, $user->id,null);
+            $message = $this->createNewMessage($conversation, $data, $user->id, null);
             $this->storeMessageFiles($message, $data, $conversation->id);
             return $message;
         });
@@ -122,6 +127,10 @@ class ChatService
         return $this->messageRepository->showMessage($newMessage);
     }
 
+    public function seAsFinalFile(File $file)
+    {
+        return $this->fileManagementService->setAsFinalFile($file);
+    }
     public function deleteMessageFile(File $file)
     {
         return $this->fileManagementService->deleteFile($file);

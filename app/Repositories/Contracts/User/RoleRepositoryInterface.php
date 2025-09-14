@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface RoleRepositoryInterface extends BaseRepositoryInterface
 {
     public function getRoleOptions(): Collection;
+    public function firstOrCreate(string $role);
     public function storeRole(array $data): Role;
     public function updateRole(Role $role, array $data): bool;
     public function deleteRole(Role $role);

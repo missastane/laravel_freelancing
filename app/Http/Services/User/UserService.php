@@ -5,6 +5,7 @@ namespace App\Http\Services\User;
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\SendVerificationEmail;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
+use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Auth\Events\Verified;
@@ -22,7 +23,8 @@ class UserService
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository,
-        protected WalletRepositoryInterface $walletRepository
+        protected WalletRepositoryInterface $walletRepository,
+        protected RoleRepositoryInterface $roleRepository
     ) {
     }
 
@@ -37,6 +39,7 @@ class UserService
                 'active_role' => $data['role'] == 1 ? 'employer' : 'freelancer',
                 'password' => Hash::make($data['password'])
             ]);
+            $role = $this->roleRepository->firstOrCreate($user->active_role);
             $user->assignRole($user->active_role);
             $this->walletRepository->create([
                 'user_id' => $user->id,

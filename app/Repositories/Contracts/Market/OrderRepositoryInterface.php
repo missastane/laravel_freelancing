@@ -15,7 +15,7 @@ interface OrderRepositoryInterface extends CreatableRepositoryInterface, Showabl
     public function getAllOrders(array $data): Paginator;
     public function getUserOrders(?User $user, array $data): Paginator;
     public function getOrderFinalFiles(Order $order);
-    public function getOrderItems(Order $order);
+    public function findById(int $orderId);
     public function showOrder(Order $order): Order;
     public function getUserCompletedOrders(User $targetUser = null): Paginator;
 }

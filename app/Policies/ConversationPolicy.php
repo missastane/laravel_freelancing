@@ -12,6 +12,7 @@ class ConversationPolicy
      */
     public function checkMembership(User $user, Conversation $conversation)
     {
+        \Log::info('in policy : '.$user->id);
         if (!$conversation->hasUser($user)) {
             return false;
         }

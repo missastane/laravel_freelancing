@@ -20,12 +20,13 @@ class ConversationRepository extends BaseRepository implements ConversationRepos
     {
         parent::__construct($model);
     }
-    public function getConversationIfExists(int $freelancerId, int $employerId): Conversation|null
+    public function getConversationIfExists(int $freelancerId, int $employerId, string $context, int $contextId): Conversation|null
     {
-        
         $conversation = $this->model->where([
             'employer_id' => $employerId,
-            'employee_id' => $freelancerId
+            'employee_id' => $freelancerId,
+            'conversation_context' =>$context,
+            'conversation_context_id' => $contextId
         ])->first();
         return $conversation;
     }

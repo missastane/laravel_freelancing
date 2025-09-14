@@ -10,6 +10,7 @@ use App\Http\Controllers\API\Admin\Content\PostController;
 use App\Http\Controllers\API\Admin\Content\TagController;
 use App\Http\Controllers\API\Admin\Locale\CityController;
 use App\Http\Controllers\Api\Admin\Market\OrderController;
+use App\Http\Controllers\Api\Customer\FinalFileController;
 use App\Http\Controllers\Api\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\API\Admin\Market\ProjectCategoryController;
 use App\Http\Controllers\API\Admin\Market\ProjectController;
@@ -289,9 +290,15 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('favorite')->group(function () {
         Route::get('/', [FavoriteController::class, 'index']);
     });
+    Route::prefix('final-file')->group(function () {
+        Route::put('/approve/{finalFile}', [FinalFileController::class, 'approveFileItem']);
+        Route::put('/reject/{finalFile}', [FinalFileController::class, 'rejectFileItem']);
+        Route::put('/revision/{finalFile}', [FinalFileController::class, 'revisionFileItem']);
+    });
     Route::prefix('message')->group(function () {
         Route::get('/{conversation}', [MessageController::class, 'index']);
         Route::post('/send/{conversation}', [MessageController::class, 'send']);
+        Route::post('/set-final-file/{file}', [MessageController::class, 'setAsFinalFile']);
         Route::post('/reply/{message}', [MessageController::class, 'replyTo']);
         Route::delete('/delete/{message}', [MessageController::class, 'delete']);
         Route::delete('/delete-file/{file}', [MessageController::class, 'deleteFile']);
@@ -305,9 +312,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [CustomerOrderController::class, 'index']);
         Route::get('/show/{order}', [CustomerOrderController::class, 'show']);
         Route::get('/final-files/{order}', [CustomerOrderController::class, 'getOrderFileFiles']);
-        Route::put('/approve/{finalFile}', [CustomerOrderController::class, 'approveFileItem']);
-        Route::put('/reject/{finalFile}', [CustomerOrderController::class, 'rejectFileItem']);
-        Route::put('/revision/{finalFile}', [CustomerOrderController::class, 'revisionFileItem']);
+
         Route::post('/{order}/submit-comment', [OrderCommentController::class, 'store']);
     });
     Route::prefix('payment')->group(function () {

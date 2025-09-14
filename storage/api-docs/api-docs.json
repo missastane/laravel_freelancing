@@ -26766,7 +26766,7 @@
                 ]
             }
         },
-        "/api/order/approve/final-file/{finalFile}": {
+        "/api/final-file/approve/{finalFile}": {
             "put": {
                 "tags": [
                     "Customer-FinalFiles",
@@ -26774,7 +26774,7 @@
                 ],
                 "summary": "Approve final submitted file",
                 "description": "This endpoint is used by the client to approve the final file submitted by the freelancer. Upon approval, the orderItem status will be marked as `approved`. The project payment will also be released to the freelancer.",
-                "operationId": "e82a87c86b8b782ce7c9e5355fc014cf",
+                "operationId": "f8c83102548652637d5e6c6ede1db3ff",
                 "parameters": [
                     {
                         "name": "finalFile",
@@ -26891,10 +26891,15 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/order/reject/final-file/{finalFile}": {
+        "/api/final-file/reject/{finalFile}": {
             "put": {
                 "tags": [
                     "Customer-FinalFiles",
@@ -26902,7 +26907,7 @@
                 ],
                 "summary": "Reject final submitted file",
                 "description": "This endpoint is used by the client to reject the final file submitted by the freelancer. Upon approval, the orderItem status will be marked as `locked` and created a dispute request. The project will be locked until admin arbitration",
-                "operationId": "a53f9530d10476c5190ae0de1fe98905",
+                "operationId": "b8d89db9030d72333422966b40e624a2",
                 "parameters": [
                     {
                         "name": "finalFile",
@@ -27019,10 +27024,15 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/order/revision/final-file/{finalFile}": {
+        "/api/final-file/revision/{finalFile}": {
             "put": {
                 "tags": [
                     "Customer-FinalFiles",
@@ -27030,7 +27040,7 @@
                 ],
                 "summary": "Revision final submitted file",
                 "description": "This endpoint is used by the client to revision the final file submitted by the freelancer. Upon revision, the FinalFile status will be marked as `revision` and created a dispute request. The project will be continued by freelancer",
-                "operationId": "d3253ed96dd2ec326cba804fdfd05712",
+                "operationId": "a4c01d2c99c919bab465b29a83cdcd78",
                 "parameters": [
                     {
                         "name": "finalFile",
@@ -27147,7 +27157,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/message/{conversation}": {
@@ -27438,6 +27453,139 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/message/set-final-file/{file}": {
+            "post": {
+                "tags": [
+                    "Customer-Message"
+                ],
+                "summary": "Set a file as a Final File of an order item by freelancer",
+                "description": "In this method freelancers can set a file as a Final File of an order item",
+                "operationId": "465eaecf3aa0b173773821a64c2af9ef",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path",
+                        "description": "ID of the File to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "successful Final File Set",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "فایا با موفقیت برای کارفرما ارسال شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "امکان ارسال پیام به این مکالمه برای شما وجود ندارد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
                                         }
                                     },
                                     "type": "object"

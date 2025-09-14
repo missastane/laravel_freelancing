@@ -150,7 +150,7 @@ class AuthController extends Controller
             }
             return $this->success($result['data'], $result['message'], $result['code']);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

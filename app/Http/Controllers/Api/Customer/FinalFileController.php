@@ -20,10 +20,11 @@ class FinalFileController extends Controller
     }
     /**
      * @OA\Put(
-     *     path="/api/order/approve/final-file/{finalFile}",
+     *     path="/api/final-file/approve/{finalFile}",
      *     summary="Approve final submitted file",
      *     description="This endpoint is used by the client to approve the final file submitted by the freelancer. Upon approval, the orderItem status will be marked as `approved`. The project payment will also be released to the freelancer.",
      *     tags={"Customer-FinalFiles","Customer-Order"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="finalFile",
      *         in="path",
@@ -85,10 +86,11 @@ class FinalFileController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/order/reject/final-file/{finalFile}",
+     *     path="/api/final-file/reject/{finalFile}",
      *     summary="Reject final submitted file",
      *     description="This endpoint is used by the client to reject the final file submitted by the freelancer. Upon approval, the orderItem status will be marked as `locked` and created a dispute request. The project will be locked until admin arbitration",
      *     tags={"Customer-FinalFiles","Customer-Order"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="finalFile",
      *         in="path",
@@ -150,10 +152,11 @@ class FinalFileController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/order/revision/final-file/{finalFile}",
+     *     path="/api/final-file/revision/{finalFile}",
      *     summary="Revision final submitted file",
      *     description="This endpoint is used by the client to revision the final file submitted by the freelancer. Upon revision, the FinalFile status will be marked as `revision` and created a dispute request. The project will be continued by freelancer",
      *     tags={"Customer-FinalFiles","Customer-Order"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="finalFile",
      *         in="path",

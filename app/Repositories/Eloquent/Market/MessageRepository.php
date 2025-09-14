@@ -19,6 +19,12 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
     {
         parent::__construct($model);
     }
+
+    public function findById(int $messageId)
+    {
+        return $this->model->find($messageId);
+    }
+
     public function showMessage(Message $message)
     {
        $result = $this->showWithRelations($message, ['files','parent']);

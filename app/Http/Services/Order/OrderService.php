@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Order;
 
+use App\Http\Services\FinalFile\FinalFileService;
 use App\Models\Market\Order;
 use App\Models\User\User;
 use App\Repositories\Contracts\Market\OrderRepositoryInterface;

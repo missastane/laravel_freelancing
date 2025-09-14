@@ -49,7 +49,8 @@ class ProposalApprovalService
 
             $order = $this->createOrder($proposal);
             $this->createOrderItems($order, $proposal);
-            $this->ensureConversation($order);
+            $this->updateFirstItemAsInProgress($order);
+            $this->createConversation($order);
             $this->logTransaction($order, $proposal);
             return $proposal;
         });
@@ -111,7 +112,6 @@ class ProposalApprovalService
         foreach ($proposal->milestones as $milestone) {
             $platformFee = ($milestone->amount * $platformFeePercent) / 100;
             $freelancerAmount = $milestone->amount - $platformFee;
-            \Log::info($milestone->due_date);
             $this->orderItemRepository->create([
                 'order_id' => $order->id,
                 'proposal_milestone_id' => $milestone->id,
@@ -123,13 +123,14 @@ class ProposalApprovalService
         }
     }
 
-
-    protected function ensureConversation(Order $order)
+    protected function updateFirstItemAsInProgress(Order $order)
     {
-        $conversation = $this->conversationRepository->getConversationIfExists($order->freelancer_id, $order->employer_id);
-        if (!$conversation) {
-            $this->chatService->createConversation($order->freelancer, $order);
-        }
+       $orderItem = $this->orderItemRepository->getFirstPendingItem($order);
+       return $this->orderItemRepository->update($orderItem,['status' => 2]);
+    }
+    protected function createConversation(Order $order)
+    {
+        return $this->chatService->createConversation($order->freelancer, $order);
     }
 
     protected function logTransaction(Order $order, Proposal $proposal)

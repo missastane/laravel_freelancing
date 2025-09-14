@@ -32,6 +32,13 @@ class FileItemApproveService
         ]);
     }
 
+    protected function setNewInProgressItem(FinalFile $finalFile)
+    {
+        $orderItem = $this->orderItemRepository->getFirstPendingItem($finalFile->orderItem->order);
+        if ($orderItem) {
+            return $this->orderItemRepository->update($orderItem, ['status' => 2]);
+        }
+    }
     protected function createTransaction(int $walletId, int $amount, int $type, string $description, string $relatedType, int $orderItemId)
     {
         $this->walletTransactionRepository->create([
@@ -56,11 +63,13 @@ class FileItemApproveService
     protected function updateFreelancerWallet(FinalFile $finalFile)
     {
         $freelancerWallet = $this->walletRepository->findByUserId($finalFile->freelancer_id);
+        \Log::info('freelancer amount before approve file : ' . $freelancerWallet->balance);
         // here we must calculate platform fee percent and de
         $freelancerAmount = $finalFile->orderItem->freelancer_amount;
         $this->walletRepository->update($freelancerWallet, [
             'balance' => $freelancerWallet->balance + $freelancerAmount
         ]);
+        \Log::info('freelancer amount after approve file : ' . $freelancerWallet->balance);
         $this->createTransaction($freelancerWallet->id, $freelancerAmount, 1, 'کارفرما مبلغ این مرحله از سفارش را آزاد نموده است', OrderItem::class, $finalFile->order_item_id);
     }
     protected function updateOrder(FinalFile $finalFile)
@@ -85,6 +94,7 @@ class FileItemApproveService
             $this->updateEmployerWallet($finalFile);
             $this->updateFreelancerWallet($finalFile);
             $this->updateOrder($finalFile);
+            $this->setNewInProgressItem($finalFile);
             return $finalFile;
         });
     }

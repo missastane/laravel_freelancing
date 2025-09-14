@@ -23,7 +23,7 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
     public function findByUserId($id)
     {
         $wallet = Wallet::where('user_id', $id)->first();
-        return new WalletResource($wallet);
+        return $wallet;
     }
 
     public function hasEnoughBalance(int $userId, int $amount): bool

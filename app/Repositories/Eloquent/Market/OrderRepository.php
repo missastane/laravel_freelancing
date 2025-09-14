@@ -51,12 +51,18 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         return $this->showWithRelations($order, ['finalFiles']);
     }
 
-    public function getOrderItems(Order $order)
-    {
-        $orderItems = OrderItem::where('order_id', $order->id)
-            ->with('milestone')->get();
-        return $orderItems;
-    }
+    // public function getOrderItems(Order $order)
+    // {
+    //     $orderItems = OrderItem::where('order_id', $order->id)
+    //         ->with('milestone')->get();
+    //     return $orderItems;
+    // }
+
+    // public function getUncompleteItems(Order $order)
+    // {
+    //     $orderItems = OrderItem::where('order_id', $order->id)->where('status', 2)->first();
+    //     return $orderItems;
+    // }
 
     public function getUserCompletedOrders(User $targetUser = null): Paginator
     {
@@ -72,6 +78,11 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
             ->with('freelancer:id,username', 'employer:id,username', 'orderItems')
             ->orderBy('created_at', 'desc')->simplePaginate(20);
         return $orders;
+    }
+
+    public function findById(int $orderId)
+    {
+        return $this->model->find($orderId);
     }
 
     public function showOrder(Order $order): Order

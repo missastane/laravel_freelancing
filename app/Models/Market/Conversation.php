@@ -42,7 +42,7 @@ class Conversation extends Model
 
     public function hasUser(User $user)
     {
-        return $this->freelancer_id === $user->id || $this->employer_id === $user->id;
+        return $this->employee_id === $user->id || $this->employer_id === $user->id;
     }
 
     public function getStatusValueAttribute()

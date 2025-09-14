@@ -75,9 +75,6 @@ class ProposalService
                 $totalDuration += (int) $milestone['duration_time'];
                 $currentDate = $dueDate;
             }
-            // \Log::info($totalAmount);
-            // \Log::info(now()->addDays($totalDuration));
-
             $this->proposalRepository->update($proposal, [
                 'total_amount' => $totalAmount,
                 'due_date' => now()->addDays($totalDuration),

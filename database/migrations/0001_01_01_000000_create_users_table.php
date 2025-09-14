@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->tinyInteger('user_type')->comment('1 => user, 2 => admin');
             $table->enum('active_role',array('employer','freelancer','admin'))->default(null);
             $table->text('about_me')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
 
