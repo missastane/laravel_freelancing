@@ -238,8 +238,11 @@ class MessageController extends Controller
      */
     public function setAsFinalFile(File $file)
     {
+        if(Gate::denies('setAsFinalFile',$file)){
+            return $this->error('عملیات غیرمجاز',403);
+        }
         try {
-            $this->chatService->seAsFinalFile($file);
+            $this->chatService->setAsFinalFile($file);
             return $this->success(null, 'فایل با موفقیت برای کارفرما ارسال شد', 201);
         } catch (NotAllowedToSetFinalFile $e) {
             throw $e;

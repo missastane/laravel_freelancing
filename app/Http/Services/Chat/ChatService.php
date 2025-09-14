@@ -127,7 +127,7 @@ class ChatService
         return $this->messageRepository->showMessage($newMessage);
     }
 
-    public function seAsFinalFile(File $file)
+    public function setAsFinalFile(File $file)
     {
         return $this->fileManagementService->setAsFinalFile($file);
     }

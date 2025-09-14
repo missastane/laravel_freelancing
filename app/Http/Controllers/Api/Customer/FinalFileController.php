@@ -10,6 +10,7 @@ use App\Models\Market\FinalFile;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class FinalFileController extends Controller
 {
@@ -76,6 +77,9 @@ class FinalFileController extends Controller
      */
     public function approveFileItem(FinalFile $finalFile)
     {
+        if(Gate::denies('approve',$finalFile)){
+            return $this->error('عملیات غیر مجاز',403);
+        }
         try {
             $this->finalFileService->approveFileItem($finalFile);
             return $this->success(null, 'این مرحله با موفقیت تایید و مبلغ آن برای فریلنسر آزاد شد');

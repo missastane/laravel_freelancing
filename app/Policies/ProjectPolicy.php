@@ -25,7 +25,6 @@ class ProjectPolicy
 
     public function update(User $user,Project $project)
     {
-        \Log::info($project);
         return $project->status == 1;
     }
     /**

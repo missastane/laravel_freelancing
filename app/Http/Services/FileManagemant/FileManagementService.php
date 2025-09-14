@@ -60,7 +60,10 @@ class FileManagementService
                 'freelancer_id' => $userId,
                 'delivered_at' => now(),
             ]);
-            $this->orderItemRepository->update($orderItem,['status' => 3]);
+            $this->orderItemRepository->update($orderItem, [
+                'delivered_at' => now(),
+                'status' => 3
+            ]);
             return $file;
         });
         // broadcast

@@ -13,6 +13,7 @@ use App\Notifications\ApproveProposalNotification;
 use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderRepositoryInterface;
+use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
 use App\Repositories\Contracts\Market\ProposalRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
@@ -33,7 +34,8 @@ class ProposalApprovalService
         protected OrderItemRepositoryInterface $orderItemRepository,
         protected WalletTransactionRepositoryInterface $walletTransactionRepository,
         protected WalletRepositoryInterface $walletRepository,
-        protected ProposalRepositoryInterface $proposalRepository
+        protected ProposalRepositoryInterface $proposalRepository,
+        protected ProjectRepositoryInterface $projectRepository
     ) {
         $this->client = auth()->user();
         $this->wallet = $this->client->wallet;
@@ -45,6 +47,7 @@ class ProposalApprovalService
         $updatedProposal = DB::transaction(function () use ($proposal) {
             $this->validateWallet($proposal);
             $this->lockFunds($proposal);
+            $this->updateProjectStatus($proposal);
             $this->updateProposals($proposal);
 
             $order = $this->createOrder($proposal);
@@ -78,6 +81,11 @@ class ProposalApprovalService
         }
     }
 
+    protected function updateProjectStatus(Proposal $proposal)
+    {
+        return $this->proposalRepository->update($proposal->project, ['status' => 2]);
+    }
+
     protected function updateProposals(Proposal $proposal)
     {
         $this->proposalRepository->update($proposal, ['status' => 2]);
@@ -93,6 +101,7 @@ class ProposalApprovalService
 
     protected function createOrder(Proposal $proposal): Order
     {
+        \Log::info($proposal->due_date);
         return $this->orderRepository->create([
             'proposal_id' => $proposal->id,
             'freelancer_id' => $proposal->freelancer_id,

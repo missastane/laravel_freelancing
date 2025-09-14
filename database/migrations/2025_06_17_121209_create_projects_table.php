@@ -20,7 +20,6 @@ return new class extends Migration
             $table->text('description');
             $table->integer('duration_time')->comment('per day');
             $table->decimal('amount',20,3);
-            $table->tinyInteger('is_full_time')->default(2)->comment('1 => yes, 2 => no');
             $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => in progress , 3 => completed, 4 => canceled');
             $table->softDeletes();
             $table->timestamps();

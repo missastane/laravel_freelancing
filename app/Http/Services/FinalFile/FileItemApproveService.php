@@ -3,11 +3,13 @@
 namespace App\Http\Services\FinalFile;
 
 use App\Models\Market\FinalFile;
+use App\Models\Market\Order;
 use App\Models\Market\OrderItem;
 use App\Models\User\User;
 use App\Repositories\Contracts\Market\FinalFileRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderRepositoryInterface;
+use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +22,8 @@ class FileItemApproveService
         protected OrderRepositoryInterface $orderRepository,
         protected WalletTransactionRepositoryInterface $walletTransactionRepository,
         protected WalletRepositoryInterface $walletRepository,
-        protected FinalFileRepositoryInterface $finalFileRepository
+        protected FinalFileRepositoryInterface $finalFileRepository,
+        protected ProjectRepositoryInterface $projectRepository
     ) {
         $this->user = auth()->user();
     }
@@ -63,24 +66,28 @@ class FileItemApproveService
     protected function updateFreelancerWallet(FinalFile $finalFile)
     {
         $freelancerWallet = $this->walletRepository->findByUserId($finalFile->freelancer_id);
-        \Log::info('freelancer amount before approve file : ' . $freelancerWallet->balance);
         // here we must calculate platform fee percent and de
         $freelancerAmount = $finalFile->orderItem->freelancer_amount;
         $this->walletRepository->update($freelancerWallet, [
             'balance' => $freelancerWallet->balance + $freelancerAmount
         ]);
-        \Log::info('freelancer amount after approve file : ' . $freelancerWallet->balance);
         $this->createTransaction($freelancerWallet->id, $freelancerAmount, 1, 'کارفرما مبلغ این مرحله از سفارش را آزاد نموده است', OrderItem::class, $finalFile->order_item_id);
     }
-    protected function updateOrder(FinalFile $finalFile)
+    protected function updateStatusesToComplete(FinalFile $finalFile)
     {
         $order = $finalFile->orderItem->order;
         $allItemsApproved = $order->orderItems->every(fn($item) => $item->status == 4);
         if ($allItemsApproved) {
             $this->orderRepository->update($order, [
-                'status' => 3
+                'status' => 3, //complete
             ]);
+            $this->updateProject($order);
         }
+    }
+    protected function updateProject(Order $order)
+    {
+        $project = $order->proposal->project;
+        return $this->projectRepository->update($project, ['status' => 3]); //complete
     }
     public function approveFileItem(FinalFile $finalFile)
     {
@@ -93,7 +100,7 @@ class FileItemApproveService
             $this->updateOrderItem($finalFile);
             $this->updateEmployerWallet($finalFile);
             $this->updateFreelancerWallet($finalFile);
-            $this->updateOrder($finalFile);
+            $this->updateStatusesToComplete($finalFile);
             $this->setNewInProgressItem($finalFile);
             return $finalFile;
         });
