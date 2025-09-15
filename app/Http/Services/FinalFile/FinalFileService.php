@@ -4,26 +4,32 @@ namespace App\Http\Services\FinalFile;
 
 use App\Models\Market\FinalFile;
 use App\Repositories\Contracts\Market\FinalFileRepositoryInterface;
+use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
+use App\Repositories\Eloquent\Market\OrderItemRepository;
+use Illuminate\Support\Facades\DB;
 
 class FinalFileService
 {
     public function __construct(
         protected FinalFileRepositoryInterface $finalFileRepository,
         protected fileItemApproveService $fileItemApproveService,
-        protected FileItemRejectService $fileItemRejectService
+        protected FileItemRejectService $fileItemRejectService,
+        protected OrderItemRepositoryInterface $orderItemRepository
     ) {
     }
 
     public function revisionFileItem(FinalFile $finalFile, array $data): FinalFile
     {
-        $this->finalFileRepository->update($finalFile, [
-            'status' => 3,
-            'employer_id' => auth()->id(),
-            'rejected_type' => 1,
-            'revision_at' => now(),
-            'revision_note' => $data
-        ]);
-        return $finalFile;
+        return DB::transaction(function () use ($finalFile, $data) {
+            $this->finalFileRepository->update($finalFile, [
+                'status' => 3,
+                'employer_id' => auth()->id(),
+                'revision_at' => now(),
+                'revision_note' => $data['revision_note']
+            ]);
+            $this->orderItemRepository->update($finalFile->orderItem, ['status' => 2]);
+            return $finalFile;
+        });
     }
 
     public function approveFileItem(FinalFile $finalFile)

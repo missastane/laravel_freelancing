@@ -26919,6 +26919,23 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "rejected_note": {
+                                        "description": "This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،.). Any other characters will result in a validation error.",
+                                        "type": "string",
+                                        "example": "توضیح علل رد کردن فایل"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "FinalFile locked successfully",
@@ -27052,6 +27069,23 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "revision_note": {
+                                        "description": "This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،.). Any other characters will result in a validation error.",
+                                        "type": "string",
+                                        "example": "پیام توضیح موارد بازبینی فایل"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "FinalFile revisioned successfully",
@@ -27521,7 +27555,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "فایا با موفقیت برای کارفرما ارسال شد"
+                                            "example": "فایل با موفقیت برای کارفرما ارسال شد"
                                         },
                                         "data": {
                                             "type": "object",

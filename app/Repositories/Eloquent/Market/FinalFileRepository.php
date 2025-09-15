@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Models\Market\File;
 use App\Models\Market\FinalFile;
 use App\Repositories\Contracts\Market\FinalFileRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -17,5 +18,10 @@ class FinalFileRepository extends BaseRepository implements FinalFileRepositoryI
     public function __construct(FinalFile $model)
     {
         parent::__construct($model);
+    }
+
+    public function findByFileId(File $file)
+    {
+        return $this->model->where('file_id',$file->id)->first();
     }
 }

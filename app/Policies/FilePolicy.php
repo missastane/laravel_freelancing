@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Market\File;
 use App\Models\User\User;
+use App\Repositories\Contracts\Market\FinalFileRepositoryInterface;
 use App\Repositories\Contracts\Market\MessageRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderRepositoryInterface;
@@ -16,7 +17,8 @@ class FilePolicy
     public function __construct(
         protected MessageRepositoryInterface $messageRepository,
         protected OrderRepositoryInterface $orderRepository,
-        protected OrderItemRepositoryInterface $orderItemRepository
+        protected OrderItemRepositoryInterface $orderItemRepository,
+        protected FinalFileRepositoryInterface $finalFileRepository
     ) {
         //
     }
@@ -33,7 +35,8 @@ class FilePolicy
         $orderId = $message->message_context_id;
         $order = $this->orderRepository->findById($orderId);
         $orderItem = $this->orderItemRepository->getUncompleteItem($order);
-        return $orderItem && in_array($order->status, [1, 2]);
+        $finalFileAlreadyExist = $this->finalFileRepository->findByFileId($file);
+        return $orderItem && in_array($order->status, [1, 2]) && !$finalFileAlreadyExist;
     }
 
 }

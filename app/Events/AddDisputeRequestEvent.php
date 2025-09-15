@@ -15,12 +15,12 @@ class AddDisputeRequestEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $freelancer,$employer,$disputer;
+    public $freelancer, $employer, $disputer;
     public int $orderItemId;
     /**
      * Create a new event instance.
      */
-    public function __construct(User $freelancer, User $employer, User $disputer, int $orderItemId)
+    public function __construct($freelancer, $employer, $disputer, int $orderItemId)
     {
         $this->freelancer = $freelancer;
         $this->employer = $employer;

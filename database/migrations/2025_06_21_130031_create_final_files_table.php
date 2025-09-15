@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamp('revision_at')->nullable();
             $table->text('revision_note')->nullable();
             $table->timestamp('approved_at')->nullable();
+            $table->text('rejected_note')->nullable();
             $table->timestamp('rejected_at')->nullable();
             
             $table->timestamps();

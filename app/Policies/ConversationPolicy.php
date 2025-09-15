@@ -17,4 +17,12 @@ class ConversationPolicy
         }
         return true;
     }
+
+    public function checkSendable(User $user, Conversation $conversation)
+    {
+        if (!$conversation->hasUser($user) || $conversation->status == 2) {
+            return false;
+        }
+        return true;
+    }
 }

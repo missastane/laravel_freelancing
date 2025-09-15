@@ -102,6 +102,16 @@ class FinalFileController extends Controller
      *         description="The ID of the Final File",
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="rejected_note", type="string", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،.). Any other characters will result in a validation error.", example="توضیح علل رد کردن فایل"),
+     *              )
+     *          )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="FinalFile locked successfully",
@@ -150,7 +160,7 @@ class FinalFileController extends Controller
             $this->finalFileService->rejectFileItem($finalFile, $request->all());
             return $this->success(null, 'فایل سفارش توسط کارفرما قفل شد و اختلاف نظر ثبت شد. لطفا منتظر نتیجه داوری بمانید');
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -167,6 +177,16 @@ class FinalFileController extends Controller
      *         required=true,
      *         description="The ID of the Final File",
      *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="revision_note", type="string", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،.). Any other characters will result in a validation error.", example="پیام توضیح موارد بازبینی فایل"),
+     *              )
+     *          )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -216,7 +236,7 @@ class FinalFileController extends Controller
             $this->finalFileService->revisionFileItem($finalFile, $request->all());
             return $this->success(null, 'فایل با موفقیت جهت بازبینی فریلنسر ارجاع شد');
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 }

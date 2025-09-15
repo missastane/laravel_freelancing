@@ -169,7 +169,7 @@ class MessageController extends Controller
      */
     public function send(Conversation $conversation, SendMessageRequest $request)
     {
-        if (Gate::denies('checkMembership', $conversation)) {
+        if (Gate::denies('checkSendable', $conversation)) {
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {
@@ -199,7 +199,7 @@ class MessageController extends Controller
      *         description="successful Final File Set",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="bool", example="true"),
-     *             @OA\Property(property="message", type="string", example="فایا با موفقیت برای کارفرما ارسال شد"),
+     *             @OA\Property(property="message", type="string", example="فایل با موفقیت برای کارفرما ارسال شد"),
      *             @OA\Property(property="data", type="object", nullable=true)
      *         )
      *     ),
@@ -333,7 +333,7 @@ class MessageController extends Controller
      */
     public function replyTo(Message $message, SendMessageRequest $reuest)
     {
-        if (Gate::denies('checkMembership', [$message->conversation])) {
+        if (Gate::denies('checkSendable', [$message->conversation])) {
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
         try {

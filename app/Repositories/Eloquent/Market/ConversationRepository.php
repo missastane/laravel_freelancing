@@ -10,11 +10,13 @@ use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCreateTrait;
 use App\Traits\HasShowTrait;
+use App\Traits\HasUpdateTrait;
 
 class ConversationRepository extends BaseRepository implements ConversationRepositoryInterface
 {
     use HasCreateTrait;
     use HasShowTrait;
+    use HasUpdateTrait;
 
     public function __construct(Conversation $model)
     {
