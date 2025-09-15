@@ -183,6 +183,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
         Route::put('/update', [SettingController::class, 'update'])->name('admin.setting.update');
     });
     Route::prefix('user')->group(function () {
+        
         Route::prefix('admin-user')->group(function () {
             Route::get('/', [AdminUserController::class, 'index'])->name('admin.user.admin-user');
             Route::get('/search', [AdminUserController::class, 'search'])->name('admin.user.admin-user.search');
@@ -298,7 +299,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('message')->group(function () {
         Route::get('/{conversation}', [MessageController::class, 'index']);
         Route::post('/send/{conversation}', [MessageController::class, 'send']);
-        Route::post('/set-final-file/{file}', [MessageController::class, 'setAsFinalFile']);
+        Route::post('/set-final-file/{file}', [MessageController::class, 'setAsFinalFile'])->middleware('freelancer');
         Route::post('/reply/{message}', [MessageController::class, 'replyTo']);
         Route::delete('/delete/{message}', [MessageController::class, 'delete']);
         Route::delete('/delete-file/{file}', [MessageController::class, 'deleteFile']);

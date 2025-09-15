@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('send_sms_count')->default(0);
             $table->integer('view_details_count')->default(0);
             $table->timestamp('period_start');
-            $table->timestamp('period_end')->useCurrent();
+            $table->timestamp('period_end')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

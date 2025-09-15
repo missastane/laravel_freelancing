@@ -16,7 +16,7 @@ interface DisputeRequestRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getAllByFilter(array $data): Paginator;
-    public function getUserRequests(): Paginator;
+    public function getAllByFilter(string $status);
+    public function getUserRequests();
     public function showDisputRequest(DisputeRequest $disputeRequest);
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('feature_type_id')->constrained('feature_types')->cascadeOnDelete();
             $table->unsignedBigInteger('target_id');
             $table->enum('target_type', ['project', 'proposal']);
-            $table->timestamp('purchased_at')->useCurrent();
+            $table->timestamp('purchased_at')->nullable();
             $table->foreignId('payment_id')->constrained('payments')->cascadeOnDelete();
             $table->timestamp('expired_at')->nullable();
             $table->unique(['feature_type_id', 'target_id', 'target_type'], 'uniq_feature_target');

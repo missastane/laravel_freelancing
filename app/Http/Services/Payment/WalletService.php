@@ -34,6 +34,7 @@ class WalletService
 
     public function transferFromLockedToBalance(Wallet $from, Wallet $to, int $amount, string $desc, $relatedId)
     {
+        $this->walletRepository->decreamentBalance($from,$amount);
         $this->walletRepository->decrementLocked($from, $amount);
         $this->walletRepository->increamentBalance($to, $amount);
         $this->createTransaction($from, $amount, 4, $desc, OrderItem::class, $relatedId); // خرج شده

@@ -104,12 +104,6 @@ class Order extends Model
         return $result;
     }
 
-    public function setDueDateAttribute()
-    {
-        $dueDate = now('Asia/Tehran')->addDays($this->total_duration_time)->getTimestamp();
-        return $dueDate;
-    }
-
     public function scopeFilterByStatus($query, $status)
     {
         // convert 

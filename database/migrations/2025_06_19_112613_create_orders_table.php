@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('freelancer_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => in progress, 3 => completed, 4 => canceled');
             $table->decimal('total_price',20,3);
-            $table->timestamp('due_date');
+            $table->timestamp('due_date')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });

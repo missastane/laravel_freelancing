@@ -18,9 +18,9 @@ class DisputeRequestService
     ) {
     }
 
-    public function getDisputeRequests(array $data)
+    public function getDisputeRequests(string $status)
     {
-        return $this->disputeRequestRepository->getAllByFilter($data);
+        return $this->disputeRequestRepository->getAllByFilter($status);
     }
 
     public function getUserRequests(): Paginator
@@ -41,11 +41,9 @@ class DisputeRequestService
             'ticket_type' => 4, //complain
             'subject' => "تیکت داوری مرحله {$title} سفارش {$orderId}",
         ]);
-        $users = [];
         $freelancer = $orderItem->order->freelancer;
         $employer = $orderItem->order->employer;
-        array_push($users,[$freelancer,$employer]);
-        Notification::send($users,new AddDisputeTicketNotification($orderItem->order->project));
+        Notification::send([$employer, $freelancer], new AddDisputeTicketNotification($orderItem->order->project));
     }
     public function showDisputeRequest(DisputeRequest $disputeRequest)
     {

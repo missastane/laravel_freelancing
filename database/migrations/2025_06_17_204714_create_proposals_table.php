@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('total_amount',20,3)->nullable();
             $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => approved, 3 => rejected, 4 => withdrawn');
-            $table->timestamp('due_date');
+            $table->timestamp('due_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

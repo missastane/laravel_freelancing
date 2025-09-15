@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\DisputeRequestResource;
 use App\Models\User\DisputeRequest;
 use App\Repositories\Contracts\User\DisputeRequestRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -22,25 +24,26 @@ class DisputeRequestRepository extends BaseRepository implements DisputeRequestR
         parent::__construct($model);
     }
 
-    public function getAllByFilter(array $data): Paginator
+    public function getAllByFilter(string $status)
     {
-        $requests = $this->model->filterByStatus($data)
-            ->with('orderItem', 'admin')
+        $requests = $this->model->filterByStatus($status)
+            ->with('orderItem', 'user')
             ->orderBy('created_at', 'desc')
-            ->simplePaginate(15);
-        return $requests;
+            ->paginate(15);
+        return new BaseCollection($requests, DisputeRequestResource::class, null);
     }
-    public function getUserRequests(): Paginator
+    public function getUserRequests()
     {
-        $requests = $this->model->where('raised_by',auth()->id())
-            ->with('orderItem', 'admin')
+        $requests = $this->model->where('raised_by', auth()->id())
+            ->with('orderItem', 'user')
             ->orderBy('created_at', 'desc')
-            ->simplePaginate(15);
-        return $requests;
+            ->paginate(15);
+        return new BaseCollection($requests, DisputeRequestResource::class, null);
+
     }
 
     public function showDisputRequest(DisputeRequest $disputeRequest)
     {
-        return $this->showWithRelations($disputeRequest,['orderItem','admin:id,username,active_role']);
+        return $this->showWithRelations($disputeRequest, ['orderItem', 'user:id,username,active_role']);
     }
 }

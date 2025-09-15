@@ -30,6 +30,13 @@ class DisputeRequestController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=true,
+     *         description="status of request to fetch",
+     *         @OA\Schema(type="string", enum={"pending","resolved","rejected"})
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="A list of Dispute Requests",
@@ -69,16 +76,23 @@ class DisputeRequestController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->success($this->disputeRequestService->getDisputeRequests($request->query('status')));
+        return $this->disputeRequestService->getDisputeRequests($request->query('status'));
     }
 
     /**
      * @OA\Post(
-     *     path="/api/admin/user/create-ticket/{disputeRequest}",
+     *     path="/api/admin/user/dispute-request/create-ticket/{disputeRequest}",
      *     summary="Store a new Ticket by admin with complain type",
      *     description="In this method admins can Create a new complain Ticket",
      *     tags={"DisputeRequest"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="disputeRequest",
+     *         in="path",
+     *         description="ID of the DisputeRequest to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -157,11 +171,18 @@ class DisputeRequestController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/admin/user/judge/{disputeRequest}",
+     *     path="/api/admin/user/dispute-request/judge/{disputeRequest}",
      *     summary="Judge a dispute request by admin",
      *     description="In this method admins can Judge a DisputeRequest",
      *     tags={"DisputeRequest"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="disputeRequest",
+     *         in="path",
+     *         description="ID of the DisputeRequest to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -236,7 +257,7 @@ class DisputeRequestController extends Controller
             $this->disputeRequestService->judgeDisputeRequest($disputeRequest, $request->all());
             return $this->success(null, 'نتیجه داوری با موفقیت ثبت و برای طرفین ارسال شد');
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

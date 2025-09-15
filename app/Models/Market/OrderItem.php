@@ -63,9 +63,9 @@ class OrderItem extends Model
     {
         return $this->hasMany(FinalFile::class);
     }
-    public function mileestone()
+    public function milestone()
     {
-        return $this->belongsTo(ProposalMilestone::class);
+        return $this->belongsTo(ProposalMilestone::class,'proposal_milestone_id');
     }
     protected function casts()
     {

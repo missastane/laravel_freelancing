@@ -48,6 +48,7 @@ class FileItemRejectService
     {
         $this->disputeRequestRepository->create([
             'order_item_id' => $finalFile->order_item_id,
+            'final_file_id' => $finalFile->id,
             'user_type' => 1,
             'raised_by' => auth()->id(),
             'reason' => $data['rejected_note'],

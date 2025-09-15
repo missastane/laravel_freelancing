@@ -49,7 +49,7 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
 
     public function decrementLocked(Wallet $wallet, int $amount): int
     {
-        return $wallet->decrement('locked_balanced', $amount);
+        return $wallet->decrement('locked_balance', $amount);
     }
 
 }

@@ -63,10 +63,8 @@ class DisputeJudgementService
             return $msg;
         });
         $orderItem = $disputeRequest->orderItem;
-        $users = [];
         $freelancer = $orderItem->order->freelancer;
         $employer = $orderItem->order->employer;
-        array_push($users, [$freelancer, $employer]);
-        Notification::send($users, new JudgeResultNotification($message,$orderItem->order->project));
+        Notification::send([$freelancer, $employer], new JudgeResultNotification($message,$orderItem->order->project));
     }
 }

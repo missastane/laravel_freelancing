@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Market\FinalFile;
 use App\Models\Market\OrderItem;
 use App\Models\Ticket\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,7 +48,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DisputeRequest extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['order_item_id','user_type', 'raised_by', 'reason', 'status'];
+    protected $fillable = ['order_item_id', 'final_file_id', 'user_type', 'raised_by', 'reason', 'status'];
 
     protected function casts()
     {
@@ -58,18 +59,22 @@ class DisputeRequest extends Model
 
     public function orderItem()
     {
-        return $this->belongsTo(OrderItem::class,'order_item_id');
+        return $this->belongsTo(OrderItem::class, 'order_item_id');
     }
     public function user()
     {
         return $this->belongsTo(User::class, 'raised_by');
     }
+    public function finalFile()
+    {
+        return $this->belongsTo(FinalFile::class, 'final_file_id');
+    }
 
     public function disputeTicket()
     {
-        return $this->hasOne(Ticket::class,'dispute_request_id');
+        return $this->hasOne(Ticket::class, 'dispute_request_id');
     }
-   
+
     public function getUserTypeValueAttribute()
     {
         switch ($this->user_type) {
@@ -99,7 +104,7 @@ class DisputeRequest extends Model
         return $result;
     }
 
-       public function scopeFilterByStatus($query, $status)
+    public function scopeFilterByStatus($query, $status)
     {
         // convert 
         $requestStatuses = [

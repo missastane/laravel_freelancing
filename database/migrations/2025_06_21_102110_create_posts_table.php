@@ -24,7 +24,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1)->comment('1 => active, 2 => disactive');
             $table->json('related_posts')->nullable();
             $table->bigInteger('view')->default(0);
-            $table->timestamp('published_at')->useCurrent();
+            $table->timestamp('published_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

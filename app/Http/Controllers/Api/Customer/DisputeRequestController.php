@@ -25,6 +25,7 @@ class DisputeRequestController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
+     *     
      *     @OA\Response(
      *         response=200,
      *         description="A list of Dispute Requests",
@@ -125,7 +126,7 @@ class DisputeRequestController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api//dispute-request/delete/{disputeRequest}",
+     *     path="/api/dispute-request/delete/{disputeRequest}",
      *     summary="Delete a DisputeRequest",
      *     description="This endpoint allows the user to `delete an existing DisputeRequest`.",
      *     operationId="deleteDisputeRequest",

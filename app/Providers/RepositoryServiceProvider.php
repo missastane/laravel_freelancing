@@ -32,6 +32,7 @@ use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketMessageRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
+use App\Repositories\Contracts\User\ArbitrationRequestRepositoryInterface;
 use App\Repositories\Contracts\User\DisputeRequestRepositoryInterface;
 use App\Repositories\Contracts\User\FavoriteRepositoryInterface;
 use App\Repositories\Contracts\User\NotificationRepositoryInterface;
@@ -73,6 +74,7 @@ use App\Repositories\Eloquent\Ticket\TicketDepartmentRepository;
 use App\Repositories\Eloquent\Ticket\TicketMessageRepository;
 use App\Repositories\Eloquent\Ticket\TicketPriorityRepository;
 use App\Repositories\Eloquent\Ticket\TicketRepository;
+use App\Repositories\Eloquent\User\ArbitrationRequestRepository;
 use App\Repositories\Eloquent\User\DisputeRequestRepository;
 use App\Repositories\Eloquent\User\FavoriteRepository;
 use App\Repositories\Eloquent\User\NotificationRepository;
@@ -133,6 +135,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(FeatureTypeRepositoryInterface::class, FeatureTypeRepository::class);
         $this->app->bind(DisputeRequestRepositoryInterface::class, DisputeRequestRepository::class);
         $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
+        $this->app->bind(ArbitrationRequestRepositoryInterface::class, ArbitrationRequestRepository::class);
     }
 
     /**

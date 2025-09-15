@@ -22555,6 +22555,22 @@
                 "summary": "Retrieve list of Dispute Requests",
                 "description": "Retrieve list of all `Dispute Requests`",
                 "operationId": "c02c983ffd38f08a155627cdb2e7beca",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "status of request to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "resolved",
+                                "rejected"
+                            ]
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "A list of Dispute Requests",
@@ -22651,14 +22667,26 @@
                 ]
             }
         },
-        "/api/admin/user/create-ticket/{disputeRequest}": {
+        "/api/admin/user/dispute-request/create-ticket/{disputeRequest}": {
             "post": {
                 "tags": [
                     "DisputeRequest"
                 ],
                 "summary": "Store a new Ticket by admin with complain type",
                 "description": "In this method admins can Create a new complain Ticket",
-                "operationId": "b10a7b181bfb0201e5e8761c3be2ae63",
+                "operationId": "739f28555cb2e9634896760a1c5c1ff5",
+                "parameters": [
+                    {
+                        "name": "disputeRequest",
+                        "in": "path",
+                        "description": "ID of the DisputeRequest to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -22820,14 +22848,26 @@
                 ]
             }
         },
-        "/api/admin/user/judge/{disputeRequest}": {
+        "/api/admin/user/dispute-request/judge/{disputeRequest}": {
             "post": {
                 "tags": [
                     "DisputeRequest"
                 ],
                 "summary": "Judge a dispute request by admin",
                 "description": "In this method admins can Judge a DisputeRequest",
-                "operationId": "25f0c6fcb4854506b49635524b528211",
+                "operationId": "35f01c9a3e51b52079939928a402d154",
+                "parameters": [
+                    {
+                        "name": "disputeRequest",
+                        "in": "path",
+                        "description": "ID of the DisputeRequest to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -26533,7 +26573,7 @@
                 ]
             }
         },
-        "/api//dispute-request/delete/{disputeRequest}": {
+        "/api/dispute-request/delete/{disputeRequest}": {
             "delete": {
                 "tags": [
                     "Customer-DisputeRequest"

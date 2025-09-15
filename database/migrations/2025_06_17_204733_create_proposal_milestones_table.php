@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('amount',20,3);
             $table->integer('duration_time')->comment('per day');
-            $table->timestamp('due_date');
+            $table->timestamp('due_date')->nullable();
             $table->timestamps();
         });
     }

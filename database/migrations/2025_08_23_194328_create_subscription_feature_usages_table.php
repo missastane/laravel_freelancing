@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignId('subscription_feature_id')->constrained('subscription_features')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('used_count');
             $table->timestamp('period_start');
-            $table->timestamp('period_end')->useCurrent();
+            $table->timestamp('period_end')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -16,13 +16,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(SubscriptionUsageManagerService::class, function ($app) {
-            $user = Auth::user(); // یا می‌تونی $app['auth']->user() هم بگیری
-            return new SubscriptionUsageManagerService(
-                $user,
-                $app->make(SubscriptionDefaultUsageRepositoryInterface::class)
-            );
-        });
+        // $this->app->bind(SubscriptionUsageManagerService::class, function ($app) {
+        //     $user = Auth::user(); // یا می‌تونی $app['auth']->user() هم بگیری
+        //     return new SubscriptionUsageManagerService(
+        //         $user,
+        //         $app->make(SubscriptionDefaultUsageRepositoryInterface::class)
+        //     );
+        // });
         $this->app->singleton(SmsService::class, function ($app) {
             return new SmsService(); // یا با پیکربندی لازم
         });

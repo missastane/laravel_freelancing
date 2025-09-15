@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->decimal('price',20,3);
             $table->decimal('freelancer_amount',20,3);
             $table->decimal('platform_fee',20,3);
-            $table->timestamp('due_date')->useCurrent();
+            $table->timestamp('due_date')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });
