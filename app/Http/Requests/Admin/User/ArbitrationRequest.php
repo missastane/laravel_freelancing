@@ -23,8 +23,8 @@ class ArbitrationRequest extends FormRequest
     {
         return [
             'status' => 'integer|required|in:2,3,4,5',
-            'freelancer_percent' => 'nullable|required_if:status,4|integer|in:1,100',
-            'employer_percent' => 'nullable|required_if:status,4|integer|in:1,100',
+            'freelancer_percent' => 'nullable|required_if:status,4|integer|between:1,100',
+            'employer_percent' => 'nullable|required_if:status,4|integer|between:1,100',
             'description' => 'required|min:2|max:500|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،\.?؟! ]+$/u',
         ];
     }

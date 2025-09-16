@@ -32,13 +32,13 @@ class WalletService
         ]);
     }
 
-    public function transferFromLockedToBalance(Wallet $from, Wallet $to, int $amount, string $desc, $relatedId)
+    public function transferFromLockedToBalance(Wallet $from, Wallet $to, int $itemPrice,int $freelancerAmount, string $desc, $relatedId)
     {
-        $this->walletRepository->decreamentBalance($from,$amount);
-        $this->walletRepository->decrementLocked($from, $amount);
-        $this->walletRepository->increamentBalance($to, $amount);
-        $this->createTransaction($from, $amount, 4, $desc, OrderItem::class, $relatedId); // خرج شده
-        $this->createTransaction($to, $amount, 4, $desc, OrderItem::class, $relatedId);   // دریافت شده
+        $this->walletRepository->decreamentBalance($from,$itemPrice);
+        $this->walletRepository->decrementLocked($from, $itemPrice);
+        $this->walletRepository->increamentBalance($to, $freelancerAmount);
+        $this->createTransaction($from, $itemPrice, 4, $desc, OrderItem::class, $relatedId); // خرج شده
+        $this->createTransaction($to, $freelancerAmount, 4, $desc, OrderItem::class, $relatedId);   // دریافت شده
     }
 
     public function showWallet()

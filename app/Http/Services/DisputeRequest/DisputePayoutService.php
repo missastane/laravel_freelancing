@@ -95,7 +95,7 @@ class DisputePayoutService
         $amount = 0;
         DB::transaction(function () use ($order, $orderItem, $employerWallet, $disputeRequest, $amount) {
             $amount = $this->priceOfCancelOtherItems($order, $orderItem);
-            $this->walletRepository->decrementLocked($employerWallet, $amount );
+            $this->walletRepository->decrementLocked($employerWallet, $amount + $orderItem->price);
             $this->finalizeDispute($order, $disputeRequest);
         });
         return 'مبلغ این مرحله از پروژه طبق رای ادمین به کیف پول کارفرما بازگردانده شد و باقی پروژه لغو شد';
@@ -105,7 +105,6 @@ class DisputePayoutService
         [$orderItem, $order, $employerWallet, $freelancerWallet] = $this->extractCommonData($disputeRequest, true);
         $result = DB::transaction(function () use ($order, $orderItem, $employerWallet, $freelancerWallet, $disputeRequest) {
             $employerAmount = $this->priceOfCancelOtherItems($order, $orderItem);
-            \Log::info('money must return to employer wallet'.$employerAmount);
             $this->walletRepository->decrementLocked($employerWallet, $employerAmount);
             $msg = 'پول بلوکه شده این مرحله از سفارش طبق رأی داور برای فریلنسر آزاد شد';
             $this->walletService->transferFromLockedToBalance(
@@ -126,7 +125,6 @@ class DisputePayoutService
     {
         DB::transaction(function () use ($disputeRequest, $freelancerPercent, $employerPercent) {
             [$orderItem, $order, $employerWallet, $freelancerWallet] = $this->extractCommonData($disputeRequest, true);
-            $employerAmount = 0;
             $employerAmount = $this->priceOfCancelOtherItems($order, $orderItem);
             $price = $orderItem->price;
             $siteFee = $orderItem->platform_fee;
@@ -141,7 +139,7 @@ class DisputePayoutService
             $this->walletService->transferFromLockedToBalance(
                 $employerWallet,
                 $freelancerWallet,
-                $orderItem->price,
+                $freelancerNetAmount + $siteFee,
                 $freelancerNetAmount,
                 $employerDecreaseMsg,
                 $orderItem->id

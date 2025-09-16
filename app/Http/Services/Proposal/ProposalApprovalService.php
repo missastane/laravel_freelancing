@@ -101,7 +101,6 @@ class ProposalApprovalService
 
     protected function createOrder(Proposal $proposal): Order
     {
-        \Log::info($proposal->due_date);
         return $this->orderRepository->create([
             'proposal_id' => $proposal->id,
             'freelancer_id' => $proposal->freelancer_id,

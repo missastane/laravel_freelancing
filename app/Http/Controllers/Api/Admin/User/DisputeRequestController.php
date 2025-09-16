@@ -202,7 +202,7 @@ class DisputeRequestController extends Controller
      *         description="successful Judgement Submition",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="bool", example="true"),
-     *             @OA\Property(property="message", type="string", example="تیکت داوری با موفقیت ثبت شد و به طرفین در این رابطه اطلاع داده شد"),
+     *             @OA\Property(property="message", type="string", example="نتیجه داوری با موفقیت ثبت و برای طرفین ارسال شد"),
      *             @OA\Property(property="data", type="object", nullable=true)
      *         )
      *     ),
