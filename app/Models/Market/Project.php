@@ -74,8 +74,13 @@ class Project extends Model
 
     public function proposals()
     {
-        return $this->hasMany(Proposal::class,'project_id');
+        return $this->hasMany(Proposal::class, 'project_id');
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'project_id');
+    }
+
     public function skills()
     {
         return $this->belongsToMany(Skill::class);

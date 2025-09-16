@@ -51,6 +51,7 @@ class ProposalApprovalService
             $this->updateProposals($proposal);
 
             $order = $this->createOrder($proposal);
+            $this->archiveConversation($proposal);
             $this->createOrderItems($order, $proposal);
             $this->updateFirstItemAsInProgress($order);
             $this->createConversation($order);
@@ -133,8 +134,22 @@ class ProposalApprovalService
 
     protected function updateFirstItemAsInProgress(Order $order)
     {
-       $orderItem = $this->orderItemRepository->getFirstPendingItem($order);
-       return $this->orderItemRepository->update($orderItem,['status' => 2]);
+        $orderItem = $this->orderItemRepository->getFirstPendingItem($order);
+        return $this->orderItemRepository->update($orderItem, ['status' => 2]);
+    }
+    protected function archiveConversation(Proposal $proposal)
+    {
+        $freelancerId = $proposal->freelancer_id;
+        $employerId = $proposal->project->user_id;
+        $conversation = $this->conversationRepository->getConversationIfExists(
+            $freelancerId,
+            $employerId,
+            Proposal::class,
+            $proposal->id
+        );
+        if ($conversation) {
+            return $this->conversationRepository->update($conversation, ['status' => 3]); //archived(read-only)
+        }
     }
     protected function createConversation(Order $order)
     {

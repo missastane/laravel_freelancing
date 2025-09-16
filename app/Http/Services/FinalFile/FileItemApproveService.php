@@ -82,11 +82,12 @@ class FileItemApproveService
                 'status' => 3, //complete
             ]);
             $this->updateProject($order);
+
         }
     }
     protected function updateProject(Order $order)
     {
-        $project = $order->proposal->project;
+        $project = $order->project;
         return $this->projectRepository->update($project, ['status' => 3]); //complete
     }
     public function approveFileItem(FinalFile $finalFile)

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('proposal_id')->constrained('proposals')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('employer_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('freelancer_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => in progress, 3 => completed, 4 => canceled');

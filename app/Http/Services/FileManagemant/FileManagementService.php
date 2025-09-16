@@ -48,7 +48,7 @@ class FileManagementService
         $order = $this->orderRepository->findById($orderId);
         $orderItem = $this->orderItemRepository->getUncompleteItem($order);
 
-        $result = DB::transaction(function () use ($file, $orderItem) {
+        $result = DB::transaction(function () use ($file,$order, $orderItem) {
             $userId = auth()->id();
             $this->fileRepository->update(
                 $file,
@@ -62,13 +62,20 @@ class FileManagementService
             ]);
             $this->orderItemRepository->update($orderItem, [
                 'delivered_at' => now(),
-                'status' => 3
             ]);
+            $hasUndeliveredItems = $this->orderItemRepository->hasUndeliveredItem($order);
+
+        if (! $hasUndeliveredItems) {
+            // all items has been delivered
+            $this->orderRepository->update($order, [
+                'delivered_at' => now(),
+            ]);
+        }
             return $file;
         });
         // broadcast
         $employer = $order->employer;
-        $project = $order->proposal->project;
+        $project = $order->project;
         $employer->notify(new SendFinalFileNotification($project, "فایل پروژه {$project->title} توسط فریلنسر برای شما ارسال شد. لطفا بررسی بفرمایید"));
         return $result;
     }

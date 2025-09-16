@@ -40,4 +40,9 @@ class OrderItemRepository extends BaseRepository implements OrderItemRepositoryI
         $orderItem = $this->model->where('order_id', $order->id)->where('status', 1)->first();
         return $orderItem;
     }
+
+    public function hasUndeliveredItem(Order $order)
+    {
+        return $this->model->where('order_id',$order)->whereNull('deivered_at')->exists();
+    }
 }

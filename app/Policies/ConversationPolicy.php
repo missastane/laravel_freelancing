@@ -20,7 +20,7 @@ class ConversationPolicy
 
     public function checkSendable(User $user, Conversation $conversation)
     {
-        if (!$conversation->hasUser($user) || $conversation->status == 2) {
+        if (!$conversation->hasUser($user) || $conversation->status != 1) {
             return false;
         }
         return true;

@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('employee_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('conversation_context')->comment('for example: App\\Models\\Proposal witch means before order or in progress of order App\\Models\\Order');
             $table->bigInteger('conversation_context_id')->comment('value of proposal_id or order_id');
-            $table->tinyInteger('status')->default(1)->comment('1=> open, 2 => close');
+            $table->tinyInteger('status')->default(1)->comment('1=> open, 2 => close, 3 => archived');
             $table->timestamps();
         });
     }

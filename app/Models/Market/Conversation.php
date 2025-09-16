@@ -47,10 +47,20 @@ class Conversation extends Model
 
     public function getStatusValueAttribute()
     {
-        if ($this->status == 1) {
-            return 'مکالمه آزاد';
-        } else {
-            return 'مکالمه بسته شده';
+        switch ($this->status) {
+            case 1:
+                $result = 'مکالمه آزاد';
+                break;
+            case 2:
+                $result = 'مکالمه بسته شده';
+                break;
+            case 3:
+                $result = 'مکالمه آرشیو شده';
+                break;
+            default:
+                $result = 'آزاد';
+                break;
         }
+        return $result;
     }
 }

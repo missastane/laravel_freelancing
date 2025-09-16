@@ -14,4 +14,5 @@ interface OrderItemRepositoryInterface extends ShowableRepositoryInterface,Creat
     public function getOrderItems(Order $order);
     public function getFirstPendingItem(Order $order);
     public function getUncompleteItem(Order $order);
+    public function hasUndeliveredItem(Order $order);
 }

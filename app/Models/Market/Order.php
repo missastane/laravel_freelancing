@@ -46,7 +46,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['proposal_id', 'employer_id', 'freelancer_id', 'status', 'total_price', 'delivered_at', 'due_date'];
+    protected $fillable = ['proposal_id','project_id', 'employer_id', 'freelancer_id', 'status', 'total_price', 'delivered_at', 'due_date'];
 
     protected function casts()
     {
@@ -62,7 +62,7 @@ class Order extends Model
 
     public function project()
     {
-        return $this->proposal()->with('project');
+        return $this->belongsTo(Project::class,'project_id');
     }
 
 

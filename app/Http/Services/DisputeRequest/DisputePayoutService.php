@@ -3,9 +3,11 @@
 namespace App\Http\Services\DisputeRequest;
 
 use App\Http\Services\Payment\WalletService;
+use App\Models\Market\Conversation;
 use App\Models\Market\Order;
 use App\Models\Market\OrderItem;
 use App\Models\User\DisputeRequest;
+use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\Market\OrderRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
@@ -24,7 +26,8 @@ class DisputePayoutService
         protected DisputeRequestRepositoryInterface $disputeRequestRepository,
         protected TicketRepositoryInterface $ticketRepository,
         protected OrderRepositoryInterface $orderRepository,
-        protected OrderItemRepositoryInterface $orderItemRepository
+        protected OrderItemRepositoryInterface $orderItemRepository,
+        protected ConversationRepositoryInterface $conversationRepository
     ) {
     }
     protected function approveDisputeRequest(DisputeRequest $disputeRequest)
@@ -44,6 +47,19 @@ class DisputePayoutService
     protected function changeOrderStatus(Order $order, int $status)
     {
         $this->orderRepository->update($order, ['status' => $status]);
+    }
+    protected function openConversation(DisputeRequest $disputeRequest)
+    {
+        $order = $disputeRequest->orderItem->order;
+        $freelancerId = $order->freelancer_id;
+        $employerId = $order->employer_id;
+        $conversation = $this->conversationRepository->getConversationIfExists(
+            $freelancerId,
+            $employerId,
+            Order::class,
+            $order->id
+        );
+        return $this->conversationRepository->update($conversation,['status' => 1]);
     }
     protected function finalizeDispute(Order $order, DisputeRequest $disputeRequest)
     {
@@ -162,6 +178,7 @@ class DisputePayoutService
         DB::transaction(function () use ($disputeRequest) {
             $this->rejectDisputeRequest($disputeRequest);
             $this->closeDisputeTicket($disputeRequest);
+            $this->openConversation($disputeRequest);
         });
         return 'این مرحله از سفارش طبق رای ادمین همچنان جاری بوده و از حالت قفل شده خارج  شده و پروژه ادامه می یابد';
     }
