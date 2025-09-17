@@ -93,7 +93,8 @@ class DisputePayoutService
             'locked_by' => null,
             'locked_reason' => null,
             'locked_note' => null,
-            'locked_at' => null
+            'locked_at' => null,
+            'delivered_at' => null
         ]);
     }
     protected function extractCommonData(DisputeRequest $disputeRequest, bool $withFreelancer = false)
@@ -138,7 +139,7 @@ class DisputePayoutService
                 $msg,
                 $orderItem->id
             );
-            $this->orderItemRepository->update($orderItem, ['status' => 3]); //completed
+            $this->orderItemRepository->update($orderItem, ['status' => 4]); //approved(by admin and paid the money)
             $this->finalizeDispute($order, $disputeRequest);
             return $msg;
         });

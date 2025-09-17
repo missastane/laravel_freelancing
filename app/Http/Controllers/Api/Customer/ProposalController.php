@@ -519,7 +519,7 @@ class ProposalController extends Controller
         }
         try {
             $this->proposalService->storeProposal($project, $request->all());
-            return $this->success(null, 'پیشنهاد با موفقیت افزوده شد', 201);
+            return $this->success(null, 'پیشنهاد با موفقیت ثبت شد', 201);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }

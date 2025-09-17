@@ -62,6 +62,7 @@ class FileManagementService
             ]);
             $this->orderItemRepository->update($orderItem, [
                 'delivered_at' => now(),
+                'status' => 3 //complete
             ]);
             $hasUndeliveredItems = $this->orderItemRepository->hasUndeliveredItem($order);
 

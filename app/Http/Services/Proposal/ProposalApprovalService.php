@@ -84,7 +84,7 @@ class ProposalApprovalService
 
     protected function updateProjectStatus(Proposal $proposal)
     {
-        return $this->proposalRepository->update($proposal->project, ['status' => 2]);
+        return $this->proposalRepository->update($proposal->project, ['status' => 2]); // in progress
     }
 
     protected function updateProposals(Proposal $proposal)
@@ -108,7 +108,8 @@ class ProposalApprovalService
             'employer_id' => $this->client->id,
             'project_id' => $proposal->project_id,
             'total_price' => $proposal->total_amount,
-            'due_date' => $proposal->due_date
+            'due_date' => $proposal->due_date,
+            'status' => 2 // in progress
         ]);
     }
 
