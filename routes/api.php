@@ -414,7 +414,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::prefix('user-rating')->group(function () {
         Route::get('/show/{user}', [UserRatingController::class, 'show']);
-        Route::get('/store/{order}', [UserRatingController::class, 'addRate']);
+        Route::post('/store/{order}', [UserRatingController::class, 'addRate']);
     });
     Route::prefix('wallet')->group(function () {
         Route::get('/', [CustomerWalletController::class, 'showWallet']);

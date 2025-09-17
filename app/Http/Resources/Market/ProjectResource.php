@@ -22,7 +22,6 @@ class ProjectResource extends JsonResource
             'duration_time' => $this->duration_time,
             'amount' => $this->amount,
             'status' => $this->status_value,
-            'is_full_time' => $this->is_full_time_value,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'employer' => auth()->user()->user_type == 2

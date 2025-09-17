@@ -18,7 +18,7 @@ class FavoriteService
     {
     }
 
-    public function getUserFavorites(): Paginator
+    public function getUserFavorites()
     {
         return $this->favoriteRepository->getUserFavorites();
     }

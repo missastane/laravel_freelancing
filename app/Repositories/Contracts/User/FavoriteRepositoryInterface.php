@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface FavoriteRepositoryInterface extends DeletableRepositoryInterface
 {
-    public function getUserFavorites(): Paginator;
+    public function getUserFavorites();
     public function getAuthUserFavoritable(Model $model);
     public function firstOrCreate(array $attributes);
 }

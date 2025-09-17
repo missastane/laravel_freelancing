@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\Exceptions\User\AlreadyRatedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\RatingRequest;
 use App\Http\Services\Rating\RatingService;
@@ -10,6 +11,7 @@ use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UserRatingController extends Controller
 {
@@ -137,6 +139,9 @@ class UserRatingController extends Controller
      */
     public function addRate(Order $order, RatingRequest $request)
     {
+        if (Gate::denies('addRate', $order)) {
+            return $this->error('عملیات غیرمجاز', 403);
+        }
         try {
             if (auth()->user()->active_role === 'freelancer') {
                 $user = $order->employer;
@@ -145,8 +150,10 @@ class UserRatingController extends Controller
             }
             $this->ratingService->addRate($request->all(), User::class, $user->id, $order->id);
             return $this->success(null, 'امتیاز شما با موفقیت ثبت شد', 201);
+        } catch (AlreadyRatedException $e) {
+            throw $e;
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
 
     }

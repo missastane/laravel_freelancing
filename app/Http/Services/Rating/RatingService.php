@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Rating;
 
+use App\Exceptions\User\AlreadyRatedException;
 use App\Models\Market\Order;
 use App\Models\Market\Rating;
 use App\Models\User\User;
@@ -26,7 +27,7 @@ class RatingService
     {
         $alreadyRated = $this->ratingRepository->isAlreadyRated($context, $contextId, $orderId);
         if ($alreadyRated) {
-            throw new Exception('شما قبلا به این کاربر امتیاز داده اید', 409);
+            throw new AlreadyRatedException();
         }
         $rating = Rating::create([
             'rate_by' => auth()->id(),
