@@ -23275,8 +23275,7 @@
                         "description": "ID of the Notification to fetch",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "string"
                         }
                     }
                 ],

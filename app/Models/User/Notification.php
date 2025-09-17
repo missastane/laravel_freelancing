@@ -42,10 +42,4 @@ class Notification extends Model
         ];
     }
 
-    public function getUserAttribute()
-    {
-        $user = User::where('id',$this->notifiable_id)
-        ->select(['id','first_name','last_name'])->first();
-        return $user;
-    }
 }

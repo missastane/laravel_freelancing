@@ -32,16 +32,12 @@ class Favorite extends Model
 
     public function getFavoritableValueAttribute()
     {
-        switch ($this->Favoritable_type) {
+        switch ($this->favoritable_type) {
             case 'َApp\\Models\\Market\\Proposal':
-                $result = Proposal::where('id', $this->favoritable_id)
-                    ->select('id', 'description', 'total_amount', 'total_duration_time', 'status')
-                    ->with('milestones', 'user:id,username')->get();
+                $result = 'پیشنهاد مورد علاقه';
                 break;
             case 'َApp\\Models\\Market\\Project':
-                $result = Project::where('id', $this->favoritable_id)
-                    ->select('id', 'title', 'description', 'amount', 'duration_time', 'status')
-                    ->with('user:id,username')->get();
+                $result = 'پروژه مورد علاقه';
                 break;
         }
         return $result;

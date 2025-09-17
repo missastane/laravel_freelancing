@@ -22,6 +22,7 @@ interface UserRepositoryInterface extends
   public function findByEmail(string $email): User|null;
   public function findByMobile(string $mobile);
   public function getUsers(int $type,$message);
+  public function getAdmins();
   public function searchUsers(int $type, string $search, $message);
   public function showUser(User $user);
   public function toggleActivation(User $user): string|null;

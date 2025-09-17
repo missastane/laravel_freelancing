@@ -70,11 +70,7 @@ class DisputePayoutService
     protected function priceOfCancelOtherItems(Order $order, ?OrderItem $except = null): int
     {
         $amount = 0;
-        $items = $order->orderItems()->where('status', '!=', 4);
-        if ($except) {
-            $items->where('id', '!=', $except->id);
-        }
-        $items = $items->get();
+        $items = $this->orderItemRepository->getUnApprovedOrderItemsExecpetOne($order,$except);
         foreach ($items as $item) {
             $this->orderItemRepository->update($item, ['status' => 5]);
             $amount += $item->price;
@@ -88,6 +84,17 @@ class DisputePayoutService
             );
         }
         return $amount;
+    }
+    protected function openOrderItemLock(DisputeRequest $disputeRequest)
+    {
+        $orderItem = $disputeRequest->orderItem;
+        return $this->orderItemRepository->update($orderItem,[
+            'status' => 2,
+            'locked_by' => null,
+            'locked_reason' => null,
+            'locked_note' => null,
+            'locked_at' => null
+        ]);
     }
     protected function extractCommonData(DisputeRequest $disputeRequest, bool $withFreelancer = false)
     {
@@ -178,6 +185,7 @@ class DisputePayoutService
         DB::transaction(function () use ($disputeRequest) {
             $this->rejectDisputeRequest($disputeRequest);
             $this->closeDisputeTicket($disputeRequest);
+            $this->openOrderItemLock($disputeRequest);
             $this->openConversation($disputeRequest);
         });
         return 'این مرحله از سفارش طبق رای ادمین همچنان جاری بوده و از حالت قفل شده خارج  شده و پروژه ادامه می یابد';

@@ -46,6 +46,13 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
   }
 
+  public function getAdmins()
+  {
+    return $this->model->whereHas('roles', function ($query) {
+      $query->where('name', 'admin');
+    })->get();
+  }
+
   public function searchUsers(int $type, string $search, $message)
   {
     $users = $this->getUsersQuery($type)
@@ -140,8 +147,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
   public function rolesSync(User $user, array $roles)
   {
-     $user->roles()->sync($roles);
-     
+    $user->roles()->sync($roles);
+
   }
   public function permissionsSync(User $user, array $permissions)
   {
@@ -159,7 +166,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
   public function deleteAdmin(User $admin)
   {
-    return DB::transaction(function()use($admin){
+    return DB::transaction(function () use ($admin) {
       $this->detachPermissions($admin);
       $this->detachRoles($admin);
       return $this->delete($admin);

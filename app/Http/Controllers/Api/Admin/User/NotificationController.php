@@ -81,7 +81,7 @@ class NotificationController extends Controller
      *         in="path",
      *         description="ID of the Notification to fetch",
      *         required=true,
-     *         @OA\Schema(type="integer", format="int64")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,

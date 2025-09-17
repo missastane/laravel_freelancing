@@ -78,12 +78,10 @@ class Comment extends Model
     {
         switch ($this->commentable_type) {
             case 'َApp\\Models\\Content\\Post':
-                $result = Post::where('id', $this->commentable_id)->
-                    select('title')->get();
+                $result = 'نظر متعلق به یک پست است';
                 break;
             case 'App\\Models\\Market\\Order':
-                $result = Order::where('id', $this->commentable_id)->
-                    with('project')->get();
+                $result = 'نظر متعبق به یک سفارش است';
                 break;
         }
         return $result;

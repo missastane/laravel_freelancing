@@ -42,7 +42,7 @@ class NotificationService
     public function showNotification(Notification $notification)
     {
         $this->markNotificationAsRead($notification);
-        return $this->notificationRepository->showWithRelations($notification, ['user:id,username']);
+        return $this->notificationRepository->showWithRelations($notification);
     }
 
     public function deleteNotification(Notification $notification)

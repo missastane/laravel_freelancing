@@ -33,19 +33,19 @@ class File extends Model
         switch($this->filable_type)
         {
             case 'App\Models\Project' :
-                $result = Project::where('id', $this->filable_id)->select('title')->get();
+                $result = 'فایل متعلق به یک پروژه است';
                 break;
             case 'App\Models\Portfolio':
-                 $result = Portfolio::where('id', $this->filable_id)->select('title')->get();
+                 $result = 'فایل متعلق به یک نمونه کار است';
                 break;
              case 'App\Models\Message':
-                 $result = Message::where('id', $this->filable_id)->select('message', 'message_context', 'message_context_id')->get();
+                 $result = 'فایل متعلق به یک پیام است';
                 break;
              case 'App\Models\TicketMessage':
-                 $result = TicketMessage::where('id', $this->filable_id)->select('message')->get();
+                 $result = 'فایل متعلق به پیام یک تیکت است';
                 break;
               case 'App\Models\Post':
-                 $result = Post::where('id', $this->filable_id)->select('title')->get();
+                 $result = 'فایل متعلق به یک پست است';
                 break;
         }
         return $result;
