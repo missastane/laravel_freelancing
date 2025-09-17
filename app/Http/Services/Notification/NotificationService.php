@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Notification;
 
+use App\Http\Resources\User\NotificationResource;
 use App\Models\User\Notification;
 use App\Models\User\User;
 use App\Repositories\Contracts\User\NotificationRepositoryInterface;
@@ -19,7 +20,7 @@ class NotificationService
         $this->user = auth()->user();
     }
 
-    public function getUserNotifications(): Paginator
+    public function getUserNotifications()
     {
         return $this->notificationRepository->getUserNotifications(auth()->id());
     }
@@ -42,7 +43,7 @@ class NotificationService
     public function showNotification(Notification $notification)
     {
         $this->markNotificationAsRead($notification);
-        return $this->notificationRepository->showWithRelations($notification);
+        return new NotificationResource($notification);
     }
 
     public function deleteNotification(Notification $notification)

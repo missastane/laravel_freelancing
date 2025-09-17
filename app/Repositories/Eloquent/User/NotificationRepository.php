@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\NotificationResource;
 use App\Models\User\Notification;
 use App\Models\User\User;
 use App\Repositories\Contracts\User\NotificationRepositoryInterface;
@@ -22,12 +24,12 @@ class NotificationRepository extends BaseRepository implements NotificationRepos
     {
         parent::__construct($model);
     }
-    public function getUserNotifications(int $userId): Paginator
+    public function getUserNotifications(int $userId)
     {
         $notifications = $this->model->where('notifiable_type', User::class)
-            ->where('notifiable_id', $userId)
-            ->orderBy('created_at', 'desc')->simplePaginate(15);
-        return $notifications;
+            ->where('notifiable_id', $userId)->whereNull('read_at')
+            ->orderBy('created_at', 'desc')->paginate(15);
+        return new BaseCollection($notifications, NotificationResource::class,null);
     }
 
 }

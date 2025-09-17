@@ -14,5 +14,5 @@ interface NotificationRepositoryInterface extends
     UpdatableRepositoryInterface,
     DeletableRepositoryInterface
 {
-    public function getUserNotifications(int $userId): Paginator;
+    public function getUserNotifications(int $userId);
 }

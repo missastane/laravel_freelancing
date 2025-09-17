@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources\User;
 
-use App\Http\Resources\Market\ProposalResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FavoriteProposalResource extends JsonResource
+class NotificationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +15,8 @@ class FavoriteProposalResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'favoritable' => new ProposalResource($this->favoritable),
+            'message' => $this->data['message'],
+            'read_at' => $this->read_at,
             'created_at' => $this->created_at
         ];
     }

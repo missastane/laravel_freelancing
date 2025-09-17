@@ -15,7 +15,7 @@ class NotificationPolicy
         //
     }
 
-    public function delete(User $user, Notification $notification)
+    public function notificationCertificate(User $user, Notification $notification)
     {
         return $notification->notifiable_type === User::class &&
                 $notification->notifiable_id === $user->id;
