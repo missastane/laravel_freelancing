@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin\Market;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Public\WithdrawalRejectRequest;
 use App\Http\Requests\Public\WithdrawalRequest;
 use App\Http\Services\Payment\WithDrawalRequestService;
 use App\Models\Payment\Withdrawal;
@@ -19,7 +20,7 @@ class WithdrawalController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/admin/user/Withdrawal-request",
+     *     path="/api/admin/user/withdrawal-request",
      *     summary="Retrieve list of Withdrawal Requests",
      *     description="Retrieve list of all `Withdrawal Requests` can filters by status",
      *     tags={"WithdrawalRequest"},
@@ -37,18 +38,55 @@ class WithdrawalController extends Controller
      *         response=200,
      *         description="A list of Withdrawal Requests",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
      *                 @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/WithdrawalRequest"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -72,12 +110,12 @@ class WithdrawalController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->success($this->withDrawalRequestService->getWithdrawalRequests($request->query('status')));
+        return $this->withDrawalRequestService->getWithdrawalRequests($request->query('status'));
     }
 
     /**
      * @OA\Get(
-     *     path="/api/admin/user/Withdrawal-request/show/{Withdrawal}",
+     *     path="/api/admin/user/withdrawal-request/show/{Withdrawal}",
      *     summary="Get details of a specific Withdrawal Request",
      *     description="Returns the `Withdrawal Request` details",
      *     operationId="getWithdrawalRequestDetails",
@@ -141,15 +179,15 @@ class WithdrawalController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="amount", type="integer", example=200000),
-     *             @OA\Property(property="bank_name", type="string", description="This field can only contain Persian letters and space. Any other characters will result in a validation error.", example="ملی"),
-     *             @OA\Property(property="card_number", type="string", description="This field can only contain Persian letters and space. Any other characters will result in a validation error.", example="6037227458963256"),
-     *             @OA\Property(property="account_number_sheba", type="string", description="This field can only contain IR plus 24 numbers. Any other characters will result in a validation error.", example="IR12 1245 1258 6985 5789 2456 34"),
+     *             @OA\Property(property="account_number_sheba", type="string", example="IR12 1245 1258 6985 5789 2456 34"),
+     *             @OA\Property(property="card_number", type="string", description="This field can only contain English numbersand must be included 16 digits. Any other characters will result in a validation error.", example="6037654789521236"),
+     *             @OA\Property(property="bank_name", type="string", description="this field only accepted persian letters", example="ملی"),
+     *             @OA\Property(property="amount", type="decimal", example=600000),
+     *              )
      *          )
-     *        )
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -295,6 +333,16 @@ class WithdrawalController extends Controller
      *         @OA\Schema(type="integer", format="int64")
      *     ),
      *     security={ {"bearerAuth": {}} },
+     *     @OA\RequestBody(
+     *      required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="rejected_note", type="string", example="عدم انطباق کد ملی شما با کد ملی صاحب کارت"),
+     *              )
+     *          )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Withdrawal Request status updated successfully",
@@ -337,10 +385,10 @@ class WithdrawalController extends Controller
      *     )
      * )
      */
-    public function rejectRequest(Withdrawal $Withdrawal)
+    public function rejectRequest(Withdrawal $Withdrawal, WithdrawalRejectRequest $request)
     {
         try {
-            $change = $this->withDrawalRequestService->rejectRequest($Withdrawal);
+            $change = $this->withDrawalRequestService->rejectRequest($Withdrawal,$request->all());
             if ($change) {
                 return $this->success(null, 'درخواست برداشت از کیف پول کاربر با موفقیت رد شد');
             } else {

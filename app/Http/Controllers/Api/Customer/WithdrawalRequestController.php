@@ -23,6 +23,19 @@ class WithdrawalRequestController extends Controller
      *     description="In this method customers can Add a a new Withdrawal Request",
      *     tags={"Customer-WithdrawalRequest"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="account_number_sheba", type="string", example="IR12 1245 1258 6985 5789 2456 34"),
+     *             @OA\Property(property="card_number", type="string", description="This field can only contain English numbersand must be included 16 digits. Any other characters will result in a validation error.", example="6037654789521236"),
+     *             @OA\Property(property="bank_name", type="string", description="this field only accepted persian letters", example="ملی"),
+     *             @OA\Property(property="amount", type="decimal", example=600000),
+     *              )
+     *          )
+     *     ),
      *     @OA\Response(
      *         response=201,
      *         description="Add WithdrawalRequest was successful",
@@ -64,7 +77,7 @@ class WithdrawalRequestController extends Controller
             $this->withDrawalRequestService->storeWithdrawalRequest($request->all());
             return $this->success(null, 'درخواست انتقال به حساب با موفقیت ثبت شد');
         }catch(Exception $e){
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 }

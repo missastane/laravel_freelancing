@@ -13,6 +13,6 @@ interface WithdrawalRepositoryInterface extends
     ShowableRepositoryInterface,
     UpdatableRepositoryInterface
 {
-    public function getAllByFilter(array $data): Paginator;
+    public function getAllByFilter(string $status);
     public function showRequest(Withdrawal $withdrawal);
 }

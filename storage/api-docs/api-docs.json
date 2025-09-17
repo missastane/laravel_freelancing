@@ -13750,14 +13750,14 @@
                 ]
             }
         },
-        "/api/admin/user/Withdrawal-request": {
+        "/api/admin/user/withdrawal-request": {
             "get": {
                 "tags": [
                     "WithdrawalRequest"
                 ],
                 "summary": "Retrieve list of Withdrawal Requests",
                 "description": "Retrieve list of all `Withdrawal Requests` can filters by status",
-                "operationId": "227a2bfa189faaf973c39ff319291324",
+                "operationId": "aba1f13f652de9c9a1aae14e145874c6",
                 "parameters": [
                     {
                         "name": "status",
@@ -13783,11 +13783,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -13801,17 +13802,120 @@
                                                         "$ref": "#/components/schemas/WithdrawalRequest"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -13870,7 +13974,7 @@
                 ]
             }
         },
-        "/api/admin/user/Withdrawal-request/show/{Withdrawal}": {
+        "/api/admin/user/withdrawal-request/show/{Withdrawal}": {
             "get": {
                 "tags": [
                     "WithdrawalRequest"
@@ -13993,27 +14097,26 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
-                                    "amount": {
-                                        "type": "integer",
-                                        "example": 200000
+                                    "account_number_sheba": {
+                                        "type": "string",
+                                        "example": "IR12 1245 1258 6985 5789 2456 34"
+                                    },
+                                    "card_number": {
+                                        "description": "This field can only contain English numbersand must be included 16 digits. Any other characters will result in a validation error.",
+                                        "type": "string",
+                                        "example": "6037654789521236"
                                     },
                                     "bank_name": {
-                                        "description": "This field can only contain Persian letters and space. Any other characters will result in a validation error.",
+                                        "description": "this field only accepted persian letters",
                                         "type": "string",
                                         "example": "ملی"
                                     },
-                                    "card_number": {
-                                        "description": "This field can only contain Persian letters and space. Any other characters will result in a validation error.",
-                                        "type": "string",
-                                        "example": "6037227458963256"
-                                    },
-                                    "account_number_sheba": {
-                                        "description": "This field can only contain IR plus 24 numbers. Any other characters will result in a validation error.",
-                                        "type": "string",
-                                        "example": "IR12 1245 1258 6985 5789 2456 34"
+                                    "amount": {
+                                        "type": "decimal",
+                                        "example": 600000
                                     }
                                 },
                                 "type": "object"
@@ -14295,6 +14398,22 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "rejected_note": {
+                                        "type": "string",
+                                        "example": "عدم انطباق کد ملی شما با کد ملی صاحب کارت"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Withdrawal Request status updated successfully",
@@ -38432,6 +38551,36 @@
                 "summary": "Add a new Withdrawal Request by customers",
                 "description": "In this method customers can Add a a new Withdrawal Request",
                 "operationId": "272dee6127f07cfe133b2b0f45b396bf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "account_number_sheba": {
+                                        "type": "string",
+                                        "example": "IR12 1245 1258 6985 5789 2456 34"
+                                    },
+                                    "card_number": {
+                                        "description": "This field can only contain English numbersand must be included 16 digits. Any other characters will result in a validation error.",
+                                        "type": "string",
+                                        "example": "6037654789521236"
+                                    },
+                                    "bank_name": {
+                                        "description": "this field only accepted persian letters",
+                                        "type": "string",
+                                        "example": "ملی"
+                                    },
+                                    "amount": {
+                                        "type": "decimal",
+                                        "example": 600000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "Add WithdrawalRequest was successful",
@@ -40248,6 +40397,23 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "user": {
+                        "properties": {
+                            "first_name": {
+                                "type": "string",
+                                "example": "راضیه"
+                            },
+                            "last_name": {
+                                "type": "string",
+                                "example": "آذری آستانه"
+                            },
+                            "national_code": {
+                                "type": "string",
+                                "example": "27301435689"
+                            }
+                        },
+                        "type": "object"
+                    },
                     "account_number_sheba": {
                         "type": "string",
                         "example": "IR12 1245 1258 6985 5789 2456 34"
@@ -40264,6 +40430,11 @@
                         "type": "integer",
                         "example": 800000
                     },
+                    "status": {
+                        "description": "Status: 1=> pending, 2 => accepted, 3 => rejected",
+                        "type": "string",
+                        "example": "در حال بررسی"
+                    },
                     "paid_at": {
                         "description": "pay datetime",
                         "type": "string",
@@ -40275,34 +40446,6 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "updated_at": {
-                        "description": "update datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "status_value": {
-                        "description": "Status: 1=> pending, 2 => accepted, 3 => rejected",
-                        "type": "string",
-                        "example": "در حال بررسی"
-                    },
-                    "user": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "راضیه"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "آذری آستانه"
-                            }
-                        },
-                        "type": "object"
                     }
                 },
                 "type": "object"

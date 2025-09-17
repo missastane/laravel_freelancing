@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('amount',20,3);
             $table->timestamp('paid_at')->nullable();
             $table->tinyInteger('status')->default(1)->comment('1=> pending, 2 => accepted, 3 => rejected');
+            $table->text('rejected_note')->nullable();
             $table->timestamps();
         });
     }

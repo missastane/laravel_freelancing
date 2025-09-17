@@ -47,7 +47,8 @@ use App\Http\Controllers\Api\Customer\TicketController as CustomerTicketControll
 use App\Http\Controllers\Api\Customer\UserEducationController;
 use App\Http\Controllers\Api\Customer\UserExperienceController;
 use App\Http\Controllers\Api\Customer\UserPortfolioController;
-use App\Http\Controllers\Api\Customer\WithdrawalRequestController;
+use App\Http\Controllers\Api\Customer\WithdrawalRequestController as CustomerWithdrawalRequestController;
+use App\Http\Controllers\Api\Admin\Market\WithdrawalController;
 use App\Http\Controllers\Api\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -238,12 +239,12 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::post('/sync-permissions/{role}', [RoleController::class, 'syncPermissionsToRole'])->name('admin.role.sync-permissions');
             Route::delete('/delete/{role}', [RoleController::class, 'delete'])->name('admin.role.delete');
         });
-        Route::prefix('Withdrawal-request')->group(function () {
-            Route::get('/', [WithdrawalRequestController::class, 'index']);
-            Route::get('/show/{Withdrawal}', [WithdrawalRequestController::class, 'show']);
-            Route::post('/store', [WithdrawalRequestController::class, 'addRequest']);
-            Route::put('/pay/{withdrawal}', [WithdrawalRequestController::class, 'changeRequestToPaid']);
-            Route::patch('/reject/{withdrawal}', [WithdrawalRequestController::class, 'rejectRequest']);
+        Route::prefix('withdrawal-request')->group(function () {
+            Route::get('/', [WithdrawalController::class, 'index']);
+            Route::get('/show/{withdrawal}', [WithdrawalController::class, 'show']);
+            Route::post('/store', [WithdrawalController::class, 'addRequest']);
+            Route::put('/pay/{withdrawal}', [WithdrawalController::class, 'changeRequestToPaid']);
+            Route::patch('/reject/{withdrawal}', [WithdrawalController::class, 'rejectRequest']);
         });
 
     });
@@ -422,8 +423,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [CustomerWalletTransactionController::class, 'index']);
         Route::get('/show/{walletTransaction}', [CustomerWalletTransactionController::class, 'show']);
     });
-    Route::prefix('Withdrawal')->group(function () {
-        Route::post('/store', [WithdrawalRequestController::class, 'addRequest']);
+    Route::prefix('withdrawal-request')->group(function () {
+        Route::post('/add-request', [CustomerWithdrawalRequestController::class, 'addRequest']);
     });
 
 });

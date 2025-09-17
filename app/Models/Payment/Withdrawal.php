@@ -11,28 +11,28 @@ use Illuminate\Database\Eloquent\Model;
  *     schema="WithdrawalRequest",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(
+ *          property="user",
+ *          type="object",
+ *                  @OA\Property(property="first_name", type="string", example="راضیه"),
+ *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
+ *                  @OA\Property(property="national_code", type="string", example="27301435689"),
+ *               )
+ *            ),
  *     @OA\Property(property="account_number_sheba", type="string", example="IR12 1245 1258 6985 5789 2456 34"),
  *     @OA\Property(property="card_number", type="string", example="6037227458963256"),
  *     @OA\Property(property="bank_name", type="string", example="ملی"),
  *     @OA\Property(property="amount", type="integer", example=800000),
+ *     @OA\Property(property="status", type="string", description="Status: 1=> pending, 2 => accepted, 3 => rejected", example="در حال بررسی"),
  *     @OA\Property(property="paid_at", type="string", format="date-time", description="pay datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="status_value", type="string", description="Status: 1=> pending, 2 => accepted, 3 => rejected", example="در حال بررسی"),
- *     @OA\Property(
- *          property="user",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="راضیه"),
- *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
- *               )
- *            ),
+ *    
  * )
  */
 class Withdrawal extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'account_number_shaba', 'card_number', 'bank_name', 'amount', 'status', 'paid_at'];
+    protected $fillable = ['user_id', 'account_number_sheba', 'card_number', 'bank_name', 'amount', 'status', 'paid_at'];
 
     protected function casts()
     {
