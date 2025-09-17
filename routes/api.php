@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\Content\CommentController;
 use App\Http\Controllers\Api\Admin\Market\FeatureTypeController;
+use App\Http\Controllers\Api\Admin\Market\PaymentController;
 use App\Http\Controllers\Api\Admin\Market\WalletController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketPriorityController;
 use App\Http\Controllers\Api\Customer\CommentController as CustomerCommentController;
@@ -128,6 +129,10 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::get('/show/{order}', [OrderController::class, 'show']);
             Route::get('/final-files/{order}', [OrderController::class, 'getOrderFinalFiles']);
         });
+        Route::prefix('payment')->group(function () {
+            Route::get('/', [PaymentController::class, 'index']);
+            Route::get('/show/{payment}', [PaymentController::class, 'show']);
+        });
         Route::prefix('project-category')->group(function () {
             Route::get('/', [ProjectCategoryController::class, 'index'])->name('admin.market.project-category');
             Route::get('/search', [ProjectCategoryController::class, 'search'])->name('admin.market.project-category.search');
@@ -184,7 +189,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
         Route::put('/update', [SettingController::class, 'update'])->name('admin.setting.update');
     });
     Route::prefix('user')->group(function () {
-        
+
         Route::prefix('admin-user')->group(function () {
             Route::get('/', [AdminUserController::class, 'index'])->name('admin.user.admin-user');
             Route::get('/search', [AdminUserController::class, 'search'])->name('admin.user.admin-user.search');
@@ -319,7 +324,6 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::prefix('payment')->group(function () {
         Route::post('/', [CustomerPaymentController::class, 'store']);
-        Route::get('/callback', [CustomerPaymentController::class, 'verify']);
     });
     Route::prefix('post')->group(function () {
         Route::post('/{post}/submit-comment', [PostCommentController::class, 'store']);
@@ -447,3 +451,5 @@ Route::
 Route::post('/broadcasting/auth', function (Request $request) {
     return Broadcast::auth($request);
 })->middleware(['auth:api']);
+
+Route::any('/payment/callback', [CustomerPaymentController::class, 'verify'])->name('payment.callback');

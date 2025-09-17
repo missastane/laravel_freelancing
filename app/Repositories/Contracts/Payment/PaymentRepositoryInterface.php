@@ -13,7 +13,7 @@ interface PaymentRepositoryInterface extends
     ShowableRepositoryInterface,
     UpdatableRepositoryInterface
 {
-    public function getAllPayments(array $data): Paginator;
-    public function showPayment(Payment $payment): Payment;
-    public function getByTransaction(int $authority): Payment;
+    public function getAllPayments(string $status);
+    public function showPayment(Payment $payment);
+    public function getByTransaction(string $authority);
 }

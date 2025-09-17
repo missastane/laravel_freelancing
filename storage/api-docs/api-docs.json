@@ -8492,7 +8492,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Order Status: `pending`, `paid`, `not-paid`, `returned`",
+                        "description": "Payment Status: `pending`, `paid`, `not-paid`, `returned`",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -8514,11 +8514,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -8532,17 +8533,120 @@
                                                         "$ref": "#/components/schemas/Payment"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -29373,7 +29477,7 @@
         "/api/payment": {
             "post": {
                 "tags": [
-                    "Payment"
+                    "Customer-Payment"
                 ],
                 "summary": "Initiate a new online payment using Zarinpal",
                 "description": "This endpoint allows an authenticated user to create a new payment request through Zarinpal. It returns a payment URL that the user must be redirected to in order to complete the transaction. The callback from Zarinpal must be handled separately.",
@@ -29501,14 +29605,14 @@
                 ]
             }
         },
-        "/api/payments/callback": {
+        "/api/payment/callback": {
             "get": {
                 "tags": [
-                    "Payment"
+                    "Customer-Payment"
                 ],
-                "summary": "Verify Zarinpal payment after redirect",
+                "summary": "Verify Zarinpal payment after redirect. This method is not able to test",
                 "description": "This endpoint is used to verify a completed payment after the user is redirected back from Zarinpal. It checks the authority code and payment status, verifies the transaction with Zarinpal, updates the payment status, and credits the user's wallet.",
-                "operationId": "b07eeb6e0da531f7c96f52c62374dff7",
+                "operationId": "c19c10db139f0bdd11b43dff0cfd4d72",
                 "parameters": [
                     {
                         "name": "Authority",
@@ -29645,7 +29749,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/post/{post}/submit-comment": {
@@ -40505,6 +40614,27 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "user": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "first_name": {
+                                "type": "string",
+                                "example": "راضیه"
+                            },
+                            "last_name": {
+                                "type": "string",
+                                "example": "آذری آستانه"
+                            },
+                            "national_code": {
+                                "type": "string",
+                                "example": "27301436589"
+                            }
+                        },
+                        "type": "object"
+                    },
                     "amount": {
                         "type": "number",
                         "format": "float",
@@ -40513,10 +40643,6 @@
                     "description": {
                         "type": "string",
                         "example": "for wallet charge"
-                    },
-                    "gateway": {
-                        "type": "string",
-                        "example": "zarinpal"
                     },
                     "transaction_id": {
                         "type": "string",
@@ -40576,45 +40702,16 @@
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
                     },
+                    "status": {
+                        "description": "Payment status: 'pending' if 1, 'paid' if 2, 'not-paid' if 3, 'returned' if 4",
+                        "type": "string",
+                        "example": "پرداخت شده"
+                    },
                     "created_at": {
                         "description": "creation datetime",
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "updated_at": {
-                        "description": "update datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "deleted_at": {
-                        "description": "delete datetime",
-                        "type": "string",
-                        "format": "datetime",
-                        "example": "2025-02-22T14:30:00Z"
-                    },
-                    "status_value": {
-                        "description": "Payment status: 'pending' if 1, 'paid' if 2, 'not-paid' if 3, 'returned' if 4",
-                        "type": "string",
-                        "example": "پرداخت شده"
-                    },
-                    "user": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "راضیه"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "آذری آستانه"
-                            }
-                        },
-                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -41547,6 +41644,10 @@
         {
             "name": "OrderComment",
             "description": "OrderComment"
+        },
+        {
+            "name": "Customer-Payment",
+            "description": "Customer-Payment"
         },
         {
             "name": "PostComment",

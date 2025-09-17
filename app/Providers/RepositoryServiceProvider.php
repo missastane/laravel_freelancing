@@ -25,6 +25,7 @@ use App\Repositories\Contracts\Market\SubscriptionDefaultUsageRepositoryInterfac
 use App\Repositories\Contracts\Market\SubscriptionFeatureRepositoryInterface;
 use App\Repositories\Contracts\Market\SubscriptionRepositoryInterface;
 use App\Repositories\Contracts\Market\UserSubscriptionRepositoryInterface;
+use App\Repositories\Contracts\Payment\PaymentRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
 use App\Repositories\Contracts\Payment\WithdrawalRepositoryInterface;
@@ -68,6 +69,7 @@ use App\Repositories\Eloquent\Market\SubscriptionDefaultUsageRepository;
 use App\Repositories\Eloquent\Market\SubscriptionFeatureRepository;
 use App\Repositories\Eloquent\Market\SubscriptionRepository;
 use App\Repositories\Eloquent\Market\UserSubscriptionRepository;
+use App\Repositories\Eloquent\Payment\PaymentRepository;
 use App\Repositories\Eloquent\Payment\WalletRepository;
 use App\Repositories\Eloquent\Payment\WalletTransactionRepository;
 use App\Repositories\Eloquent\Payment\WithdrawalRepository;
@@ -139,6 +141,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
         $this->app->bind(ArbitrationRequestRepositoryInterface::class, ArbitrationRequestRepository::class);
         $this->app->bind(WithdrawalRepositoryInterface::class, WithdrawalRepository::class);
+        $this->app->bind(PaymentRepositoryInterface::class, PaymentRepository::class);
     }
 
     /**

@@ -11,9 +11,17 @@ use Illuminate\Database\Eloquent\Model;
  *     schema="Payment",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(
+ *          property="user",
+ *          type="object",
+ *                  @OA\Property(property="id", type="integer", example=3),
+ *                  @OA\Property(property="first_name", type="string", example="راضیه"),
+ *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
+ *                  @OA\Property(property="national_code", type="string", example="27301436589"),
+ *               )
+ *            ),
  *     @OA\Property(property="amount", type="float", example=5000.000),
  *     @OA\Property(property="description", type="string", example="for wallet charge"),
- *     @OA\Property(property="gateway", type="string", example="zarinpal"),
  *     @OA\Property(property="transaction_id", type="string", example="S000000000000000000000000000000w758z"),
  *     @OA\Property(property="bank_first_response", type="array", 
  *         @OA\Items(
@@ -32,18 +40,8 @@ use Illuminate\Database\Eloquent\Model;
  *     ),
  *     @OA\Property(property="reference_id", type="string", example=1359401),
  *     @OA\Property(property="paid_at", type="string", format="date-time", description="paid at datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="status", type="string", description="Payment status: 'pending' if 1, 'paid' if 2, 'not-paid' if 3, 'returned' if 4", example="پرداخت شده"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="deleted_at", type="string", format="datetime",description="delete datetime", example="2025-02-22T14:30:00Z"),
- *     @OA\Property(property="status_value", type="string", description="Payment status: 'pending' if 1, 'paid' if 2, 'not-paid' if 3, 'returned' if 4", example="پرداخت شده"),
- *        @OA\Property(
- *          property="user",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="راضیه"),
- *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
- *               )
- *            ),
  * )
  */
 class Payment extends Model

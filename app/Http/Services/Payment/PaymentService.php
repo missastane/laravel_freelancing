@@ -4,6 +4,7 @@ namespace App\Http\Services\Payment;
 
 use App\Models\Payment\Payment;
 use App\Repositories\Contracts\Payment\PaymentRepositoryInterface;
+use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\Payment\WalletTransactionRepositoryInterface;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -16,16 +17,16 @@ class PaymentService
         protected PaymentRepositoryInterface $paymentRepository,
         protected ZarinPalService $zarinPalService,
         protected WalletTransactionRepositoryInterface $walletTransactionRepository,
-        protected WalletService $walletService
+        protected WalletRepositoryInterface $walletRepository
     ) {
     }
 
-    public function getPayments(array $data): Paginator
+    public function getPayments(string $status)
     {
-        return $this->paymentRepository->getAllPayments($data);
+        return $this->paymentRepository->getAllPayments($status);
     }
 
-    public function showPayment(Payment $payment): Payment
+    public function showPayment(Payment $payment)
     {
         return $this->paymentRepository->showPayment($payment);
     }
@@ -34,7 +35,7 @@ class PaymentService
     {
         $this->paymentRepository->update($payment, [
             'transaction_id' => $result['authority'],
-            'bank_first_response' => json_encode($result)
+            'bank_first_response' => $result
         ]);
         // this url returns https://www.zarinpal.com/pg/StartPay/S000000000000000000000000000000gmwrm
         // to text this url must remove wwww and replace it with sandbox -> go to zarinpal system
@@ -50,7 +51,7 @@ class PaymentService
         // fail zarinpal connection
         $this->paymentRepository->update($payment, [
             'status' => 3,
-            'bank_first_response' => json_encode($result)
+            'bank_first_response' => $result
         ]);
 
         return [
@@ -84,8 +85,8 @@ class PaymentService
     public function verify(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $authority = $data['authority'];
-            $status = $data['status'];
+            $authority = $data['Authority'];
+            $status = $data['Status'];
             $payment = $this->paymentRepository->getByTransaction($authority);
             if (!$payment) {
                  return [
@@ -98,7 +99,7 @@ class PaymentService
                 Log::info('status: not ok');
                 $this->paymentRepository->update($payment, [
                     'status' => 3,
-                    'bank_second_response' => json_encode(['status' => $status]),
+                    'bank_second_response' => ['status' => $status],
                 ]);
                 return [
                     'status' => false,
@@ -111,7 +112,7 @@ class PaymentService
                 Log::info('result: not success');
                 $this->paymentRepository->update($payment, [
                     'status' => 3,
-                    'bank_second_response' => json_encode($result),
+                    'bank_second_response' => $result,
                 ]);
                 return [
                     'status' => false,
@@ -122,7 +123,7 @@ class PaymentService
             $this->paymentRepository->update($payment, [
                 'status' => 2,
                 'reference_id' => $result['ref_id'],
-                'bank_second_response' => json_encode($result),
+                'bank_second_response' => $result,
                 'paid_at' => now()
             ]);
             $this->walletTransactionRepository->create([
@@ -133,7 +134,7 @@ class PaymentService
                 'related_type' => Payment::class,
                 'related_id' => $payment->id
             ]);
-            $this->walletService->increment($payment->user->wallet, $payment->amount);
+            $this->walletRepository->increamentBalance($payment->user->wallet, $payment->amount);
             return [
                 'status' => true,
                 'message' => 'تایید پرداخت با موفقیت انجام شد',

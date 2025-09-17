@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\Payment;
 
+use App\Http\Resources\Payment\PaymentResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Payment\Payment;
 use App\Repositories\Contracts\Payment\PaymentRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -21,21 +23,22 @@ class PaymentRepository extends BaseRepository implements PaymentRepositoryInter
         parent::__construct($model);
     }
 
-    public function getAllPayments(array $data): Paginator
+    public function getAllPayments(string $status)
     {
-        $payments = Payment::filterByStatus($data)
-        ->with('user:id,first_name,last_name')
-        ->orderBy('created_at','desc')->simplePaginate(15);
-        return $payments;
+        $payments = $this->model->filterByStatus($status)
+        ->with('user:id,first_name,last_name,national_code')
+        ->orderBy('created_at','desc')->paginate(15);
+        return new BaseCollection($payments, PaymentResource::class,null);
     }
 
-    public function getByTransaction(int $authority): Payment
+    public function getByTransaction(string $authority)
     {
-        return Payment::where('transaction_id',$authority)->first();
+        return $this->model->where('transaction_id',$authority)->first();
     }
 
-    public function showPayment(Payment $payment):Payment
+    public function showPayment(Payment $payment)
     {
-        return $this->showWithRelations($payment,['user:id,first_name,last_name']);
+        $result = $this->showWithRelations($payment,['user:id,first_name,last_name,national_code']);
+        return new PaymentResource($result);
     }
 }

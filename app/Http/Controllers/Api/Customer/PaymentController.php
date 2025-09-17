@@ -30,7 +30,7 @@ class PaymentController extends Controller
      *     path="/api/payment",
      *     summary="Initiate a new online payment using Zarinpal",
      *     description="This endpoint allows an authenticated user to create a new payment request through Zarinpal. It returns a payment URL that the user must be redirected to in order to complete the transaction. The callback from Zarinpal must be handled separately.",
-     *     tags={"Payment"},
+     *     tags={"Customer-Payment"},
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -141,10 +141,13 @@ class PaymentController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/payments/callback",
-     *     summary="Verify Zarinpal payment after redirect",
+     *     path="/api/payment/callback",
+     *     summary="Verify Zarinpal payment after redirect. This method is not able to test",
      *     description="This endpoint is used to verify a completed payment after the user is redirected back from Zarinpal. It checks the authority code and payment status, verifies the transaction with Zarinpal, updates the payment status, and credits the user's wallet.",
-     *     tags={"Payment"},
+     *     tags={"Customer-Payment"},
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
      *     @OA\Parameter(
      *         name="Authority",
      *         in="query",
@@ -218,6 +221,8 @@ class PaymentController extends Controller
     //             return $this->error('تراکنش یافت نشد', 404);
     //         }
 
+    //         $payment = Payment::where('transaction_id', $authority)->first();
+    //         // Log::info('payment from db: ' . ($payment ? $payment->id : 'null'));
     //         if ($status !== 'OK') {
     //             Log::info('status: not ok');
     //             $payment->update([
@@ -273,7 +278,7 @@ class PaymentController extends Controller
             Log::error('Verify payment error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
