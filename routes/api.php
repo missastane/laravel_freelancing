@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\Admin\Market\WalletTransactionController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketDepartmentController;
 use App\Http\Controllers\Api\Admin\User\DisputeRequestController;
+use App\Http\Controllers\Api\Customer\DisputeRequestController as CustomerDisputeRequestController;
 use App\Http\Controllers\Api\Admin\User\NotificationController;
 use App\Http\Controllers\Api\Customer\FavoriteController;
 use App\Http\Controllers\Api\Customer\OrderCommentController;
@@ -293,6 +294,11 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('comment')->group(function () {
         Route::post('/reply/{comment}', [CustomerCommentController::class, 'reply']);
+    });
+    Route::prefix('dispute-request')->group(function () {
+        Route::get('/',[CustomerDisputeRequestController::class,'index']);
+        Route::get('/show/{disputeRequest}',[CustomerDisputeRequestController::class,'show']);
+        Route::delete('/delete/{disputeRequest}',[CustomerDisputeRequestController::class,'delete']);
     });
     Route::prefix('favorite')->group(function () {
         Route::get('/', [FavoriteController::class, 'index']);

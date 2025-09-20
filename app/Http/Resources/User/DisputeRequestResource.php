@@ -27,6 +27,9 @@ class DisputeRequestResource extends JsonResource
                 'title' => $this->orderItem->milestone->title,
                 'due_date' => $this->orderItem->due_date,
                 'price' => $this->orderItem->price,
+                'freelancer_amount' => $this->orderItem->freelancer_amount,
+                'platform_fee' => $this->orderItem->platform_fee,
+                'delivered_at' => $this->orderItem->delivered_at,
                 'order_id' => $this->orderItem->order_id
             ],
             'final_file' => [
@@ -40,6 +43,7 @@ class DisputeRequestResource extends JsonResource
                 'role' => $this->user_type_value,
             ],
             'reason' => $this->reason,
+            'status' => $this->status_value,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

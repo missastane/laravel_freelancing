@@ -14,35 +14,47 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     schema="DisputeRequest",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="reason", type="string", example="عدم تحویل به موقع کار توسط فریلنسر"),
- *     @OA\Property(property="deleted_at", type="string", format="date-time", description="delete datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="user_type_value", type="string",description="user type: 	1 => employer, 2 => freelancer", example="کارفرما"),
- *     @OA\Property(property="status_value", type="string",description="status: 1 => active, 2 => disactive", example="فعال"),
  *     @OA\Property(
- *          property="user",
+ *          property="employer",
  *          type="object",
  *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="راضیه"),
- *                  @OA\Property(property="last_name", type="string", example="آذری آستانه"),
+ *                  @OA\Property(property="username", type="string", example="razi"),
+ *               )
+ *            ),
+ *     @OA\Property(
+ *          property="freelancer",
+ *          type="object",
+ *                  @OA\Property(property="id", type="integer", example=3),
+ *                  @OA\Property(property="username", type="string", example="roody"),
  *               )
  *            ),
  *     @OA\Property(property="orderItem", type="object",
+ *          @OA\Property(property="id", type="integer", example=1),
+ *          @OA\Property(property="title", type="string", example="مرحله اول پیشنهاد"),
+ *          @OA\Property(property="due_date", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
  *          @OA\Property(property="price", type="integer", example=500000),
  *          @OA\Property(property="freelancer_amount", type="integer", example=450000),
  *          @OA\Property(property="platform_fee", type="integer", example=50000),
- *          @OA\Property(property="due_date", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
  *          @OA\Property(property="delivered_at", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
- *          @OA\Property(property="order", type="object",
- *              @OA\Property(property="id", type="integer", example=3) 
- *           ),      
- *          @OA\Property(property="milestone", type="object",
- *              @OA\Property(property="id", type="integer", example=3),
- *              @OA\Property(property="title", type="string", example="مرحله اول"),
- *               @OA\Property(property="description", type="string", example="ویرایش فصل های 1 تا 5")
- *           )
+ *          @OA\Property(property="order_id", type="integer", example=3)
  *      ),
+ *      @OA\Property(property="finalFile", type="object",
+ *          @OA\Property(property="id", type="integer", example=1),
+ *          @OA\Property(property="file_name", type="string", example="مرحله اول پیشنهاد"),
+ *          @OA\Property(property="file_path", type="string", example="path/file.extension"),
+ *          @OA\Property(property="delivered_at", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
+ *      ),
+ *     @OA\Property(
+ *          property="plaintiff",
+ *          type="object",
+ *                  @OA\Property(property="username", type="string", example="roody"),
+ *                  @OA\Property(property="role", type="string", example="employer"),
+ *               )
+ *            ),
+ *     @OA\Property(property="reason", type="string", example="عدم تحویل به موقع کار توسط فریلنسر"),
+ *     @OA\Property(property="status", type="string",description="status: 1 => active, 2 => disactive", example="فعال"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
  * )
  */
 class DisputeRequest extends Model

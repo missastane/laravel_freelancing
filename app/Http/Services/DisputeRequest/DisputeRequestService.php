@@ -23,7 +23,7 @@ class DisputeRequestService
         return $this->disputeRequestRepository->getAllByFilter($status);
     }
 
-    public function getUserRequests(): Paginator
+    public function getUserRequests()
     {
         return $this->disputeRequestRepository->getUserRequests();
     }

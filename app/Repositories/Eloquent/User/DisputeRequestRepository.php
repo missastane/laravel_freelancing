@@ -27,7 +27,7 @@ class DisputeRequestRepository extends BaseRepository implements DisputeRequestR
     public function getAllByFilter(string $status)
     {
         $requests = $this->model->filterByStatus($status)
-            ->with('orderItem', 'user')
+            ->with('orderItem', 'user','finalFile')
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         return new BaseCollection($requests, DisputeRequestResource::class, null);
@@ -35,7 +35,7 @@ class DisputeRequestRepository extends BaseRepository implements DisputeRequestR
     public function getUserRequests()
     {
         $requests = $this->model->where('raised_by', auth()->id())
-            ->with('orderItem', 'user')
+            ->with('orderItem', 'user','finalFile')
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         return new BaseCollection($requests, DisputeRequestResource::class, null);
@@ -44,6 +44,7 @@ class DisputeRequestRepository extends BaseRepository implements DisputeRequestR
 
     public function showDisputRequest(DisputeRequest $disputeRequest)
     {
-        return $this->showWithRelations($disputeRequest, ['orderItem', 'user:id,username,active_role']);
+        $result = $this->showWithRelations($disputeRequest, ['orderItem', 'user:id,username,active_role','finalFile']);
+        return new DisputeRequestResource($result);
     }
 }
