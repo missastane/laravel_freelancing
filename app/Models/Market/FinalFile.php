@@ -6,6 +6,21 @@ use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
+/**
+ * @OA\Schema(
+ *     schema="FinalFile",
+ *     type="object",
+ *     title="FinalFile",
+ *     description="Schema for a FinalFile",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="file_name", type="string", example="fileName"),
+ *     @OA\Property(property="file_path", type="string", example="2356489"),
+ *     @OA\Property(property="mime_type", type="string", example="image/jpg"),
+ *     @OA\Property(property="file_size", type="integer", example=401093),
+ *     @OA\Property(property="download_url", type="string", example="http://127.0.0.1:8000/api/final-file/download/21"),
+ *  )
+ */
 class FinalFile extends Model
 {
     use HasFactory;

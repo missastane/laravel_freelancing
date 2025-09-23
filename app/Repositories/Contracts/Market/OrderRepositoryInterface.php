@@ -12,10 +12,9 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface OrderRepositoryInterface extends CreatableRepositoryInterface, ShowableRepositoryInterface, UpdatableRepositoryInterface
 {
-    public function getAllOrders(array $data): Paginator;
-    public function getUserOrders(?User $user, array $data): Paginator;
+    public function getAllOrders(string $status);
+    public function getUserOrders(?User $user, ?string $status = null);
     public function getOrderFinalFiles(Order $order);
     public function findById(int $orderId);
-    public function showOrder(Order $order): Order;
-    public function getUserCompletedOrders(User $targetUser = null): Paginator;
+    public function showOrder(Order $order);
 }

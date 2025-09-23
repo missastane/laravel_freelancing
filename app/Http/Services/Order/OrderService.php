@@ -17,26 +17,23 @@ class OrderService
         protected OrderRepositoryInterface $orderRepository
     ) {
     }
-    public function getAllOrders(array $data): Paginator
+    public function getAllOrders(string $status)
     {
-        return $this->orderRepository->getAllOrders($data);
+        return $this->orderRepository->getAllOrders($status);
     }
 
-    public function getUserOrders(?User $user, array $data): Paginator
+    public function getUserOrders(?User $user, ?string $status = null)
     {
-        return $this->orderRepository->getUserOrders($user, $data);
+        return $this->orderRepository->getUserOrders($user, $status);
     }
 
     public function getOrderFinalFiles(Order $order)
     {
         return $this->orderRepository->getOrderFinalFiles($order);
     }
-    public function getUserCompletedOrders(User $targetUser = null)
-    {
-        return $this->orderRepository->getUserCompletedOrders($targetUser);
-    }
+   
 
-    public function showOrder(Order $order): Order
+    public function showOrder(Order $order)
     {
         return $this->orderRepository->showOrder($order);
     }

@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent\Market;
 
 use App\Models\Market\File;
 use App\Models\Market\FinalFile;
+use App\Models\Market\Order;
 use App\Repositories\Contracts\Market\FinalFileRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCreateTrait;
@@ -24,4 +25,6 @@ class FinalFileRepository extends BaseRepository implements FinalFileRepositoryI
     {
         return $this->model->where('file_id',$file->id)->first();
     }
+
+
 }

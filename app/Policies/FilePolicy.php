@@ -42,4 +42,13 @@ class FilePolicy
         !$finalFileAlreadyExist;
     }
 
+    public function canDownload(User $user, File $file)
+    {
+        $messageId = $file->filable_id;
+        $message = $this->messageRepository->findById($messageId);
+        $orderId = $message->message_context_id;
+        $order = $this->orderRepository->findById($orderId);
+        return $user->id == $order->freelancer_id || $user->id == $order->employer_id || $user->active_role === 'admin';
+    }
+
 }

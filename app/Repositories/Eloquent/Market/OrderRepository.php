@@ -2,6 +2,9 @@
 
 namespace App\Repositories\Eloquent\Market;
 
+use App\Http\Resources\Market\OrderFinalFileResource;
+use App\Http\Resources\Market\OrderResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Order;
 use App\Models\Market\OrderItem;
 use App\Models\User\User;
@@ -22,62 +25,36 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getAllOrders(array $data): Paginator
+    public function getAllOrders(string $status)
     {
-        $orders = $this->model->filterByStatus($data)->with(['freelancer:id,first_name,last_name', 'employer:id,first_name,last_name', 'orderItems'])
+        $orders = $this->model->filterByStatus($status)->with(['freelancer:id,first_name,last_name', 'employer:id,first_name,last_name', 'orderItems'])
             ->orderBy('created_at', 'desc')->simplePaginate(15);
-        return $orders;
+        return new BaseCollection($orders, OrderResource::class, null);
+
     }
 
-    public function getUserOrders(?User $user, array $data): Paginator
+    public function getUserOrders(?User $user, ?string $status = null)
     {
-        $userId = $user->id ?? auth()->id();
+        $currentUser = $user ?? auth()->user();
+        $currentUserId = $user->id ?? auth()->id();
 
-        $query = match (auth()->user()->active_role) {
-            'freelancer' => $this->model->where('freelancer_id', $userId),
-            'employer' => $this->model->where('employer_id', $userId),
+        $query = match ($currentUser->active_role) {
+            'freelancer' => $this->model->where('freelancer_id', $currentUserId),
+            'employer' => $this->model->where('employer_id', $currentUserId),
             default => $this->model->query(),
         };
 
         $orders = $query
-            ->filterByStatus($data)
+            ->filterByStatus($status)
             ->with(['freelancer:id,username', 'employer:id,username', 'orderItems', 'comments'])
             ->latest()
-            ->simplePaginate(15);
-        return $orders;
+            ->paginate(15);
+        return new BaseCollection($orders, OrderResource::class, null);
     }
     public function getOrderFinalFiles(Order $order)
     {
-        return $this->showWithRelations($order, ['finalFiles']);
-    }
-
-    // public function getOrderItems(Order $order)
-    // {
-    //     $orderItems = OrderItem::where('order_id', $order->id)
-    //         ->with('milestone')->get();
-    //     return $orderItems;
-    // }
-
-    // public function getUncompleteItems(Order $order)
-    // {
-    //     $orderItems = OrderItem::where('order_id', $order->id)->where('status', 2)->first();
-    //     return $orderItems;
-    // }
-
-    public function getUserCompletedOrders(User $targetUser = null): Paginator
-    {
-        $user = auth()->user();
-        $user->active_role === 'admin' ? $userId = $targetUser->id : $userId = $user->id;
-
-        $query = match (auth()->user()->active_role) {
-            'freelancer' => $this->model->where('freelancer_id', $userId),
-            'employer' => $this->model->where('employer_id', $userId),
-        };
-
-        $orders = $query->where('status', 3)
-            ->with('freelancer:id,username', 'employer:id,username', 'orderItems')
-            ->orderBy('created_at', 'desc')->simplePaginate(20);
-        return $orders;
+        $result = $this->showWithRelations($order,['finalFiles']);
+        return new OrderFinalFileResource($result);
     }
 
     public function findById(int $orderId)
@@ -85,9 +62,10 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         return $this->model->find($orderId);
     }
 
-    public function showOrder(Order $order): Order
+    public function showOrder(Order $order)
     {
-        return $this->showWithRelations($order, ['comments']);
+        $result = $this->showWithRelations($order, ['freelancer:id,username','employer:id,username','orderItems','comments']);
+        return new OrderResource($result);
     }
 
 

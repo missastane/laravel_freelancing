@@ -8017,11 +8017,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -8035,17 +8036,120 @@
                                                         "$ref": "#/components/schemas/Order"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -8148,11 +8252,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -8166,17 +8271,120 @@
                                                         "$ref": "#/components/schemas/Order"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -8404,7 +8612,10 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Order"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FinalFile"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -29397,16 +29608,6 @@
                 "operationId": "31471f73c6a5fde28da56b776d0ad1df",
                 "parameters": [
                     {
-                        "name": "user",
-                        "in": "path",
-                        "description": "User id to fetch him/her orders",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
                         "name": "status",
                         "in": "query",
                         "description": "Order Status: `pending`, `processing`, `completed`, `canceled`",
@@ -29431,11 +29632,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -29449,17 +29651,120 @@
                                                         "$ref": "#/components/schemas/Order"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -29626,7 +29931,7 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Order"
+                                            "$ref": "#/components/schemas/FinalFile"
                                         }
                                     },
                                     "type": "object"
@@ -39436,6 +39741,138 @@
                     }
                 ]
             }
+        },
+        "/api/final-file/download/{file}": {
+            "get": {
+                "tags": [
+                    "File"
+                ],
+                "summary": "Download a file",
+                "description": "This endpoint allows the user to download a file if they have the proper permissions. If the user does not have permission, a 403 error will be returned.",
+                "operationId": "download",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path",
+                        "description": "The ID of the file to be downloaded.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The file is being downloaded.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "path/file.format"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You do not have permission to download this file.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما اجازه دسترسی به این فایل را ندارید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -39935,6 +40372,37 @@
                 },
                 "type": "object"
             },
+            "FinalFile": {
+                "title": "FinalFile",
+                "description": "Schema for a FinalFile",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "file_name": {
+                        "type": "string",
+                        "example": "fileName"
+                    },
+                    "file_path": {
+                        "type": "string",
+                        "example": "2356489"
+                    },
+                    "mime_type": {
+                        "type": "string",
+                        "example": "image/jpg"
+                    },
+                    "file_size": {
+                        "type": "integer",
+                        "example": 401093
+                    },
+                    "download_url": {
+                        "type": "string",
+                        "example": "http://127.0.0.1:8000/api/final-file/download/21"
+                    }
+                },
+                "type": "object"
+            },
             "Message": {
                 "properties": {
                     "id": {
@@ -39989,6 +40457,100 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "project": {
+                        "properties": {
+                            "employer": {
+                                "type": "string",
+                                "example": "username"
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "برنامه نویسی لاراول"
+                            },
+                            "slug": {
+                                "type": "string",
+                                "example": "برنامه-نویسی-لاراول"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "در این پروژه ما می خواهیم که یک پلتفرم را با فریم ورک لاراول پیاده سازی و اجرا کنیم."
+                            },
+                            "duration_time": {
+                                "type": "integer",
+                                "example": 15
+                            },
+                            "amount": {
+                                "type": "decimal",
+                                "example": 7000000
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "proposal": {
+                        "properties": {
+                            "freelancer": {
+                                "type": "string",
+                                "example": "username"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "من می توانم پلتفرم درخواستی شما را با فریم ورک لاراول پیاده سازی و اجرا کنم."
+                            },
+                            "total_amount": {
+                                "type": "decimal",
+                                "example": 70000000
+                            },
+                            "due_date": {
+                                "description": "due_date datetime",
+                                "type": "string",
+                                "format": "datetime",
+                                "example": "2025-02-22T14:30:00Z"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "orderItems": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "مرحله اول پیشنهاد"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "من می توانم پلتفرم درخواستی شما را با فریم ورک لاراول پیاده سازی و اجرا کنم."
+                                },
+                                "price": {
+                                    "type": "integer",
+                                    "example": 500000
+                                },
+                                "freelancer_amount": {
+                                    "type": "integer",
+                                    "example": 450000
+                                },
+                                "platform_fee": {
+                                    "type": "integer",
+                                    "example": 50000
+                                },
+                                "due_date": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2025-02-25T12:50:00Z"
+                                },
+                                "delivered_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2025-02-25T12:50:00Z"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "total_price": {
                         "type": "integer",
                         "example": 500000
@@ -39998,64 +40560,39 @@
                         "format": "date-time",
                         "example": "2025-02-25T12:50:00Z"
                     },
-                    "deleted_at": {
+                    "delivered_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-25T12:50:00Z"
+                    },
+                    "status": {
+                        "description": "status: 1 => pending, 2 => in progress, 3 => completed, 4 => canceled\t",
+                        "type": "string",
+                        "example": "در حال بررسی"
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-25T12:45:00Z"
                     },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-25T12:50:00Z"
-                    },
-                    "status_value": {
-                        "description": "status: 1 => pending, 2 => in progress, 3 => completed, 4 => canceled\t",
-                        "type": "string",
-                        "example": "در حال بررسی"
-                    },
-                    "freelancer": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "ایمان"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "مدائنی"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "employer": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "ایمان"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "مدائنی"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "orderItems": {
+                    "comments": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OrderItem"
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "user": {
+                                    "type": "string",
+                                    "example": "username"
+                                },
+                                "comment": {
+                                    "type": "string",
+                                    "example": "من می توانم پلتفرم درخواستی شما را با فریم ورک لاراول پیاده سازی و اجرا کنم."
+                                }
+                            },
+                            "type": "object"
                         }
                     }
                 },

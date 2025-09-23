@@ -307,6 +307,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/approve/{finalFile}', [FinalFileController::class, 'approveFileItem']);
         Route::put('/reject/{finalFile}', [FinalFileController::class, 'rejectFileItem']);
         Route::put('/revision/{finalFile}', [FinalFileController::class, 'revisionFileItem']);
+        Route::get('/download/{file}', [FileController::class, 'download'])->name('file.download');
+        
+
     });
     Route::prefix('message')->group(function () {
         Route::get('/{conversation}', [MessageController::class, 'index']);

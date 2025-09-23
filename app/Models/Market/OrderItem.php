@@ -61,7 +61,7 @@ class OrderItem extends Model
 
     public function finalFiles()
     {
-        return $this->hasMany(FinalFile::class);
+        return $this->hasMany(FinalFile::class, 'order_item_id');
     }
     public function milestone()
     {
