@@ -15,6 +15,6 @@ interface CommentRepositoryInterface extends
     CreatableRepositoryInterface,
     ListableRepositoryInterface
 {
-    public function getComments(): Paginator;
-    public function showComment(Comment $comment): Comment;
+    public function getComments();
+    public function showComment(Comment $comment);
 }

@@ -30,11 +30,12 @@
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": "true"
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "null"
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "data": {
                                             "properties": {
@@ -48,17 +49,120 @@
                                                         "$ref": "#/components/schemas/Comment"
                                                     }
                                                 },
-                                                "last_page": {
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
                                                     "example": 15
                                                 },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 45
+                                                    "example": 4
                                                 }
                                             },
                                             "type": "object"
@@ -524,6 +628,18 @@
                 "summary": "Reply to comment by admin",
                 "description": "In this method admins can Reply to an existing comment",
                 "operationId": "ecaa5212cf40a3ecd357c620b6facd8a",
+                "parameters": [
+                    {
+                        "name": "comment",
+                        "in": "path",
+                        "description": "ID of the Comment to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -26858,6 +26974,18 @@
                 "summary": "Reply to comment by customer",
                 "description": "In this method customers can Reply to an existing comment",
                 "operationId": "c41560c3fa0e6f16602279cbb9915ad4",
+                "parameters": [
+                    {
+                        "name": "comment",
+                        "in": "path",
+                        "description": "ID of the Comment to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -29459,6 +29587,18 @@
                 "summary": "Store a new comment for an order by customers",
                 "description": "In this method customers can Store a new comment for an order",
                 "operationId": "ec259d0817fcb188a7272bffe1f03716",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID of the Order to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -29931,7 +30071,10 @@
                                             "example": "null"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/FinalFile"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FinalFile"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -30279,6 +30422,18 @@
                 "summary": "Store a new comment for a post by customers",
                 "description": "In this method customers can Store a new comment for a post",
                 "operationId": "d999fefd987ea07259c32e6ed270d865",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "ID of the Post to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -40261,86 +40416,59 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "user": {
+                        "type": "string",
+                        "example": "ایمان"
+                    },
                     "comment": {
                         "type": "string",
                         "example": "این محصول عالیه!"
                     },
-                    "deleted_at": {
+                    "seen": {
+                        "description": "Comment Seen_Value: 'دیده شده' if 1, 'دیده نشده' if 2",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-25T12:50:00Z"
+                        "example": "دیده شده"
+                    },
+                    "approved": {
+                        "description": "Comment Approved_Value: 'تأیید شده' if 1, 'تأیید نشده' if 2",
+                        "type": "string",
+                        "example": "تأیید شده"
+                    },
+                    "status": {
+                        "description": "Comment status: 'active' if 1, 'inactive' if 2",
+                        "type": "string",
+                        "example": "فعال"
+                    },
+                    "commentable_type": {
+                        "type": "string",
+                        "example": "نظر متعلق به یک محصول است"
+                    },
+                    "commentable_id": {
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "parent": {
+                        "properties": {
+                            "user": {
+                                "type": "string",
+                                "example": "ایمان"
+                            },
+                            "comment": {
+                                "type": "string",
+                                "example": "این محصول عالیه!"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-02-25T12:45:00Z"
+                            }
+                        },
+                        "type": "object"
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-25T12:45:00Z"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-25T12:50:00Z"
-                    },
-                    "seen_value": {
-                        "description": "Comment Seen_Value: 'دیده شده' if 1, 'دیده نشده' if 2",
-                        "type": "string",
-                        "example": "دیده شده"
-                    },
-                    "approved_value": {
-                        "description": "Comment Approved_Value: 'تأیید شده' if 1, 'تأیید نشده' if 2",
-                        "type": "string",
-                        "example": "تأیید شده"
-                    },
-                    "status_value": {
-                        "description": "Comment status: 'active' if 1, 'inactive' if 2",
-                        "type": "string",
-                        "example": "فعال"
-                    },
-                    "commentable_type_value": {
-                        "type": "string",
-                        "example": "نظر متعلق به یک محصول است"
-                    },
-                    "commentable": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "name": {
-                                "type": "string",
-                                "example": "نام پست یا محصول"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "parent": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "body": {
-                                "type": "string",
-                                "example": "این نظر منه"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "user": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "first_name": {
-                                "type": "string",
-                                "example": "ایمان"
-                            },
-                            "last_name": {
-                                "type": "string",
-                                "example": "مدائنی"
-                            }
-                        },
-                        "type": "object"
                     }
                 },
                 "type": "object"

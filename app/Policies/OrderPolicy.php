@@ -28,4 +28,26 @@ class OrderPolicy
         };
     }
 
+    public function storeComment(User $user, Order $order)
+    {
+        $isValidRole = match ($user->active_role) {
+            'freelancer' => $user->id == $order->freelancer_id,
+            'employer' => $user->id == $order->employer_id,
+            default => false,
+        };
+
+        if (!$isValidRole) {
+            return false;
+        }
+
+        return !$order->comments()
+            ->where('user_id', $user->id)
+            ->whereNull('parent_id')
+            ->exists();
+    }
+
+    
+
+
+
 }

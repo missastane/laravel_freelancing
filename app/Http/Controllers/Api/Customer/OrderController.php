@@ -173,8 +173,8 @@ class OrderController extends Controller
      *           @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example="true"),
      *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *               ref="#/components/schemas/FinalFile"
+     *             @OA\Property(property="data", type="array",
+     *               @OA\Items(ref="#/components/schemas/FinalFile")
      *             )
      *         )
      *   ),

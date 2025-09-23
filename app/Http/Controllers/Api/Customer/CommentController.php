@@ -9,6 +9,7 @@ use App\Models\Market\Comment;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
@@ -26,6 +27,13 @@ class CommentController extends Controller
      *     description="In this method customers can Reply to an existing comment",
      *     tags={"Customer-Comment"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="comment",
+     *         in="path",
+     *         description="ID of the Comment to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -84,6 +92,9 @@ class CommentController extends Controller
      */
     public function reply(Comment $comment, CommentRequest $request)
     {
+         if(Gate::denies('reply',$comment)){
+            return $this->error('عملیات غیرمجاز');
+        }
         try {
             $this->commentService->answerComment($comment, $request->all(), 1, 1, 1);
             return $this->success(null, 'پاسخ شما با موفقیت ثبت شد', 201);

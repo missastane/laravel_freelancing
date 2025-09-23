@@ -326,6 +326,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::prefix('order')->group(function () {
         Route::get('/', [CustomerOrderController::class, 'index']);
+        Route::post('/{order}/submit-comment', [OrderCommentController::class, 'store']);
         Route::get('/show/{order}', [CustomerOrderController::class, 'show']);
         Route::get('/final-files/{order}', [CustomerOrderController::class, 'getOrderFileFiles']);
 

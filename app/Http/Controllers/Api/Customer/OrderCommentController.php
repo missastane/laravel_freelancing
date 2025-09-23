@@ -8,6 +8,7 @@ use App\Http\Services\Comment\CommentService;
 use App\Models\Market\Order;
 use App\Traits\ApiResponseTrait;
 use Exception;
+use Illuminate\Support\Facades\Gate;
 
 class OrderCommentController extends Controller
 {
@@ -23,6 +24,13 @@ class OrderCommentController extends Controller
      *     description="In this method customers can Store a new comment for an order",
      *     tags={"OrderComment","Customer-Comment"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="order",
+     *         in="path",
+     *         description="ID of the Order to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -80,11 +88,14 @@ class OrderCommentController extends Controller
      */
     public function store(Order $order, CommentRequest $request)
     {
+        if(Gate::denies('storeComment',$order)){
+            return $this->error('عملیات غیرمجاز');
+        }
         try {
             $this->commentService->addComment($request->all(), Order::class, $order->id, null, null, null);
             return $this->success(null, 'نظر شما با موفقیت ثبت شد', 201);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

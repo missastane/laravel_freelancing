@@ -16,36 +16,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     title="Comment",
  *     description="Schema for a comment",
  *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="user", type="string", example="ایمان"),
  *     @OA\Property(property="comment", type="string", example="این محصول عالیه!"),
- *     @OA\Property(property="deleted_at", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
+ *     @OA\Property(property="seen", type="string", description="Comment Seen_Value: 'دیده شده' if 1, 'دیده نشده' if 2", example="دیده شده"),
+ *     @OA\Property(property="approved", type="string", description="Comment Approved_Value: 'تأیید شده' if 1, 'تأیید نشده' if 2", example="تأیید شده"),
+ *     @OA\Property(property="status", type="string", description="Comment status: 'active' if 1, 'inactive' if 2", example="فعال"),
+ *     @OA\Property(property="commentable_type", type="string", example="نظر متعلق به یک محصول است"),
+ *     @OA\Property(property="commentable_id", type="integer", example=12),
+ *     @OA\Property(property="parent", type="object",
+ *         @OA\Property(property="user", type="string", example="ایمان"),
+ *         @OA\Property(property="comment", type="string", example="این محصول عالیه!"),
+ *         @OA\Property(property="created_at", type="string", format="date-time", example="2025-02-25T12:45:00Z"),
+ *      ),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2025-02-25T12:45:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
- *     @OA\Property(property="seen_value", type="string", description="Comment Seen_Value: 'دیده شده' if 1, 'دیده نشده' if 2", example="دیده شده"),
- *     @OA\Property(property="approved_value", type="string", description="Comment Approved_Value: 'تأیید شده' if 1, 'تأیید نشده' if 2", example="تأیید شده"),
- *     @OA\Property(property="status_value", type="string", description="Comment status: 'active' if 1, 'inactive' if 2", example="فعال"),
- *     @OA\Property(property="commentable_type_value", type="string", example="نظر متعلق به یک محصول است"),
- *     @OA\Property(
- *          property="commentable",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="name", type="string", example="نام پست یا محصول")
- *               )
- *            ),
- *    @OA\Property(
- *          property="parent",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="body", type="string", example="این نظر منه")
- *               )
- *            ),
- *    @OA\Property(
- *          property="user",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="first_name", type="string", example="ایمان"),
- *                  @OA\Property(property="last_name", type="string", example="مدائنی")
- *               )
- *            ),
  * )
  */
 class Comment extends Model
@@ -57,9 +40,10 @@ class Comment extends Model
         'comment',
         'commentable_type',
         'commentable_id',
-        'seen',
-        'approved',
-        'status'
+        // this fields have default values:
+        // 'seen',
+        // 'approved',
+        // 'status' 
     ];
     public function user()
     {
@@ -69,20 +53,27 @@ class Comment extends Model
     {
         return $this->belongsTo(Comment::class, 'parent_id');
     }
-     public function commentable()
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function commentable()
     {
         return $this->morphTo();
     }
-   
+
     public function getCommentableTypeValueAttribute()
     {
         switch ($this->commentable_type) {
-            case 'َApp\\Models\\Content\\Post':
+            case Post::class:
                 $result = 'نظر متعلق به یک پست است';
                 break;
-            case 'App\\Models\\Market\\Order':
-                $result = 'نظر متعبق به یک سفارش است';
+            case Order::class:
+                $result = 'نظر متعلق به یک سفارش است';
                 break;
+            default:
+            $result = 'نامشخص';
         }
         return $result;
     }

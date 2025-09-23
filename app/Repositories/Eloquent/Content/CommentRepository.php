@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\Content;
 
+use App\Http\Resources\Market\AdminCommentResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Comment;
 use App\Repositories\Contracts\Content\CommentRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -22,13 +24,14 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
     {
         parent::__construct($model);
     }
-    public function getComments(): Paginator
+    public function getComments()
     {
-        $comments = $this->all(['user:id,first_name,last_name','parent:id,comment']);
-        return $comments;
+        $comments = $this->all(['user:id,first_name,last_name,username','parent']);
+        return new BaseCollection($comments,AdminCommentResource::class,null);
     }
-    public function showComment(Comment $comment): Comment
+    public function showComment(Comment $comment)
     {
-        return $this->showWithRelations($comment,['user:id,first_name,last_name','parent:id,comment']);
+        $result = $this->showWithRelations($comment,['user:id,first_name,last_name,username','parent:id,comment,created_at,user_id']);
+        return new AdminCommentResource($result);
     }
 }

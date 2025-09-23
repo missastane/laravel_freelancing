@@ -17,11 +17,11 @@ class CommentService
         $this->user = auth()->user();
     }
 
-    public function getComments(): Paginator
+    public function getComments()
     {
         return $this->commentRepository->getComments();
     }
-    public function showComment(Comment $comment): Comment
+    public function showComment(Comment $comment)
     {
         return $this->commentRepository->showComment($comment);
     }

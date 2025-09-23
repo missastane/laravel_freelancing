@@ -8,6 +8,7 @@ use App\Http\Services\Comment\CommentService;
 use App\Models\Market\Comment;
 use App\Traits\ApiResponseTrait;
 use Exception;
+use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
@@ -30,19 +31,56 @@ class CommentController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="A list of Comments",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(property="message", type="string", example="null"),
-     *             @OA\Property(property="data", type="object",
-     *             @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
+     *           @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", nullable=true, example=null),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *               @OA\Property(property="data", type="array",
      *                     @OA\Items(
      *                      ref="#/components/schemas/Comment"
      *                     )
      *                 ),
-     *                 @OA\Property(property="last_page", type="integer", example=3),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
      *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=45)
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="to", type="integer", example=4)
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=4),
+     *             @OA\Property(property="last_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=4),
+     *                 @OA\Property(property="total", type="integer", example=4)
      *             )
      *         )
      *     ),
@@ -67,7 +105,7 @@ class CommentController extends Controller
     public function index()
     {
         $comments = $this->commentService->getComments();
-        return $this->success($comments);
+        return $comments;
     }
 
     /**
@@ -288,6 +326,13 @@ class CommentController extends Controller
      *     description="In this method admins can Reply to an existing comment",
      *     tags={"Comment"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="comment",
+     *         in="path",
+     *         description="ID of the Comment to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -355,6 +400,9 @@ class CommentController extends Controller
      */
     public function reply(Comment $comment, CommentRequest $request)
     {
+        if(Gate::denies('adminReply',$comment)){
+            return $this->error('عملیات غیرمجاز',403);
+        }
         try {
             $this->commentService->answerComment($comment, $request->all(), 1, 1, 1);
             return $this->success(null, 'پاسخ شما با موفقیت ثبت شد', 201);
@@ -417,7 +465,7 @@ class CommentController extends Controller
     public function show(Comment $comment)
     {
         $result = $this->commentService->showComment($comment);
-        return $this->success($comment);
+        return $this->success($result);
     }
 
     /**

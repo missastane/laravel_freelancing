@@ -25,6 +25,13 @@ class PostCommentController extends Controller
      *     description="In this method customers can Store a new comment for a post",
      *     tags={"PostComment","Customer-Comment"},
      *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         description="ID of the Post to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
