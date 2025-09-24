@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dispute_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_item_id')->constrained('order_items')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('final_file_id')->constrained('final_files')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('final_file_id')->nullable()->constrained('final_files')->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('user_type')->default(1)->comment('1 => employer, 2 => freelancer');
             $table->foreignId('raised_by')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('reason');

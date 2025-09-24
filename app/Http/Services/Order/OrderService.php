@@ -32,6 +32,10 @@ class OrderService
         return $this->orderRepository->getOrderFinalFiles($order);
     }
    
+    public function getOrderItems(Order $order)
+    {
+        return $this->orderRepository->getOrderItems($order);
+    }
 
     public function showOrder(Order $order)
     {

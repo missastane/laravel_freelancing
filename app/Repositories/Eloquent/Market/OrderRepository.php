@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent\Market;
 
 use App\Http\Resources\Market\OrderFinalFileResource;
+use App\Http\Resources\Market\OrderItemsResource;
 use App\Http\Resources\Market\OrderResource;
 use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Order;
@@ -56,6 +57,13 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         $result = $this->showWithRelations($order,['finalFiles']);
         return new OrderFinalFileResource($result);
     }
+
+    public function getOrderItems(Order $order)
+    {
+        $result = $this->showWithRelations($order,['orderItems']);
+        return new OrderItemsResource($result);
+    }
+
 
     public function findById(int $orderId)
     {

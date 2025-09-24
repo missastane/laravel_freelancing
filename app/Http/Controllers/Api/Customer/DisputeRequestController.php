@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Public\StoreDisputeRequest;
 use App\Http\Services\DisputeRequest\DisputeRequestService;
+use App\Models\Market\OrderItem;
 use App\Models\User\DisputeRequest;
 use App\Traits\ApiResponseTrait;
 use Exception;
@@ -167,6 +169,88 @@ class DisputeRequestController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/api/dispute-request/store/{orderItem}",
+     *     summary="Store a new Dispute Request by customers",
+     *     description="In this method customers can Store a new Dispute Request",
+     *     tags={"Customer-DisputeRequest"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="orderItem",
+     *         in="path",
+     *         description="ID of the Order Item to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="reason", type="string", description="This field can only contain Persian and English letters, Persian and English numbers, and symbols (,،?!.). Any other characters will result in a validation error.", example="این تیکت منه"),
+     *             @OA\Property(property="locked_reason", type="integer", enum={1,2,3,4}, description="1 => not answer, 2 => insult, 3 => poor quality, 4 => other", example=1),
+     *              )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful Dispute Request Creation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="شکایت شما با موفقیت ثبت شد و سفارش و مکالمه موقتا قفل شد. لطفا منتظر نتیجه داوری بمانید"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="فیلد وارد شده نامعتبر است"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="x", type="array",
+     *                     @OA\Items(type="string", example="فیلد x اجباری است")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
+     *         )
+     *     )
+     * )
+     */
+    public function store(OrderItem $orderItem, StoreDisputeRequest $request)
+    {
+        try {
+            $inputs = $request->all();
+            $this->disputeRequestService->createDisputeRequest($orderItem, $inputs);
+            return $this->success(null, "شکایت شما با موفقیت ثبت شد و سفارش و مکالمه موقتا قفل شد. لطفا منتظر نتیجه داوری بمانید", 201);
+        } catch (Exception $e) {
+            return $this->error();
+        }
+    }
     /**
      * @OA\Delete(
      *     path="/api/dispute-request/delete/{disputeRequest}",

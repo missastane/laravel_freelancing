@@ -199,5 +199,63 @@ class OrderController extends Controller
         return $this->success($this->orderService->getOrderFinalFiles($order));
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/order/order-items/{order}",
+     *     summary="Get Order Items of a specific Order",
+     *     description="Returns the Order `Order Items`",
+     *     tags={"Customer-Order"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="order",
+     *         in="path",
+     *         description="ID of the Order to fetch",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully fetched Order Order Items",
+     *           @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example="true"),
+     *             @OA\Property(property="message", type="string", example="null"),
+     *             @OA\Property(property="data", type="array",
+     *                @OA\Items(
+     *                   @OA\Property(property="order_items", type="array",
+     *                      @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="title", type="string", example="عنوان مرحله"),
+     *                         @OA\Property(property="description", type="string", example= "من می توانم در مرحله نخست پلتفرم درخواستی شما را با فریم ورک لاراول پیاده سازی و اجرا کنم."),
+     *                         @OA\Property(property="price", type="integer", example=500000),
+     *                         @OA\Property(property="freelancer_amount", type="integer", example=450000),
+     *                         @OA\Property(property="platform_fee", type="integer", example=50000),
+     *                         @OA\Property(property="due_date", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
+     *                         @OA\Property(property="delivered_at", type="string", format="date-time", example="2025-02-25T12:50:00Z"),
+     *                      )
+     *                    )
+     *                 )
+     *             )
+     *         )
+     *   ),
+     *  @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *  @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     ))
+     * )
+     */
+    public function getOrderItems(Order $order)
+    {
+        return $this->success($this->orderService->getOrderItems($order));
+    }
 
 }

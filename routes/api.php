@@ -303,6 +303,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::prefix('dispute-request')->group(function () {
         Route::get('/', [CustomerDisputeRequestController::class, 'index']);
+        Route::post('/store/{orderItem}', [CustomerDisputeRequestController::class, 'store']);
         Route::get('/show/{disputeRequest}', [CustomerDisputeRequestController::class, 'show']);
         Route::delete('/delete/{disputeRequest}', [CustomerDisputeRequestController::class, 'delete']);
     });
@@ -334,6 +335,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [CustomerOrderController::class, 'index']);
         Route::post('/{order}/submit-comment', [OrderCommentController::class, 'store']);
         Route::get('/show/{order}', [CustomerOrderController::class, 'show']);
+        Route::get('/order-items/{order}', [CustomerOrderController::class, 'getOrderItems']);
         Route::get('/final-files/{order}', [CustomerOrderController::class, 'getOrderFileFiles']);
 
         Route::post('/{order}/submit-comment', [OrderCommentController::class, 'store']);

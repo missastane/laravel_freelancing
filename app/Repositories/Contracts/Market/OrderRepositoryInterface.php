@@ -15,6 +15,7 @@ interface OrderRepositoryInterface extends CreatableRepositoryInterface, Showabl
     public function getAllOrders(string $status);
     public function getUserOrders(?User $user, ?string $status = null);
     public function getOrderFinalFiles(Order $order);
+    public function getOrderItems(Order $order);
     public function findById(int $orderId);
     public function showOrder(Order $order);
 }

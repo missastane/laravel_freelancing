@@ -2,19 +2,27 @@
 
 namespace App\Http\Services\DisputeRequest;
 
+use App\Events\AddDisputeRequestEvent;
+use App\Models\Market\Order;
+use App\Models\Market\OrderItem;
+use Illuminate\Support\Facades\DB;
 use App\Models\User\DisputeRequest;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Contracts\Pagination\Paginator;
 use App\Notifications\AddDisputeTicketNotification;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
+use App\Repositories\Contracts\Market\OrderItemRepositoryInterface;
+use App\Repositories\Contracts\Market\ConversationRepositoryInterface;
 use App\Repositories\Contracts\User\DisputeRequestRepositoryInterface;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\Notification;
 
 class DisputeRequestService
 {
     public function __construct(
         protected DisputeRequestRepositoryInterface $disputeRequestRepository,
         protected TicketRepositoryInterface $ticketRepository,
-        protected DisputeJudgementService $disputeJudgementService
+        protected DisputeJudgementService $disputeJudgementService,
+        protected OrderItemRepositoryInterface $orderItemRepository,
+        protected ConversationRepositoryInterface $conversationRepository
     ) {
     }
 
@@ -28,6 +36,38 @@ class DisputeRequestService
         return $this->disputeRequestRepository->getUserRequests();
     }
 
+    public function createDisputeRequest(OrderItem $orderItem, array $data)
+    {
+        $user = auth()->user();
+         $order = $orderItem->order;
+        $result = DB::transaction(function () use ($orderItem,$order, $data, $user) {
+            $disputeRequest = $this->disputeRequestRepository->create([
+                'order_item_id' => $orderItem->id,
+                'user_type' => $user->active_role === 'employer' ? 1 : 2,
+                'raised_by' => $user->id,
+                'reason' => $data['reason'],
+            ]);
+            $this->orderItemRepository->update($orderItem, [
+                'locked_by' => $user->active_role === 'employer' ? 1 : 2,
+                'locked_reason' => $data['locked_reason'],
+                'locked_note' => $data['reason'],
+                'locked_at' => now()
+            ]);
+           
+            $conversation = $this->conversationRepository->getConversationIfExists(
+                $order->freelancer_id,
+                $order->employer_id,
+                Order::class,
+                $order->id
+            );
+            if ($conversation) {
+                $this->conversationRepository->update($conversation, ['status' => 2]); //close
+            }
+            return $disputeRequest;
+        });
+        event(new AddDisputeRequestEvent($order->freelancer, $order->employer, $user, $orderItem->id));
+        return $result;
+    }
     public function createDisputeTicket(DisputeRequest $disputeRequest, array $data)
     {
         $orderItem = $disputeRequest->orderItem;
