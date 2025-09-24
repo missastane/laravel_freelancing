@@ -52,7 +52,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *               )
  *            ),
  *     @OA\Property(property="reason", type="string", example="عدم تحویل به موقع کار توسط فریلنسر"),
- *     @OA\Property(property="status", type="string",description="status: 1 => active, 2 => disactive", example="فعال"),
+ *     @OA\Property(property="status", type="string",description="status: 1 => pending, 2 => resloved, 3 => rejected", example="رد شده"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
  * )

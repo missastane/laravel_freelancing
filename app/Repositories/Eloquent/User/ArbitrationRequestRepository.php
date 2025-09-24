@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\ArbitrationRequestResource;
 use App\Models\User\ArbitrationRequest;
 use App\Repositories\Contracts\User\ArbitrationRequestRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -17,9 +19,17 @@ class ArbitrationRequestRepository extends BaseRepository implements Arbitration
         parent::__construct($model);
     }
 
+    public function getAllByFilter(?string $status = null)
+    {
+        $requests = $this->model->filterByStatus($status)
+        ->orderBy('created_at','desc')->paginate(15);
+        return new BaseCollection($requests,ArbitrationRequestResource::class,null);
+    }
+
     public function showArbitrationRequest(ArbitrationRequest $arbitrationRequest)
     {
-        return $this->showWithRelations($arbitrationRequest,['admin:id,first_name,last_name']);
+        $result = $this->showWithRelations($arbitrationRequest,['admin:id,first_name,last_name']);
+        return new ArbitrationRequestResource($result);
     }
 
 }

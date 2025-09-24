@@ -21451,6 +21451,344 @@
                 ]
             }
         },
+        "/api/admin/user/arbitration-request": {
+            "get": {
+                "tags": [
+                    "ArbitrationRequest"
+                ],
+                "summary": "Retrieve list of Arbitration Requests",
+                "description": "Retrieve list of `Arbitration Requests`",
+                "operationId": "8f1d5c1c2410adf63b67243880c9c3c7",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "status of request to fetch",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "employer",
+                                "freelancer",
+                                "distribution",
+                                "nochange"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of Arbitration Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ArbitrationRequest"
+                                                    }
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 4
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer?page=1"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/api/admin/user/customer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/user/arbitration-request/show/{arbitrationRequest}": {
+            "get": {
+                "tags": [
+                    "ArbitrationRequest"
+                ],
+                "summary": "Get details of a specific arbitrationRequest",
+                "description": "Returns the `arbitrationRequest` details",
+                "operationId": "getarbitrationRequestDetails",
+                "parameters": [
+                    {
+                        "name": "arbitrationRequest",
+                        "in": "path",
+                        "description": "ID of the ArbitrationRequest to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched ArbitrationRequest details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ArbitrationRequest"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/user/customer": {
             "get": {
                 "tags": [
@@ -27309,6 +27647,22 @@
                 "summary": "Retrieve list of auth user's Dispute Requests",
                 "description": "Retrieve list of auth user's `Dispute Requests`",
                 "operationId": "42379a6f346d843e2a66a9def09ae918",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "status of request to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "resolved",
+                                "rejected"
+                            ]
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "A list of Dispute Requests",
@@ -42227,6 +42581,111 @@
                 },
                 "type": "object"
             },
+            "ArbitrationRequest": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "dispute-request": {
+                        "properties": {
+                            "employer": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "razi"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "freelancer": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "roody"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "plaintiff": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "roody"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "employer"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "order_item": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "مرحله اول پیشنهاد"
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-02-25T12:50:00Z"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 500000
+                                    },
+                                    "delivered_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-02-25T12:50:00Z"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "reason": {
+                                "type": "string",
+                                "example": "عدم تحویل به موقع کار توسط فریلنسر"
+                            },
+                            "created_at": {
+                                "description": "creation datetime",
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-02-22T10:00:00Z"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "status": {
+                        "description": "\t1 => pending, 2 => For the benefit of the employer(cancel), 3 => For the benefit of the freelancer(approve delivery), 4 => Money distribution, 5 => without change",
+                        "type": "string",
+                        "example": "به نفع کارفرما"
+                    },
+                    "freelancer_percent": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "employer_percent": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "result_description": {
+                        "type": "string",
+                        "example": "من به نفع هیچ کس رای ندادم و پول رو تقسیم کردم"
+                    },
+                    "resolved_by": {
+                        "type": "string",
+                        "example": "ایمان مدائنی"
+                    },
+                    "resolved_at": {
+                        "description": "resolved datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "DisputeRequest": {
                 "properties": {
                     "id": {
@@ -42338,9 +42797,9 @@
                         "example": "عدم تحویل به موقع کار توسط فریلنسر"
                     },
                     "status": {
-                        "description": "status: 1 => active, 2 => disactive",
+                        "description": "status: 1 => pending, 2 => resloved, 3 => rejected",
                         "type": "string",
-                        "example": "فعال"
+                        "example": "رد شده"
                     },
                     "created_at": {
                         "description": "creation datetime",
@@ -42683,6 +43142,10 @@
         {
             "name": "Admin/Form",
             "description": "Admin/Form"
+        },
+        {
+            "name": "ArbitrationRequest",
+            "description": "ArbitrationRequest"
         },
         {
             "name": "Customer",

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\Market\FeatureTypeController;
 use App\Http\Controllers\Api\Admin\Market\PaymentController;
 use App\Http\Controllers\Api\Admin\Market\WalletController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketPriorityController;
+use App\Http\Controllers\Api\Admin\User\ArbitrationRequestController;
 use App\Http\Controllers\Api\Customer\CommentController as CustomerCommentController;
 use App\Http\Controllers\API\Admin\Content\PostCategoryController;
 use App\Http\Controllers\API\Admin\Content\PostController;
@@ -206,6 +207,10 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
                 Route::post('/departments/{admin}/store', [AdminUserController::class, 'departmentsStore'])->name('admin.user.admin-user.departmentsStore');
             });
         });
+        Route::prefix('arbitration-request')->group(function () {
+            Route::get('/',[ArbitrationRequestController::class,'index']);
+            Route::get('/show/{arbitrationRequest}',[ArbitrationRequestController::class,'show']);
+        });
         Route::prefix('dispute-request')->group(function () {
             Route::get('/', [DisputeRequestController::class, 'index']);
             Route::post('/create-ticket/{disputeRequest}', [DisputeRequestController::class, 'createTicket']);
@@ -297,9 +302,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/reply/{comment}', [CustomerCommentController::class, 'reply']);
     });
     Route::prefix('dispute-request')->group(function () {
-        Route::get('/',[CustomerDisputeRequestController::class,'index']);
-        Route::get('/show/{disputeRequest}',[CustomerDisputeRequestController::class,'show']);
-        Route::delete('/delete/{disputeRequest}',[CustomerDisputeRequestController::class,'delete']);
+        Route::get('/', [CustomerDisputeRequestController::class, 'index']);
+        Route::get('/show/{disputeRequest}', [CustomerDisputeRequestController::class, 'show']);
+        Route::delete('/delete/{disputeRequest}', [CustomerDisputeRequestController::class, 'delete']);
     });
     Route::prefix('favorite')->group(function () {
         Route::get('/', [FavoriteController::class, 'index']);
@@ -309,7 +314,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/reject/{finalFile}', [FinalFileController::class, 'rejectFileItem']);
         Route::put('/revision/{finalFile}', [FinalFileController::class, 'revisionFileItem']);
         Route::get('/download/{file}', [FileController::class, 'download'])->name('file.download');
-        
+
 
     });
     Route::prefix('message')->group(function () {

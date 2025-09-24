@@ -10,5 +10,6 @@ interface ArbitrationRequestRepositoryInterface extends
 CreatableRepositoryInterface,
 ShowableRepositoryInterface
 {
+    public function getAllByFilter(?string $status = null);
     public function showArbitrationRequest(ArbitrationRequest $arbitrationRequest);
 }
