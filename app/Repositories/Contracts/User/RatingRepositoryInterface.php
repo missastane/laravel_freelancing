@@ -7,6 +7,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface RatingRepositoryInterface extends CreatableRepositoryInterface
 {
-    public function getContextRates(string $context, int $contextId): Paginator;
+    public function getContextRates(string $context, int $contextId);
     public function isAlreadyRated(string $context, int $contextId, ?int $orderId = null):bool;
 }

@@ -78,7 +78,11 @@ class AdminUserService
     }
     public function syncRoles(User $admin, array $data): User
     {
-        $adminRoleId = $this->roleRepository->findByName('admin')->id;
+        $adminRole = $this->roleRepository->findByName('admin');
+        if(!$adminRole){
+            $adminRole =$this->roleRepository->create(['name' => 'admin','guard_name' => 'api']);
+        }
+        $adminRoleId = $adminRole->id;
         array_push($data,$adminRoleId);
         $this->userRepository->rolesSync($admin,$data);
         return $admin;
@@ -87,5 +91,10 @@ class AdminUserService
     {
         $this->userRepository->permissionsSync($admin,$data);
         return $admin;
+    }
+
+    public function syncDepartments(User $user, array $data)
+    {
+        return $this->userRepository->syncDepartments($user,$data);
     }
 }

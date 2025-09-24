@@ -21275,6 +21275,182 @@
                 ]
             }
         },
+        "/api/admin/user/admin-user/departments/{admin}/store": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update Admin Departments",
+                "description": "This endpoint assigns new Departments to an admin user to manage it.",
+                "operationId": "14f8b6930e0139ecfe68085f34d911cb",
+                "parameters": [
+                    {
+                        "name": "admin",
+                        "in": "path",
+                        "description": "Admin user ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "departments"
+                                ],
+                                "properties": {
+                                    "departments": {
+                                        "description": "List of department IDs",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Departments successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "دپارتمان های ادمین با موفقیت بروزرسانی شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - admin does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ادمین با این مشخصات یافت نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "route not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مسیر مورد نظر پیدا نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/user/customer": {
             "get": {
                 "tags": [
@@ -31360,16 +31536,6 @@
                 "operationId": "2db00220beccf3e25bc258f830ea857b",
                 "parameters": [
                     {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Filter by project status. Possible values: pending, processing , completed, canceled",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "processing,canceled"
-                        }
-                    },
-                    {
                         "name": "category_id",
                         "in": "query",
                         "description": "Filter by category. Possible values: ",
@@ -40545,6 +40711,34 @@
                         "type": "string",
                         "example": "چه نوع ویرایشی مد نظرتون هست؟"
                     },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "file_name": {
+                                    "type": "string",
+                                    "example": "fileName"
+                                },
+                                "file_path": {
+                                    "type": "string",
+                                    "example": "2356489"
+                                },
+                                "mime_type": {
+                                    "type": "string",
+                                    "example": "image/jpg"
+                                },
+                                "download_url": {
+                                    "type": "string",
+                                    "example": "http://127.0.0.1:8000/api/final-file/download/21"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "sent_date": {
                         "description": "sent datetime",
                         "type": "string",
@@ -40564,6 +40758,34 @@
                             "message": {
                                 "type": "string",
                                 "example": "چه نوع ویرایشی مد نظرتون هست؟"
+                            },
+                            "files": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "file_name": {
+                                            "type": "string",
+                                            "example": "fileName"
+                                        },
+                                        "file_path": {
+                                            "type": "string",
+                                            "example": "2356489"
+                                        },
+                                        "mime_type": {
+                                            "type": "string",
+                                            "example": "image/jpg"
+                                        },
+                                        "download_url": {
+                                            "type": "string",
+                                            "example": "http://127.0.0.1:8000/api/final-file/download/21"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
                             },
                             "sent_date": {
                                 "description": "sent datetime",
@@ -41226,39 +41448,28 @@
                         "type": "integer",
                         "example": 4
                     },
+                    "order_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "rate_by": {
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "example": "ایمان"
+                            },
+                            "avatar": {
+                                "type": "string",
+                                "example": "path/avatar.extension"
+                            }
+                        },
+                        "type": "object"
+                    },
                     "created_at": {
                         "description": "creation datetime",
                         "type": "string",
                         "format": "date-time",
                         "example": "2025-02-22T10:00:00Z"
-                    },
-                    "updated_at": {
-                        "description": "update datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T10:00:00Z"
-                    },
-                    "user": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            },
-                            "username": {
-                                "type": "string",
-                                "example": "ایمان"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "order": {
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "example": 3
-                            }
-                        },
-                        "type": "object"
                     }
                 },
                 "type": "object"

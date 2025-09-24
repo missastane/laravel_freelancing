@@ -14,11 +14,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="sender", type="string", example="ali001"),
  *     @OA\Property(property="message", type="string", example="چه نوع ویرایشی مد نظرتون هست؟"),
+ *     @OA\Property(property="files", type="array",
+ *        @OA\Items(  
+ *            @OA\Property(property="id", type="integer", example=3),
+ *            @OA\Property(property="file_name", type="string", example="fileName"),
+ *            @OA\Property(property="file_path", type="string", example="2356489"),
+ *            @OA\Property(property="mime_type", type="string", example="image/jpg"),
+ *            @OA\Property(property="download_url", type="string", example="http://127.0.0.1:8000/api/final-file/download/21"),
+ *         )
+ *     ),
  *     @OA\Property(property="sent_date", type="string", format="date-time", description="sent datetime", example="2025-02-22T10:00:00Z"),
  *     @OA\Property(property="parent", type="object",
  *        @OA\Property(property="id", type="integer", example=1),
  *        @OA\Property(property="sender", type="string", example="ali001"),
  *        @OA\Property(property="message", type="string", example="چه نوع ویرایشی مد نظرتون هست؟"),
+ *        @OA\Property(property="files", type="array",
+ *          @OA\Items(  
+ *            @OA\Property(property="id", type="integer", example=3),
+ *            @OA\Property(property="file_name", type="string", example="fileName"),
+ *            @OA\Property(property="file_path", type="string", example="2356489"),
+ *            @OA\Property(property="mime_type", type="string", example="image/jpg"),
+ *            @OA\Property(property="download_url", type="string", example="http://127.0.0.1:8000/api/final-file/download/21"),
+ *          )
+ *     ),
  *        @OA\Property(property="sent_date", type="string", format="date-time", description="sent datetime", example="2025-02-22T10:00:00Z"),
  *     ),
  * )
@@ -65,7 +83,7 @@ class Message extends Model
 
     public function files()
     {
-        return $this->morphMany('App\Models\Market\File', 'filable');
+        return $this->morphMany(File::class, 'filable');
     }
     public function getMessageTypeValueAttribute()
     {

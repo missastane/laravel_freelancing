@@ -18,6 +18,7 @@ use App\Models\Market\WorkExperience;
 use App\Models\Payment\FeaturePerchased;
 use App\Models\Payment\Payment;
 use App\Models\Payment\Wallet;
+use App\Models\Ticket\TicketDepartment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -196,6 +197,16 @@ class User extends Authenticatable implements JWTSubject
     public function skills()
     {
         return $this->belongsToMany(Skill::class);
+    }
+
+    public function departments()
+    {
+        return $this->belongsToMany(
+            TicketDepartment::class,
+            'admin_ticket_department',
+            'admin_id',
+            'department_id'
+        )->withTimestamps();;
     }
     public function messages()
     {

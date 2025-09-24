@@ -2,6 +2,7 @@
 
 namespace App\Models\Ticket;
 
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
  * )
  */
- class TicketDepartment extends Model
+class TicketDepartment extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = ['name', 'status'];
@@ -34,8 +35,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         }
         return $result;
     }
-      public function priorities()
+    public function priorities()
     {
         return $this->hasMany(Ticket::class);
     }
+
+    public function admins()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'admin_ticket_department',
+            'department_id',
+            'admin_id'
+        )->withTimestamps();;
+    }
+
 }

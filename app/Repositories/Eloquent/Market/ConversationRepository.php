@@ -36,7 +36,7 @@ class ConversationRepository extends BaseRepository implements ConversationRepos
     public function getConversationMessages(Conversation $conversation)
     {
         $conversation = $this->showWithRelations($conversation,['employer:id,username', 'freelancer:id,username']);
-        $messages = $conversation->messages->load(['sender:id,username', 'parent:id,message', 'files:id,file_name,file_path,mime_type']);
+        $messages = $conversation->messages->load(['sender:id,username', 'parent:id,message', 'files']);
         return new ConversationResource($conversation);
     }
 

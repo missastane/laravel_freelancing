@@ -12,21 +12,12 @@ use Illuminate\Database\Eloquent\Model;
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="value", type="integer", example=4),
+ *     @OA\Property(property="order_id", type="integer", example=1),
+ *     @OA\Property(property="rate_by", type="object",
+ *         @OA\Property(property="username", type="string", example="ایمان"),
+ *         @OA\Property(property="avatar", type="string", example="path/avatar.extension"),
+ *     ),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(
- *          property="user",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="username", type="string", example="ایمان"),
- *               )
- *            ),
- *     @OA\Property(
- *          property="order",
- *          type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *               )
- *            ),
  * )
  */
 class Rating extends Model

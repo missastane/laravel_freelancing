@@ -57,7 +57,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['proposal_id','project_id', 'employer_id', 'freelancer_id', 'status', 'total_price', 'delivered_at', 'due_date'];
+    protected $fillable = ['proposal_id', 'project_id', 'employer_id', 'freelancer_id', 'status', 'total_price', 'delivered_at', 'due_date'];
 
     protected function casts()
     {
@@ -73,7 +73,7 @@ class Order extends Model
 
     public function project()
     {
-        return $this->belongsTo(Project::class,'project_id');
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
 
@@ -94,7 +94,12 @@ class Order extends Model
 
     public function finalFiles()
     {
-        return $this->hasManyThrough(FinalFile::class,OrderItem::class,'order_id','order_item_id','id','id');
+        return $this->hasManyThrough(FinalFile::class, OrderItem::class, 'order_id', 'order_item_id', 'id', 'id');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'order_id');
     }
 
     public function comments()

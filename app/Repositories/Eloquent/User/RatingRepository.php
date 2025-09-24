@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Http\Resources\ResourceCollections\BaseCollection;
+use App\Http\Resources\User\RatingResource;
 use App\Models\Market\Rating;
 use App\Repositories\Contracts\User\RatingRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
@@ -16,11 +18,11 @@ class RatingRepository extends BaseRepository implements RatingRepositoryInterfa
         parent::__construct($model);
     }
 
-    public function getContextRates(string $context, int $contextId): Paginator
+    public function getContextRates(string $context, int $contextId)
     {
         $rates = $this->model->where(['ratable_type' => $context, 'ratable_id' => $contextId])
             ->paginate(15);
-        return $rates;
+        return new BaseCollection($rates, RatingResource::class,null);
     }
     public function isAlreadyRated(string $context, int $contextId, ?int $orderId = null): bool
     {

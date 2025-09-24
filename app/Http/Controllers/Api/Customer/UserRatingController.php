@@ -63,7 +63,7 @@ class UserRatingController extends Controller
      */
     public function show(User $user)
     {
-        return $this->success($this->ratingService->getContextRates(User::class, $user->id));
+        return $this->ratingService->getContextRates(User::class, $user->id);
     }
 
     /**

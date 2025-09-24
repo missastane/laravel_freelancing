@@ -25,7 +25,7 @@ class ProjectPolicy
 
     public function update(User $user,Project $project)
     {
-        return $project->status == 1;
+        return $project->status == 1 && $user->id == $project->user_id;
     }
     /**
      * Determine whether the user can delete the model.

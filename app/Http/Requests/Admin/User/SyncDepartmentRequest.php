@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Market;
+namespace App\Http\Requests\Admin\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProjectFilterRequest extends FormRequest
+class SyncDepartmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,15 +22,13 @@ class ProjectFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'nullable|string|in:pending,processing,completed,canceled',
-            'category_id' => 'nullable|exists:project_categories,id'
+            'departments' => 'required|array',
+            'departments.*' => 'required|exists:ticket_departments,id',
         ];
     }
+
     public function attributes()
     {
-        return [
-            'status' => 'وضعیت',
-            'category_id' => 'دسته بندی'
-        ];
+        return ['departments' => 'دپارتمان'];
     }
 }

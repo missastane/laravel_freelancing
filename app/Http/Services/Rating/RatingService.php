@@ -19,7 +19,7 @@ class RatingService
     {
     }
 
-    public function getContextRates(string $context, int $contextId): Paginator
+    public function getContextRates(string $context, int $contextId)
     {
         return $this->ratingRepository->getContextRates($context, $contextId);
     }

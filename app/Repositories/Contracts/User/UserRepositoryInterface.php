@@ -33,6 +33,8 @@ interface UserRepositoryInterface extends
   public function assignRole(User $user, string|int|array|Role|Collection $roles);
   public function rolesSync(User $user, array $roles);
   public function permissionsSync(User $user, array $permissions);
+  
+  public function syncDepartments(User $user,array $data);
   public function detachRoles(User $user);
   public function detachPermissions(User $user);
   public function deleteAdmin(User $admin);

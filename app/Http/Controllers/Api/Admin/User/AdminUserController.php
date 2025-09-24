@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\AdminUserRequest;
 use App\Http\Requests\Admin\User\PermissionStoreRequest;
 use App\Http\Requests\Admin\User\RoleStoreRequest;
+use App\Http\Requests\Admin\User\SyncDepartmentRequest;
 use App\Http\Requests\SearchRequest;
 use App\Http\Services\User\AdminUserService;
 use App\Models\User\User;
@@ -844,7 +845,7 @@ class AdminUserController extends Controller
             $this->adminUserService->syncRoles($admin, $request->roles);
             return $this->success(null, 'نقش های ادمین با موفقیت بروزرسانی شد');
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
     /**
@@ -934,6 +935,95 @@ class AdminUserController extends Controller
             return $this->success(null, 'دسترسی های ادمین با موفقیت بروزرسانی شد');
         } catch (Exception $e) {
             return $this->error();
+        }
+    }
+
+
+     /**
+     * @OA\Post(
+     *     path="/api/admin/user/admin-user/departments/{admin}/store",
+     *     summary="Update Admin Departments",
+     *     description="This endpoint assigns new Departments to an admin user to manage it.",
+     *     tags={"Admin"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="admin",
+     *         in="path",
+     *         required=true,
+     *         description="Admin user ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"departments"},
+     *             @OA\Property(
+     *                 property="departments",
+     *                 type="array",
+     *                 description="List of department IDs",
+     *                 @OA\Items(type="integer", example=2)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Departments successfully updated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="دپارتمان های ادمین با موفقیت بروزرسانی شد"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *    @OA\Response(
+     *         response=400,
+     *         description="Bad Request - admin does not exist",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="ادمین با این مشخصات یافت نشد")
+     *     )),
+     *    @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+     *     )),
+     *     @OA\Response(
+     *         response=404,
+     *         description="route not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="bool", example="false"),
+     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
+     *     )),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *         )
+     *     )
+     * )
+     */
+     public function departmentsStore(User $admin, SyncDepartmentRequest $request)
+    {
+        // if (Gate::denies('assignDepartment', [$admin])) {
+        //     return $this->error('اجازه دسترسی ندارید', 403);
+        // }
+        try {
+            $this->adminUserService->syncDepartments($admin,$request->departments);
+            return $this->success(null, 'دپارتمان های ادمین با موفقیت بروزرسانی شد');
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
         }
     }
 }

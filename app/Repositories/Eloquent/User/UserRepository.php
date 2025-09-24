@@ -164,6 +164,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     return $user->permissions()->detach();
   }
 
+  public function syncDepartments(User $user,array $data)
+  {
+    return $user->departments()->sync($data);
+  }
   public function deleteAdmin(User $admin)
   {
     return DB::transaction(function () use ($admin) {

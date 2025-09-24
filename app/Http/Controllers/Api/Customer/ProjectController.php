@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\Customer;
 
 use App\Exceptions\FavoriteNotExistException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Market\ProjectFilterRequest;
 use App\Http\Requests\Employer\ProjectRequest;
+use App\Http\Requests\Market\ProjectCheckStatusRequest;
 use App\Http\Services\Project\ProjectService;
 use App\Models\Market\File;
 use App\Models\Market\Project;
@@ -31,13 +33,6 @@ class ProjectController extends Controller
      *     security={
      *         {"bearerAuth": {}}
      *     },
-     *  @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by project status. Possible values: pending, processing , completed, canceled",
-     *         required=false,
-     *         @OA\Schema(type="string", example="processing,canceled")
-     *     ),
      *     @OA\Parameter(
      *         name="category_id",
      *         in="query",
@@ -110,9 +105,12 @@ class ProjectController extends Controller
      *     )),
      * )
      */
-    public function index(Request $request)
+    public function index(ProjectFilterRequest $request)
     {
-        return $this->projectService->getProjects($request->all());
+        $inputs = $request->all();
+        $inputs['status'] = 'pending';
+        $inputs['category_id'] = $request->category_id;
+        return $this->projectService->getProjects($inputs);
     }
 
     /**

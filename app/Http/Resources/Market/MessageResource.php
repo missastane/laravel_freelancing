@@ -18,11 +18,25 @@ class MessageResource extends JsonResource
             'id' => $this->id,
             'sender' => $this->sender->username,
             'message' => $this->message,
+            'files' => $this->files?->map(fn($file) => [
+                'id' => $file->id,
+                'name' => $file->file_name,
+                'path' => $file->file_path,
+                'size' => $file->file_size,
+                'download_url' => route('file.download', ['file' => $file]),
+            ]),
             'sent_date' => $this->sent_date,
             'parent' => $this->parent ? [
                 'id' => $this->parent_id,
                 'sender' => $this->parent->sender->username,
                 'message' => $this->parent->message,
+                'files' => $this->files?->map(fn($file) => [
+                    'id' => $file->id,
+                    'name' => $file->file_name,
+                    'path' => $file->file_path,
+                    'size' => $file->file_size,
+                    'download_url' => route('file.download', ['file' => $file]),
+                ]),
                 'sent_date' => $this->parent->sent_date
             ] : null,
         ];

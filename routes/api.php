@@ -203,6 +203,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
                 Route::delete('/delete/{admin}', [AdminUserController::class, 'delete'])->name('admin.user.admin-user.delete');
                 Route::post('/roles/{admin}/store', [AdminUserController::class, 'rolesStore'])->name('admin.user.admin-user.rolesStore');
                 Route::post('/permissions/{admin}/store', [AdminUserController::class, 'permissionsStore'])->name('admin.user.admin-user.permissionsStore');
+                Route::post('/departments/{admin}/store', [AdminUserController::class, 'departmentsStore'])->name('admin.user.admin-user.departmentsStore');
             });
         });
         Route::prefix('dispute-request')->group(function () {
