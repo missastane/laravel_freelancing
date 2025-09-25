@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\Content\CommentController;
+use App\Http\Controllers\Api\Admin\Content\FaqController;
 use App\Http\Controllers\Api\Admin\Market\ConversationController;
 use App\Http\Controllers\Api\Admin\Market\FeatureTypeController;
 use App\Http\Controllers\Api\Admin\Market\PaymentController;
@@ -62,14 +63,7 @@ use App\Http\Controllers\Api\Customer\WalletController as CustomerWalletControll
 
 Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     Route::prefix('content')->group(function () {
-        Route::prefix('tag')->group(function () {
-            Route::get('/', [TagController::class, 'index'])->name('admin.content.tag');
-            Route::get('/search', [TagController::class, 'search'])->name('admin.content.tag.search');
-            Route::get('/show/{tag}', [TagController::class, 'show'])->name('admin.content.tag.show');
-            Route::post('/store', [TagController::class, 'store'])->name('admin.content.tag.store');
-            Route::put('/update/{tag}', [TagController::class, 'update'])->name('admin.content.tag.update');
-            Route::delete('/delete/{tag}', [TagController::class, 'delete'])->name('admin.content.tag.delete');
-        });
+
         Route::prefix('category')->group(function () {
             Route::get('/', [PostCategoryController::class, 'index'])->name('admin.category.tag');
             Route::get('/search', [PostCategoryController::class, 'search'])->name('admin.content.category.search');
@@ -77,6 +71,22 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::post('/store', [PostCategoryController::class, 'store'])->name('admin.content.category.store');
             Route::put('/update/{category}', [PostCategoryController::class, 'update'])->name('admin.content.category.update');
             Route::delete('/delete/{category}', [PostCategoryController::class, 'delete'])->name('admin.content.category.delete');
+        });
+        Route::prefix('comment')->group(function () {
+            Route::get('/', [CommentController::class, 'index']);
+            Route::patch('/status/{comment}', [CommentController::class, 'toggleStatus']);
+            Route::patch('/seen/{comment}', [CommentController::class, 'toggleSeen']);
+            Route::patch('/approved/{comment}', [CommentController::class, 'toggleApproved']);
+            Route::post('/reply/{comment}', [CommentController::class, 'reply']);
+            Route::get('/show/{comment}', [CommentController::class, 'show']);
+            Route::delete('/delete/{comment}', [CommentController::class, 'delete']);
+        });
+        Route::prefix('faq')->group(function () {
+            Route::get('/', [FaqController::class, 'index']);
+            Route::post('/store', [FaqController::class, 'store']);
+            Route::get('/show/{faq}', [FaqController::class, 'show']);
+            Route::put('/update/{faq}', [FaqController::class, 'update']);
+            Route::delete('/delete/{faq}', [FaqController::class, 'delete']);
         });
         Route::prefix('post')->group(function () {
             Route::get('/', [PostController::class, 'index'])->name('admin.post.tag');
@@ -89,19 +99,19 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::delete('/delete/{post}', [PostController::class, 'delete'])->name('admin.content.post.delete');
             Route::delete('/delete-file/{file}', [PostController::class, 'deleteFile'])->name('admin.content.post.delete-file');
         });
-        Route::prefix('comment')->group(function () {
-            Route::get('/', [CommentController::class, 'index']);
-            Route::patch('/status/{comment}', [CommentController::class, 'toggleStatus']);
-            Route::patch('/seen/{comment}', [CommentController::class, 'toggleSeen']);
-            Route::patch('/approved/{comment}', [CommentController::class, 'toggleApproved']);
-            Route::post('/reply/{comment}', [CommentController::class, 'reply']);
-            Route::get('/show/{comment}', [CommentController::class, 'show']);
-            Route::delete('/delete/{comment}', [CommentController::class, 'delete']);
+        Route::prefix('tag')->group(function () {
+            Route::get('/', [TagController::class, 'index'])->name('admin.content.tag');
+            Route::get('/search', [TagController::class, 'search'])->name('admin.content.tag.search');
+            Route::get('/show/{tag}', [TagController::class, 'show'])->name('admin.content.tag.show');
+            Route::post('/store', [TagController::class, 'store'])->name('admin.content.tag.store');
+            Route::put('/update/{tag}', [TagController::class, 'update'])->name('admin.content.tag.update');
+            Route::delete('/delete/{tag}', [TagController::class, 'delete'])->name('admin.content.tag.delete');
         });
     });
     Route::prefix('conversation')->group(function () {
         Route::get('/{conversation}/messages', [ConversationController::class, 'index']);
     });
+
     Route::prefix('locale')->group(function () {
         Route::prefix('province')->group(function () {
             Route::get('/', [ProvinceController::class, 'index'])->name('admin.locale.province');

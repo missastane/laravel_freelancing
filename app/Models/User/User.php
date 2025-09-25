@@ -93,6 +93,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'username',
+        'username_change_count',
         'email',
         'password',
         'first_name',
@@ -119,6 +120,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'user_type',
         'activation',
+        'username_change_count'
     ];
 
     /**

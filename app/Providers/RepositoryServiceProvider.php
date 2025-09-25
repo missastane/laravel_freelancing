@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Repositories\Contracts\Content\CommentRepositoryInterface;
+use App\Repositories\Contracts\Content\FaqRepositoryInterface;
 use App\Repositories\Contracts\Content\PostCategoryRepositoryInterface;
 use App\Repositories\Contracts\Content\PostRepositoryInterface;
 use App\Repositories\Contracts\Content\TagRepositoryInterface;
@@ -47,6 +48,7 @@ use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Repositories\Contracts\User\WorkExperienceRepositoryInterface;
 use App\Repositories\Eloquent\Content\CommentRepository;
+use App\Repositories\Eloquent\Content\FaqRepository;
 use App\Repositories\Eloquent\Market\FileRepository;
 use App\Repositories\Eloquent\Content\PostCategoryRepository;
 use App\Repositories\Eloquent\Content\PostRepository;
@@ -142,6 +144,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ArbitrationRequestRepositoryInterface::class, ArbitrationRequestRepository::class);
         $this->app->bind(WithdrawalRepositoryInterface::class, WithdrawalRepository::class);
         $this->app->bind(PaymentRepositoryInterface::class, PaymentRepository::class);
+        $this->app->bind(FaqRepositoryInterface::class, FaqRepository::class);
     }
 
     /**
