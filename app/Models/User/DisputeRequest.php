@@ -110,6 +110,9 @@ class DisputeRequest extends Model
                 $result = 'حل شده';
                 break;
             case 3:
+                $result = 'پس گرفته شده';
+                break;
+            case 4:
                 $result = 'رد شده';
                 break;
         }
@@ -122,7 +125,8 @@ class DisputeRequest extends Model
         $requestStatuses = [
             'pending' => 1,
             'resolved' => 2,
-            'rejected' => 3
+            'withdrawn' => 3,
+            'rejected' => 4
         ];
 
         // if the type is valid filters query

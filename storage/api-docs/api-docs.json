@@ -23624,12 +23624,13 @@
                         "name": "status",
                         "in": "query",
                         "description": "status of request to fetch",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "string",
                             "enum": [
                                 "pending",
                                 "resolved",
+                                "withdrawn",
                                 "rejected"
                             ]
                         }
@@ -27652,12 +27653,13 @@
                         "name": "status",
                         "in": "query",
                         "description": "status of request to fetch",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "string",
                             "enum": [
                                 "pending",
                                 "resolved",
+                                "withdrawn",
                                 "rejected"
                             ]
                         }
@@ -28144,19 +28146,19 @@
                 ]
             }
         },
-        "/api/dispute-request/delete/{disputeRequest}": {
-            "delete": {
+        "/api/dispute-request/withdrawn/{disputeRequest}": {
+            "patch": {
                 "tags": [
                     "Customer-DisputeRequest"
                 ],
-                "summary": "Delete a DisputeRequest",
-                "description": "This endpoint allows the user to `delete an existing DisputeRequest`.",
-                "operationId": "deleteDisputeRequest",
+                "summary": "Withdrawn an existing Dispute Request by customer who created it",
+                "description": "In this method customers can Withdrawn their Dispute Request",
+                "operationId": "9641b6d5eac6ca75ef59c62c37805f0d",
                 "parameters": [
                     {
                         "name": "disputeRequest",
                         "in": "path",
-                        "description": "The ID of the DisputeRequest to be deleted",
+                        "description": "ID of the Dispute Request to fetch",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -28166,18 +28168,18 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "DisputeRequest deleted successfully",
+                        "description": "successful Dispute Request Withdrawn",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "status": {
                                             "type": "boolean",
-                                            "example": true
+                                            "example": "true"
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "رکورد با موفقیت حذف شد"
+                                            "example": "شکایت شما با موفقیت پس گرفته شد و قفل مکالمه و آیتم باز شد"
                                         },
                                         "data": {
                                             "type": "object",
@@ -28229,8 +28231,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "route not found",
+                    "500": {
+                        "description": "internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -28241,27 +28243,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "مسیر مورد نظر پیدا نشد"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید"
+                                            "example": "خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید."
                                         }
                                     },
                                     "type": "object"

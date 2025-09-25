@@ -305,7 +305,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [CustomerDisputeRequestController::class, 'index']);
         Route::post('/store/{orderItem}', [CustomerDisputeRequestController::class, 'store']);
         Route::get('/show/{disputeRequest}', [CustomerDisputeRequestController::class, 'show']);
-        Route::delete('/delete/{disputeRequest}', [CustomerDisputeRequestController::class, 'delete']);
+        Route::patch('/withdrawn/{disputeRequest}', [CustomerDisputeRequestController::class, 'withdrawn']);
     });
     Route::prefix('favorite')->group(function () {
         Route::get('/', [FavoriteController::class, 'index']);

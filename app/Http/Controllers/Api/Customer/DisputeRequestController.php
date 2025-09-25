@@ -30,9 +30,9 @@ class DisputeRequestController extends Controller
      *       @OA\Parameter(
      *         name="status",
      *         in="query",
-     *         required=true,
+     *         required=false,
      *         description="status of request to fetch",
-     *         @OA\Schema(type="string", enum={"pending","resolved","rejected"})
+     *         @OA\Schema(type="string", enum={"pending","resolved","withdrawn","rejected"})
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -243,6 +243,9 @@ class DisputeRequestController extends Controller
      */
     public function store(OrderItem $orderItem, StoreDisputeRequest $request)
     {
+        if (Gate::denies('storeDisputeRequest', $orderItem)) {
+            return $this->error('عملیات غیرمجاز', 403);
+        }
         try {
             $inputs = $request->all();
             $this->disputeRequestService->createDisputeRequest($orderItem, $inputs);
@@ -251,31 +254,31 @@ class DisputeRequestController extends Controller
             return $this->error();
         }
     }
-    /**
-     * @OA\Delete(
-     *     path="/api/dispute-request/delete/{disputeRequest}",
-     *     summary="Delete a DisputeRequest",
-     *     description="This endpoint allows the user to `delete an existing DisputeRequest`.",
-     *     operationId="deleteDisputeRequest",
+
+     /**
+     * @OA\Patch(
+     *     path="/api/dispute-request/withdrawn/{disputeRequest}",
+     *     summary="Withdrawn an existing Dispute Request by customer who created it",
+     *     description="In this method customers can Withdrawn their Dispute Request",
      *     tags={"Customer-DisputeRequest"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="disputeRequest",
      *         in="path",
-     *         description="The ID of the DisputeRequest to be deleted",
+     *         description="ID of the Dispute Request to fetch",
      *         required=true,
      *         @OA\Schema(type="integer", format="int64")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="DisputeRequest deleted successfully",
+     *         description="successful Dispute Request Withdrawn",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="رکورد با موفقیت حذف شد"),
+     *             @OA\Property(property="status", type="bool", example="true"),
+     *             @OA\Property(property="message", type="string", example="شکایت شما با موفقیت پس گرفته شد و قفل مکالمه و آیتم باز شد"),
      *             @OA\Property(property="data", type="object", nullable=true)
      *         )
      *     ),
-     *     @OA\Response(
+     *  @OA\Response(
      *         response=401,
      *         description="Unauthenticated",
      *         @OA\JsonContent(
@@ -289,36 +292,29 @@ class DisputeRequestController extends Controller
      *             type="object",
      *             @OA\Property(property="status", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
-     *         ),
+     *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="route not found",
+     *         response=500,
+     *         description="internal server error",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="مسیر مورد نظر پیدا نشد")
-     *     )),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید")
+     *             @OA\Property(property="message", type="string", example="خطای غیرمنتظره در سرور رخ داده است. لطفاً دوباره تلاش کنید.")
      *         )
      *     )
      * )
      */
-
-    public function delete(DisputeRequest $disputeRequest)
+    public function withdrawn(DisputeRequest $disputeRequest)
     {
-        if (Gate::denies('delete', $disputeRequest)) {
-            return $this->error('عملیات غیر مجاز', 403);
+        if(Gate::denies('withdrawn',$disputeRequest)){
+            return $this->error('عملیات غیرمجاز',403);
         }
         try {
-            $this->disputeRequestService->deleteDisputeRequest($disputeRequest);
-            return $this->success(null, 'درخواست داوری با موفقیت حذف شد');
+            $this->disputeRequestService->withdrawn($disputeRequest);
+            return $this->success(null, 'شکایت شما با موفقیت پس گرفته شد و قفل مکالمه و آیتم باز شد');
         } catch (Exception $e) {
             return $this->error();
         }
     }
+  
 }

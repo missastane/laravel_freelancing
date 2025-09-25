@@ -33,9 +33,9 @@ class DisputeRequestController extends Controller
      *     @OA\Parameter(
      *         name="status",
      *         in="query",
-     *         required=true,
+     *         required=false,
      *         description="status of request to fetch",
-     *         @OA\Schema(type="string", enum={"pending","resolved","rejected"})
+     *         @OA\Schema(type="string", enum={"pending","resolved","withdrawn","rejected"})
      *     ),
      *     @OA\Response(
      *         response=200,

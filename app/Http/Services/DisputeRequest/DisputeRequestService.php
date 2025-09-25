@@ -39,8 +39,8 @@ class DisputeRequestService
     public function createDisputeRequest(OrderItem $orderItem, array $data)
     {
         $user = auth()->user();
-         $order = $orderItem->order;
-        $result = DB::transaction(function () use ($orderItem,$order, $data, $user) {
+        $order = $orderItem->order;
+        $result = DB::transaction(function () use ($orderItem, $order, $data, $user) {
             $disputeRequest = $this->disputeRequestRepository->create([
                 'order_item_id' => $orderItem->id,
                 'user_type' => $user->active_role === 'employer' ? 1 : 2,
@@ -53,7 +53,7 @@ class DisputeRequestService
                 'locked_note' => $data['reason'],
                 'locked_at' => now()
             ]);
-           
+
             $conversation = $this->conversationRepository->getConversationIfExists(
                 $order->freelancer_id,
                 $order->employer_id,
@@ -104,6 +104,33 @@ class DisputeRequestService
     public function judgeDisputeRequest(DisputeRequest $disputeRequest, array $data)
     {
         $this->disputeJudgementService->judgeRequest($disputeRequest, $data);
+    }
+
+    public function withdrawn(DisputeRequest $disputeRequest)
+    {
+        $orderItem = $disputeRequest->orderItem;
+        $order = $orderItem->order;
+        $result = DB::transaction(function () use ($orderItem, $disputeRequest, $order) {
+            $this->disputeRequestRepository->update($disputeRequest, ['status' => 3]); //withdrawn
+            $this->orderItemRepository->update($orderItem, [
+                'locked_by' => null,
+                'locked_reason' => null,
+                'locked_note' => null,
+                'locked_at' => null
+            ]);
+            $conversation = $this->conversationRepository->getConversationIfExists(
+                $order->freelancer_id,
+                $order->employer_id,
+                Order::class,
+                $order->id
+            );
+            if ($conversation) {
+                $this->conversationRepository->update($conversation, ['status' => 1]); //open
+            }
+            return $disputeRequest;
+        });
+        return $result;
+
     }
 
     public function deleteDisputeRequest(DisputeRequest $disputeRequest)

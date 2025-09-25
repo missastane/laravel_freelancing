@@ -15,7 +15,12 @@ class DisputeRequestPolicy
         //
     }
 
-    public function delete(DisputeRequest $disputeRequest, User $user)
+    public function withdrawn(User $user, DisputeRequest $disputeRequest)
+    {
+        return $disputeRequest->status == 1 && $user->id == $disputeRequest->raised_by;
+    }
+
+    public function delete(User $user, DisputeRequest $disputeRequest)
     {
         return $disputeRequest->status == 1 && $disputeRequest->raised_by == $user->id;
     }

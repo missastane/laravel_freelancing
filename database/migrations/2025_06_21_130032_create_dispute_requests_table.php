@@ -18,7 +18,7 @@ return new class extends Migration
             $table->tinyInteger('user_type')->default(1)->comment('1 => employer, 2 => freelancer');
             $table->foreignId('raised_by')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('reason');
-            $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => resloved, 3 => rejected');
+            $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => resloved, 3 => withdrawn, 4 => rejected');
             $table->softDeletes();
             $table->timestamps();
         });
