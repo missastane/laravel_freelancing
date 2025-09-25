@@ -36,7 +36,6 @@ class ProjectCategoryService
     {
         return DB::transaction(function () use ($data) {
             $data['image'] = $this->mediaStorageService->storeMultipleImages($data['image'], "images/project-category");
-            $data['slug'] = 'slug';
             $projectCategory = $this->projectCategoryRepository->create($data);
             $this->tagStorageService->storeTagsForFirstTime($projectCategory, $data['tags']);
             return $projectCategory;

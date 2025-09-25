@@ -47,7 +47,6 @@ class PostService
             $realTimestamp = substr($data['published_at'], 0, 10);
             $data['published_at'] = date("Y-m-d H:i:s", (int) $realTimestamp);
             $data['image'] = $this->mediaStorageService->storeMultipleImages($data['image'], "images/post");
-            $data['slug'] = 'slug';
             $data['author_id'] = auth()->user()->id;
             $post = $this->postRepository->create($data);
             $this->tagStorageService->storeTagsForFirstTime($post, $data['tags']);

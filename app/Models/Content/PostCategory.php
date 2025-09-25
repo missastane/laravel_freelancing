@@ -5,6 +5,7 @@ namespace App\Models\Content;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 /**
  * @OA\Schema(
@@ -43,6 +44,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PostCategory extends Model
 {
     use HasFactory, SoftDeletes;
+     use Sluggable;
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
     protected $fillable = ['name', 'slug', 'image', 'description', 'status'];
     public function casts()
     {

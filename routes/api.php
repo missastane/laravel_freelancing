@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\Content\CommentController;
+use App\Http\Controllers\Api\Admin\Market\ConversationController;
 use App\Http\Controllers\Api\Admin\Market\FeatureTypeController;
 use App\Http\Controllers\Api\Admin\Market\PaymentController;
 use App\Http\Controllers\Api\Admin\Market\WalletController;
@@ -97,6 +98,9 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             Route::get('/show/{comment}', [CommentController::class, 'show']);
             Route::delete('/delete/{comment}', [CommentController::class, 'delete']);
         });
+    });
+    Route::prefix('conversation')->group(function () {
+        Route::get('/{conversation}/messages', [ConversationController::class, 'index']);
     });
     Route::prefix('locale')->group(function () {
         Route::prefix('province')->group(function () {
@@ -208,8 +212,8 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
             });
         });
         Route::prefix('arbitration-request')->group(function () {
-            Route::get('/',[ArbitrationRequestController::class,'index']);
-            Route::get('/show/{arbitrationRequest}',[ArbitrationRequestController::class,'show']);
+            Route::get('/', [ArbitrationRequestController::class, 'index']);
+            Route::get('/show/{arbitrationRequest}', [ArbitrationRequestController::class, 'show']);
         });
         Route::prefix('dispute-request')->group(function () {
             Route::get('/', [DisputeRequestController::class, 'index']);

@@ -58,7 +58,6 @@ class ProjectService
 
         $project = DB::transaction(function () use ($data, $user) {
             $data['user_id'] = $user->id;
-            $data['slug'] = 'slug';
 
             $project = $this->projectRepository->create($data);
 

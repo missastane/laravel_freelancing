@@ -39,7 +39,6 @@ class PostCategoryService
         return DB::transaction(function () use ($data) {
 
             $data['image'] = $this->mediaStorageService->storeMultipleImages($data['image'], "images/post-category");
-            $data['slug'] = 'slug';
             $postCategory = $this->postCategoryRepository->create($data);
             $this->tagStorageService->storeTagsForFirstTime($postCategory, $data['tags']);
             return $postCategory;

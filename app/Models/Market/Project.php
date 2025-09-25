@@ -7,7 +7,7 @@ use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Cviebrock\EloquentSluggable\Sluggable;
 /**
  * @OA\Schema(
  *     schema="Project",
@@ -60,6 +60,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Project extends Model
 {
     use HasFactory, SoftDeletes;
+       use Sluggable;
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'title'
+            ]
+        ];
+    }
     protected $fillable = ['user_id', 'project_category_id', 'title', 'slug', 'description', 'duration_time', 'amount', 'status'];
     protected $hidden = ['project_category_id', 'status', 'user_id', 'is_full_time'];
     public function employer()

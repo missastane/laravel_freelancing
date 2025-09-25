@@ -6,7 +6,7 @@ use App\Models\Content\Tag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Cviebrock\EloquentSluggable\Sluggable;
 /**
  * @OA\Schema(
  *     schema="ProjectCategory",
@@ -43,7 +43,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProjectCategory extends Model
 {
     use HasFactory, SoftDeletes;
-
+    use Sluggable;
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
     protected $fillable = ['name', 'slug', 'description', 'image', 'parent_id', 'status', 'show_in_menu'];
 
     protected function casts()
@@ -57,7 +70,7 @@ class ProjectCategory extends Model
         return $this->hasMany(Project::class);
     }
 
-     public function parent()
+    public function parent()
     {
         return $this->belongsTo(ProjectCategory::class, 'parent_id');
     }
@@ -74,7 +87,7 @@ class ProjectCategory extends Model
         }
     }
 
-     public function getShowInMenuValueAttribute()
+    public function getShowInMenuValueAttribute()
     {
         if ($this->show_in_menu == 1) {
             return 'بله';
