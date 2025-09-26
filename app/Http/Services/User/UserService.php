@@ -4,6 +4,7 @@ namespace App\Http\Services\User;
 
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\SendVerificationEmail;
+use App\Models\User\User;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -210,4 +211,5 @@ class UserService
             ];
         }
     }
+
 }

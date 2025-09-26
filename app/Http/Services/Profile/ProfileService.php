@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Profile;
 
+use App\Exceptions\User\LimitChangeUsernameException;
 use App\Http\Services\Image\ImageService;
 use App\Http\Services\OTP\OTPService;
 use App\Http\Services\Public\MediaStorageService;
@@ -135,5 +136,19 @@ class ProfileService
             'data' => null,
             'code' => 200
         ];
+    }
+
+     public function changeUsername(array $data)
+    {
+        $user = auth()->user();
+        if ($user->username_change_count >= 2) {
+            throw new LimitChangeUsernameException();
+        }
+        $this->userRepository->update($user, [
+            'username' => $data['username'],
+            'username_change_count' => $user->username_change_count + 1,
+        ]);
+
+        return $user->fresh();
     }
 }

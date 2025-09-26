@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Exceptions\User\LimitChangeUsernameException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\ProfileRequest;
 use App\Http\Requests\Profile\AboutMeRequest;
 use App\Http\Requests\Profile\ChangePasswordRequest;
+use App\Http\Requests\Profile\ChangerUsernameRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Requests\Profile\WithdrawalRequest;
 use App\Http\Services\Image\ImageService;
@@ -175,16 +177,81 @@ class ProfileController extends Controller
     *  )
     * )
     */
+
+  
    public function changeMobile(Request $request)
    {
       try {
          $inputs = $request->all();
          $result = $this->profileService->changeMobile($inputs);
-         return $this->success($result['data'],$result['message'],200);
+         return $this->success($result['data'], $result['message'], 200);
       } catch (Exception $e) {
          return $this->error();
       }
    }
+
+   /**
+    * @OA\Patch(
+    *     path="/api/admin/profile/change-username",
+    *     summary="Change auth user's username",
+    *     description="In This method auth users can change their username 2 time",
+    *     tags={"Profile"},
+    *     security={{"bearerAuth":{}}},
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             required={"username"},
+    *             @OA\Property(property="username", type="string", example="12v34Kf56")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Username is Updated Successfully",
+    *         @OA\JsonContent(
+    *             type="object",
+    *             @OA\Property(property="status", type="boolean", example=true),
+    *             @OA\Property(property="message", type="string", example="نام کاربری شما با موفقیت بروزرسانی شد")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=401,
+    *         description="Unauthenticated",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="status", type="bool", example="false"),
+    *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
+    *     )),
+    *      @OA\Response(
+    *         response=403,
+    *         description="You are not authorized to do this action.",
+    *         @OA\JsonContent(
+    *             type="object",
+    *             @OA\Property(property="status", type="boolean", example=false),
+    *             @OA\Property(property="message", type="string", example="تغییر نام کاربری بیش از ۲ بار مجاز نیست")
+    *         ),
+    *     ),
+    *     @OA\Response(
+    *         response=500,
+    *         description="Internal servr error",
+    *         @OA\JsonContent(
+    *             type="object",
+    *             @OA\Property(property="status", type="boolean", example=false),
+    *             @OA\Property(property="message", type="string", example="خطایی غیرمنتظره در سرور رخ داده است. لطفا دوباره تلاش کنید")
+    *         )
+    *     )
+    * )
+    */
+    public function changeUsername(ChangerUsernameRequest $request)
+   {
+      try {
+         $this->profileService->changeUsername($request->all());
+         return $this->success(null, 'نام کاربری شما با موفقیت بروزرسانی شد');
+      } catch (LimitChangeUsernameException $e) {
+         throw $e;
+      } catch (Exception $e) {
+         return $this->error();
+      }
+   }
+
    /**
     * @OA\Put(
     *     path="/api/admin/profile/confirm-mobile/{token}",
@@ -260,7 +327,7 @@ class ProfileController extends Controller
          $inputs = $request->all();
          $result = $this->profileService->confirmMobile($token, $inputs);
          if ($result['status']) {
-            return $this->success($result['data'], $result['message'],$result['code']);
+            return $this->success($result['data'], $result['message'], $result['code']);
          } else {
             return response()->json([
                'status' => $result['status'],

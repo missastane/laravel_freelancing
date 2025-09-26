@@ -304,6 +304,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     });
     Route::prefix('profile')->group(function () {
         Route::put('/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
+        Route::patch('/change-username', [ProfileController::class, 'changeUsername']);
         Route::post('/change-mobile', [ProfileController::class, 'changeMobile'])->name('admin.profile.change-mobile');
         Route::put('/confirm-mobile/{token}', [ProfileController::class, 'confirmMobile'])->name('admin.profile.confirm-mobile');
         Route::put('/about-me', [ProfileController::class, 'aboutMe']);
@@ -365,6 +366,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/update', [CustomerProfileController::class, 'updateBasicInfo']);
         Route::put('/about-me', [CustomerProfileController::class, 'addAboutMe']);
         Route::patch('/change-password', [CustomerProfileController::class, 'updatePassword']);
+        Route::patch('/change-username', [CustomerProfileController::class, 'changeUsername']);
         Route::patch('/change-mobile', [CustomerProfileController::class, 'updateMobile']);
         Route::put('/confirm-mobile/{token}', [CustomerProfileController::class, 'mobileConfirm']);
     });
