@@ -3,8 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\User\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -80,7 +84,7 @@ class AuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'status' => true,
-                'message' =>  "کاربر با موفقیت از حساب کاربری خود خارج شد",
+                'message' => "کاربر با موفقیت از حساب کاربری خود خارج شد",
                 'data' => null
             ]);
 
@@ -90,6 +94,29 @@ class AuthTest extends TestCase
         ])->getJson('/api/protected-route');
 
         $response2->assertStatus(401);
+    }
+    public function test_user_can_verify_email_with_valid_link()
+    {
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create();
+
+        // ساخت لینک تأیید ایمیل
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $response = $this->getJson($verificationUrl);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => true,
+                'message' => 'ایمیل شما با موفقیت تأیید شد',
+            ]);
+
+        $this->assertNotNull($user->fresh()->email_verified_at);
     }
 
 

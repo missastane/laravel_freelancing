@@ -112,7 +112,6 @@ class PasswordResetController extends Controller
      */
     public function resetPassword(ResetPasswordRequest $request)
     {
-        \Log::info($request->all());
         $result = $this->userService->resetPassword(
             $request->only('email', 'password', 'password_confirmation', 'token')
         );
