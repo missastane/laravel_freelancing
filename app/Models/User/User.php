@@ -75,6 +75,10 @@ class User extends Authenticatable implements JWTSubject
 {
 
     use HasFactory, Notifiable, HasRoles, HasPermissions, SoftDeletes;
+    protected static function newFactory()
+    {
+        return \Database\Factories\UserFactory::new();
+    }
 
     public function getJWTIdentifier()
     {
@@ -208,7 +212,8 @@ class User extends Authenticatable implements JWTSubject
             'admin_ticket_department',
             'admin_id',
             'department_id'
-        )->withTimestamps();;
+        )->withTimestamps();
+        ;
     }
     public function messages()
     {
@@ -252,7 +257,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserSubscription::class);
     }
-    
+
     public function featurePerchased()
     {
         return $this->hasMany(FeaturePerchased::class, 'user_id');

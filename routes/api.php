@@ -487,3 +487,8 @@ Route::post('/broadcasting/auth', function (Request $request) {
 })->middleware(['auth:api']);
 
 Route::any('/payment/callback', [CustomerPaymentController::class, 'verify'])->name('payment.callback');
+
+// for test
+Route::middleware('auth:api')->get('/protected-route', function() {
+    return response()->json(['status' => true]);
+});

@@ -82,6 +82,8 @@ class UserService
 
     public function logoutUser()
     {
+        $token = JWTAuth::getToken();
+        JWTAuth::invalidate($token);
         auth()->logout();
     }
 
