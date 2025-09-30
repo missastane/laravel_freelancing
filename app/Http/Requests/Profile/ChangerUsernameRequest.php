@@ -22,7 +22,7 @@ class ChangerUsernameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:255|unique:users,username|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي ]+$/u'
+            'username' => 'required|string|max:255|unique:users,username|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي\-\_ ]+$/u'
         ];
     }
 }

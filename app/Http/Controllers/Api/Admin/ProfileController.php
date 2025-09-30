@@ -2,23 +2,19 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Exceptions\InvalidMobileNumberException;
 use App\Exceptions\User\LimitChangeUsernameException;
+use App\Exceptions\WrongCurrentPasswordException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\User\ProfileRequest;
 use App\Http\Requests\Profile\AboutMeRequest;
 use App\Http\Requests\Profile\ChangePasswordRequest;
 use App\Http\Requests\Profile\ChangerUsernameRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
-use App\Http\Requests\Profile\WithdrawalRequest;
-use App\Http\Services\Image\ImageService;
-use App\Http\Services\OTP\OTPService;
 use App\Http\Services\Profile\ProfileService;
-use App\Models\User\OTP;
-use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Log;
 
 class ProfileController extends Controller
 {
@@ -178,13 +174,15 @@ class ProfileController extends Controller
     * )
     */
 
-  
+
    public function changeMobile(Request $request)
    {
       try {
          $inputs = $request->all();
          $result = $this->profileService->changeMobile($inputs);
          return $this->success($result['data'], $result['message'], 200);
+      } catch (InvalidMobileNumberException $e) {
+         throw $e;
       } catch (Exception $e) {
          return $this->error();
       }
@@ -240,7 +238,7 @@ class ProfileController extends Controller
     *     )
     * )
     */
-    public function changeUsername(ChangerUsernameRequest $request)
+   public function changeUsername(ChangerUsernameRequest $request)
    {
       try {
          $this->profileService->changeUsername($request->all());
@@ -528,9 +526,10 @@ class ProfileController extends Controller
       try {
          $this->profileService->changePassword($request->all());
          return $this->success(null, 'کلمه عبور با موفقیت بروزرسانی شد');
+      } catch (WrongCurrentPasswordException $e) {
+         throw $e;
       } catch (Exception $e) {
          return $this->error();
       }
    }
-
 }

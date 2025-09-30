@@ -2,26 +2,17 @@
 
 namespace App\Http\Services\Profile;
 
+use App\Exceptions\InvalidMobileNumberException;
 use App\Exceptions\User\LimitChangeUsernameException;
-use App\Http\Services\Image\ImageService;
+use App\Exceptions\WrongCurrentPasswordException;
 use App\Http\Services\OTP\OTPService;
 use App\Http\Services\Public\MediaStorageService;
-use App\Models\Payment\UserBankAccount;
-use App\Models\Payment\Wallet;
-use App\Models\Payment\WalletTransaction;
-use App\Models\Payment\Withdrawal;
-use App\Models\User\Notification;
-use App\Models\User\OTP;
-use App\Models\User\User;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
-use App\Traits\ApiResponseTrait;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Log;
 
 
 class ProfileService
@@ -59,7 +50,7 @@ class ProfileService
     {
         $user = auth()->user();
         if (!Hash::check($data['current_password'], $user->password)) {
-            throw new Exception('کلمه عبور فعلی نادرست است', 403);
+           throw new WrongCurrentPasswordException();
         }
         return $this->userRepository->update($user, [
             'password' => Hash::make($data['new_password'])
@@ -71,7 +62,9 @@ class ProfileService
         $user = auth()->user();
         $oldUser = $this->userRepository->findByMobile($data['id']);
         if (!empty($oldUser) || !normalizeMobile($data['id'])) {
-            throw new Exception('شماره موبایل صحیح نیست یا از قبل وجود دارد', 422);
+            Log::info('here');
+            Log::info($oldUser);
+            throw new InvalidMobileNumberException();
         }
         $oldOTP = $this->oTPService->checkOldOtp($data['id'], 0);
 
@@ -138,7 +131,7 @@ class ProfileService
         ];
     }
 
-     public function changeUsername(array $data)
+    public function changeUsername(array $data)
     {
         $user = auth()->user();
         if ($user->username_change_count >= 2) {
@@ -151,4 +144,5 @@ class ProfileService
 
         return $user->fresh();
     }
+
 }

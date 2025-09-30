@@ -27,7 +27,7 @@ class MediaStorageService
         $service->setExclusiveDirectory($normalized);
     }
 
-    public function storeSingleImage(UploadedFile $file, string $directory, string|null $name): string|bool
+    public function storeSingleImage(UploadedFile $file, string $directory, string|null $name): string|bool|null
     {
         if (empty($file)) {
             return null;
@@ -52,6 +52,7 @@ class MediaStorageService
         if ($result === false) {
             throw new Exception('بارگذاری عکس با خطا مواجه شد', 422);
         }
+        \Log::info($result);
         return $result;
     }
     public function storeFile(UploadedFile $file, string $context, int $contextId, string $directory, string $disk = 'private'): ?File
@@ -104,7 +105,7 @@ class MediaStorageService
         return $storedFiles;
     }
 
-    public function updateImageIfExists(?UploadedFile $newFile, array|string $oldImage, string $directory, string|null $name): array|string|null
+    public function updateImageIfExists(?UploadedFile $newFile, array|string|null $oldImage, string $directory, string|null $name): array|string|null
     {
         if (empty($newFile)) {
             return $oldImage;
@@ -125,6 +126,9 @@ class MediaStorageService
             // store new image
             return $this->storeSingleImage($newFile, $directory, $name);
         }
+          if (is_null($oldImage)) {
+            return $this->storeSingleImage($newFile, $directory, $name);
+          }
         return null;
     }
 

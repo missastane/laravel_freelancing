@@ -61,7 +61,7 @@ use App\Http\Controllers\Auth\OTPController;
 use App\Http\Controllers\API\Admin\Locale\ProvinceController;
 use App\Http\Controllers\Api\Customer\WalletController as CustomerWalletController;
 
-Route::prefix('admin')->middleware(['auth:api'])->group(function () {
+Route::prefix('admin')->middleware(['auth:api','admin'])->group(function () {
     Route::prefix('content')->group(function () {
 
         Route::prefix('category')->group(function () {
@@ -305,7 +305,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     Route::prefix('profile')->group(function () {
         Route::put('/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
         Route::patch('/change-username', [ProfileController::class, 'changeUsername']);
-        Route::post('/change-mobile', [ProfileController::class, 'changeMobile'])->name('admin.profile.change-mobile');
+        Route::patch('/change-mobile', [ProfileController::class, 'changeMobile'])->name('admin.profile.change-mobile');
         Route::put('/confirm-mobile/{token}', [ProfileController::class, 'confirmMobile'])->name('admin.profile.confirm-mobile');
         Route::put('/about-me', [ProfileController::class, 'aboutMe']);
         Route::get('/', [ProfileController::class, 'getProfile']);
