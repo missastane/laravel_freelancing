@@ -25,6 +25,11 @@ use Illuminate\Database\Eloquent\Model;
 class Wallet extends Model
 {
     use HasFactory;
+      protected static function newFactory()
+    {
+        return \Database\Factories\WalletFactory::new();
+    }
+
     protected $fillable = ['balance', 'locked_balance', 'user_id', 'currency'];
 
     public function user()

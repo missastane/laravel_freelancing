@@ -60,7 +60,12 @@ use Cviebrock\EloquentSluggable\Sluggable;
 class Project extends Model
 {
     use HasFactory, SoftDeletes;
-       use Sluggable;
+    use Sluggable;
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProjectFactory::new();
+    }
+
     /**
      * Return the sluggable configuration array for this model.
      *

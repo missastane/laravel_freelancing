@@ -32,6 +32,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Proposal extends Model
 {
     use HasFactory, SoftDeletes;
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProposalFactory::new();
+    }
 
     protected $fillable = ['project_id', 'freelancer_id', 'description', 'total_amount', 'total_duration_time', 'status', 'due_date'];
 
@@ -51,9 +55,9 @@ class Proposal extends Model
 
     public function milestones()
     {
-        return $this->hasMany(ProposalMilestone::class,'proposal_id');
+        return $this->hasMany(ProposalMilestone::class, 'proposal_id');
     }
-     public function favorites()
+    public function favorites()
     {
         return $this->morphMany('App\Models\User\Favorite', 'favoritable');
     }

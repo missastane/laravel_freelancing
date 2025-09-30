@@ -21,7 +21,6 @@ class OTPFactory extends Factory
     {
         return [
             'login_id' => $this->faker->numerify('9#########'),
-            // 'user_id' => \App\Models\User\User::factory(),
             'otp_code' => rand(111111, 999999),
             'used' => 0,
             // 'token' => Str::random(60)
