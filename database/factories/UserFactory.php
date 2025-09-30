@@ -51,4 +51,20 @@ class UserFactory extends Factory
             'user_type' => 2
         ]);
     }
+
+     public function freelancer()
+    {
+        return $this->state(fn(array $attributes) => [
+            'active_role' => 'freelancer',
+            'user_type' => 1
+        ]);
+    }
+
+     public function employer()
+    {
+        return $this->state(fn(array $attributes) => [
+            'active_role' => 'employer',
+            'user_type' => 1
+        ]);
+    }
 }

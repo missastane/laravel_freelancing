@@ -44,6 +44,12 @@ class ProjectCategory extends Model
 {
     use HasFactory, SoftDeletes;
     use Sluggable;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProjectCategoryFactory::new();
+    }
+
     /**
      * Return the sluggable configuration array for this model.
      *

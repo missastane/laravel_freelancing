@@ -23,6 +23,11 @@ class Skill extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected static function newFactory()
+    {
+        return \Database\Factories\SkillFactory::new();
+    }
+
     protected $fillable = ['persian_title', 'original_title'];
 
     public function portfolios()
