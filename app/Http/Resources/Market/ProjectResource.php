@@ -31,6 +31,7 @@ class ProjectResource extends JsonResource
                     'last_name' => $this->employer->last_name,
                 ]
                 : [
+                     'id' => $this->employer->id,
                     'username' => $this->employer->username,
                 ],
             'category' => [

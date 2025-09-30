@@ -15,7 +15,7 @@ class ProjectPolicy
         //
     }
 
-     /**
+    /**
      * Determine whether the user can toggle the model full time status.
      */
     public function toggleFullTime(User $user)
@@ -23,7 +23,7 @@ class ProjectPolicy
         return $user->activeSubscription();
     }
 
-    public function update(User $user,Project $project)
+    public function update(User $user, Project $project)
     {
         return $project->status == 1 && $user->id == $project->user_id;
     }
@@ -32,7 +32,10 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return $project->employer->id == $user->id || $user->hasRole('admin');
+        if ($project->status != 1) {
+            return false;
+        }
+        return ($project->employer->id == $user->id) || ($user->user_type == 2 && $user->active_role === 'admin');
     }
 
     public function storeProposal(User $user, Project $project)

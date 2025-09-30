@@ -29,7 +29,7 @@ class ProjectRequest extends FormRequest
                 'duration_time' => 'required|integer',
                 'amount' => 'required|numeric',
                 'files.*' => 'nullable|file|mimes:png,jpg,jpeg,gif,pdf,doc,docs,mp4,mkv.avi|max:20480',
-                'files' => 'nullable|array|min:1',
+                'files' => 'nullable|array',
                 'skills' => 'required|array|min:1',
                 'skills.*' => 'required|integer|exists:skills,id'
             ];

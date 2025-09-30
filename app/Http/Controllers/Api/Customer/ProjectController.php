@@ -12,6 +12,7 @@ use App\Models\Market\File;
 use App\Models\Market\Project;
 use App\Traits\ApiResponseTrait;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -210,7 +211,7 @@ class ProjectController extends Controller
      *     )
      * )
      */
-    public function userProjects(Request $request)
+    public function userProjects(ProjectFilterRequest $request)
     {
         return $this->projectService->getUserPrjects(null, $request->all());
     }
@@ -790,7 +791,7 @@ class ProjectController extends Controller
     public function update(Project $project, ProjectRequest $request)
     {
         if (Gate::denies('update', $project)) {
-            return $this->error('شما مجاز به انجام این عملیات نیستید');
+            return $this->error('شما مجاز به انجام این عملیات نیستید',403);
         }
         try {
             $inputs = $request->all();
@@ -932,7 +933,8 @@ class ProjectController extends Controller
                 $this->projectService->deleteProject($project);
                 return $this->success(null, 'پروژه با موفقیت حذف شد');
             } else {
-                return $this->error('شما مجاز به انجام این عملیات نیستید');
+                \Log::info('here is ...');
+                return $this->error('شما مجاز به انجام این عملیات نیستید',403);
             }
         } catch (Exception $e) {
             return $this->error();

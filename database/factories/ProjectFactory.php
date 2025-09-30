@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Market\Project;
 use App\Models\Market\ProjectCategory;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,8 +21,10 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         $category = ProjectCategory::factory()->create();
+        $user = User::factory()->create();
         return [
             'project_category_id' => $category->id,
+            'user_id' => $user->id,
             'title' => fake()->title(),
             'description' => fake()->text(),
             'duration_time' => 5,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\WrongCurrentPasswordException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -54,5 +55,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 401);
             }
         });
-       
+        $exceptions->renderable(function (AuthorizationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'شما مجاز به انجام این عملیات نیستید'
+                ], 403);
+            }
+        });
     })->create();
