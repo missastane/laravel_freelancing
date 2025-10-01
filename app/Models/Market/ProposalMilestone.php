@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\Model;
 class ProposalMilestone extends Model
 {
     use HasFactory;
+      protected static function newFactory()
+    {
+        return \Database\Factories\ProposalMilestoneFactory::new();
+    }
 
     protected $fillable = ['proposal_id', 'title', 'description', 'amount', 'duration_time', 'due_date'];
 

@@ -38,7 +38,7 @@ class ProposalRepository extends BaseRepository implements ProposalRepositoryInt
     }
     public function showProposal(Proposal $proposal): Proposal
     {
-        return $this->showWithRelations($proposal, ['project','milestones']);
+        return $this->showWithRelations($proposal, ['project', 'milestones']);
     }
 
     public function getProposals(string $status)
@@ -65,15 +65,25 @@ class ProposalRepository extends BaseRepository implements ProposalRepositoryInt
 
     public function getProjectProposalsStats(Project $project): array
     {
-        $query = DB::table('proposals')->where('project_id', $project->id);
+        $proposals = Proposal::with('milestones')
+            ->where('project_id', $project->id)
+            ->get();
+
+        $totals = $proposals->map(function ($proposal) {
+            return [
+                'total_duration' => $proposal->milestones->sum('duration_time'),
+                'total_amount' => $proposal->milestones->sum('amount'),
+            ];
+        });
 
         return [
-            'min_days' => $query->min('total_duration_time'),
-            'max_days' => $query->max('total_duration_time'),
-            'min_price' => $query->min('total_amount'),
-            'max_price' => $query->max('total_amount')
+            'min_days' => $totals->min('total_duration'),
+            'max_days' => $totals->max('total_duration'),
+            'min_price' => $totals->min('total_amount'),
+            'max_price' => $totals->max('total_amount'),
         ];
     }
+
 
 
 }

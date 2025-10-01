@@ -6,6 +6,8 @@ use App\Http\Services\Public\MediaStorageService;
 use App\Jobs\SendNotificationForNewProject;
 use App\Models\Market\Project;
 use App\Models\Market\ProjectCategory;
+use App\Models\Market\Proposal;
+use App\Models\Market\ProposalMilestone;
 use App\Models\Market\Skill;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -270,5 +272,63 @@ class ProjectTest extends TestCase
         $this->assertDatabaseHas('projects', ['id' => $project->id]);
     }
 
+
+    public function test_employer_can_view_project_details()
+    {
+        $employer = User::factory()->employer()->create();
+        $project = Project::factory()->create(['user_id' => $employer->id]);
+
+        $proposalA = Proposal::factory()->create([
+            'project_id' => $project->id,
+            'description' => 'این پیشنهاد آخر منه',
+            'total_amount' => 200000,
+            'freelancer_id' => User::factory()->freelancer()->create()->id
+        ]);
+        $milestoneA = ProposalMilestone::factory()->create([
+            'proposal_id' => $proposalA->id,
+            'title' => 'مرحله اول پیشنهاد',
+            'description' => 'توضیح مرحله اول پیشنهاد',
+            'amount' => 200000,
+            'duration_time' => 2
+        ]);
+        $proposalB = Proposal::factory()->create([
+            'project_id' => $project->id,
+            'description' => 'این پیشنهاد آخر منه',
+            'total_amount' => 300000,
+            'freelancer_id' => User::factory()->freelancer()->create()->id
+        ]);
+        $milestoneB = ProposalMilestone::factory()->create([
+            'proposal_id' => $proposalB->id,
+            'title' => 'مرحله اول پیشنهاد',
+            'description' => 'توضیح مرحله اول پیشنهاد',
+            'amount' => 300000,
+            'duration_time' => 3
+        ]);
+
+        $response = $this->actingAs($employer, 'api')
+            ->getJson("/api/project/details/{$project->id}");
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => [
+                    'project' => ['id', 'title'],
+                    'stats' => ['min_days', 'max_days', 'min_price', 'max_price'],
+                ]
+            ]);
+    }
+
+    public function test_non_employer_cannot_view_project_details_without_plan()
+    {
+        $freelancer = User::factory()->freelancer()->create();
+        $employer = User::factory()->employer()->create();
+        $project = Project::factory()->create(['user_id' => $employer->id]);
+
+        $response = $this->actingAs($freelancer, 'api')
+            ->getJson("/api/project/details/{$project->id}");
+
+        $response->assertStatus(429);
+    }
 
 }

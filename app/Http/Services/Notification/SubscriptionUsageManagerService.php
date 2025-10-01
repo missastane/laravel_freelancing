@@ -82,7 +82,7 @@ class SubscriptionUsageManagerService
 
                 // Projects / Proposals
                 'target_create' => $this->currentUsage->target_create_count < 10,
-                'view_details'  => false,
+                'view_details'  => $this->user->active_role === 'employer' ? true:false,
 
                 default => false,
             };
