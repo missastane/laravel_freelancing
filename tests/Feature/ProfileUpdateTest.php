@@ -9,26 +9,24 @@ use App\Models\Market\ProjectCategory;
 use App\Models\Market\Proposal;
 use App\Models\Market\ProposalMilestone;
 use App\Models\Market\Skill;
+use App\Models\Payment\Wallet;
 use App\Models\User\OTP;
 use App\Models\User\User;
+use App\Notifications\WithdrawProposalNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
+use function PHPUnit\Framework\assertJson;
 
 class ProfileUpdateTest extends TestCase
 {
     use RefreshDatabase;
 
    
-
-
-
-
-
-
     // public function test_direct_throw_wrong_password_exception()
     // {
     //     $this->withExceptionHandling();

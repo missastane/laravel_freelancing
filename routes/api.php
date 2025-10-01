@@ -61,7 +61,7 @@ use App\Http\Controllers\Auth\OTPController;
 use App\Http\Controllers\API\Admin\Locale\ProvinceController;
 use App\Http\Controllers\Api\Customer\WalletController as CustomerWalletController;
 
-Route::prefix('admin')->middleware(['auth:api','admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:api', 'admin'])->group(function () {
     Route::prefix('content')->group(function () {
 
         Route::prefix('category')->group(function () {
@@ -390,7 +390,6 @@ Route::middleware(['auth:api'])->group(function () {
         });
     });
     Route::prefix('proposal')->group(function () {
-        Route::get('/', [CustomerProposalController::class, 'index']);
         Route::get('/show/{proposal}', [CustomerProposalController::class, 'show']);
         Route::middleware('employer')->group(function () {
             Route::get('/{project}', [CustomerProposalController::class, 'getProjectProposals']);
@@ -399,6 +398,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::post('/approve/{proposal}', [CustomerProposalController::class, 'approve']);
         });
         Route::middleware('freelancer')->group(function () {
+            Route::get('/', [CustomerProposalController::class, 'index']);
             Route::post('/store/{project}', [CustomerProposalController::class, 'store']);
             Route::put('/update/{proposal}', [CustomerProposalController::class, 'update']);
             Route::patch('/withdraw/{proposal}', [CustomerProposalController::class, 'withdraw']);
@@ -489,6 +489,6 @@ Route::post('/broadcasting/auth', function (Request $request) {
 Route::any('/payment/callback', [CustomerPaymentController::class, 'verify'])->name('payment.callback');
 
 // for test
-Route::middleware('auth:api')->get('/protected-route', function() {
+Route::middleware('auth:api')->get('/protected-route', function () {
     return response()->json(['status' => true]);
 });

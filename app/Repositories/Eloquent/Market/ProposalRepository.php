@@ -41,14 +41,14 @@ class ProposalRepository extends BaseRepository implements ProposalRepositoryInt
         return $this->showWithRelations($proposal, ['project', 'milestones']);
     }
 
-    public function getProposals(string $status)
+    public function getProposals(?string $status)
     {
         $user = $user ?? auth()->user();
         $freelancerProposals = $this->model->where('freelancer_id', $user->id)->filterByStatus($status)->with('project', 'milestones')
             ->orderBy('created_at', 'desc')->paginate(15);
         return new BaseCollection($freelancerProposals, ProposalResource::class, null);
     }
-    public function getProjectProposals(Project $project, string $status)
+    public function getProjectProposals(Project $project, ?string $status)
     {
         $employerProposal = $project->proposals()
             ->filterByStatus($status)->with('milestones')

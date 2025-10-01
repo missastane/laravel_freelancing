@@ -29,12 +29,12 @@ class ProposalService
     ) {
         $this->user = auth()->user();
     }
-    public function getProposals(string $status)
+    public function getProposals(?string $status)
     {
         return $this->proposalRepository->getProposals($status);
     }
 
-    public function getProjectProposals(Project $project, string $status)
+    public function getProjectProposals(Project $project, ?string $status)
     {
         return $this->proposalRepository->getProjectProposals($project, $status);
     }
@@ -115,7 +115,7 @@ class ProposalService
             $totalAmount = 0;
             $totalDuration = 0;
             $currentDate = now();
-            if ($data['milestones']) {
+            if (isset($data['milestones']) && is_array($data['milestones'])) {
                 $this->proposalMilstoneRepository->deleteProposlMilestones($proposal);
                 foreach ($data['milestones'] as $index => $milestone) {
                     $dueDate = $currentDate->copy()->addDays((int) $milestone['duration_time']);

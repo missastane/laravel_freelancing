@@ -22,7 +22,7 @@ class ProposalStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:pending,approved,rejected,withdrown'
+            'status' => 'nullable|in:pending,approved,rejected,withdrown'
         ];
     }
 }

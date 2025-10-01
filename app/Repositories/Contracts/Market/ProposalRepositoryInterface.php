@@ -18,8 +18,8 @@ interface ProposalRepositoryInterface extends
     DeletableRepositoryInterface
 {
      public function existsForProjectAndFreelancer($projectId, $freelancerId): bool;
-    public function getProposals(string $status);
-     public function getProjectProposals(Project $project, string $status);
+    public function getProposals(?string $status);
+     public function getProjectProposals(Project $project, ?string $status);
     public function showProposal(Proposal $proposal): Proposal;
     public function updateWhere(array $conditions, array $data): int;
     public function getProjectProposalsStats(Project $project): array;

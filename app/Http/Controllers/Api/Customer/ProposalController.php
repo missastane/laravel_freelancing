@@ -208,10 +208,22 @@ class ProposalController extends Controller
      *             @OA\Property(property="status", type="bool", example="false"),
      *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
      *     )),
+     *  @OA\Response(
+     *         response=403,
+     *         description="You are not authorized to do this action.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
+     *         )
+     *     )
      * )
      */
     public function getProjectProposals(Project $project, ProposalStatusRequest $request)
     {
+        if (Gate::denies('getProjectProposals', $project)) {
+            return $this->error("شما مجاز به انجام این عملیات نیستید", 403);
+        }
         return $this->proposalService->getProjectProposals($project, $request->query('status'));
     }
     /**
@@ -749,7 +761,7 @@ class ProposalController extends Controller
     public function approve(Proposal $proposal)
     {
         if (Gate::denies('approve', $proposal)) {
-            return $this->error('شما مجاز به انجام این عملیات افتضاح نیستید', 403);
+            return $this->error('شما مجاز به انجام این عملیات نیستید', 403);
         }
         try {
             $this->proposalService->approveProposal($proposal);

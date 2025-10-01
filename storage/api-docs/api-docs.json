@@ -35670,6 +35670,26 @@
                                 }
                             }
                         }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به انجام این عملیات نیستید"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

@@ -15,6 +15,10 @@ class ProjectPolicy
         //
     }
 
+    public function getProjectProposals(User $user, Project $project)
+    {
+        return ($user->id == $project->user_id) || ($user->active_role === 'admin' && $user->user_type == 2);
+    }
     /**
      * Determine whether the user can toggle the model full time status.
      */
