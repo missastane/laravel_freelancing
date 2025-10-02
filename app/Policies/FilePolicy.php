@@ -36,7 +36,8 @@ class FilePolicy
         $order = $this->orderRepository->findById($orderId);
         $orderItem = $this->orderItemRepository->getUncompleteItem($order);
         $finalFileAlreadyExist = $this->finalFileRepository->findByFileId($file);
-        return $file->uploaded_by == $user->id &&
+        return 
+        $file->uploaded_by == $user->id &&
         $orderItem && 
         in_array($order->status, [1, 2]) && 
         !$finalFileAlreadyExist;

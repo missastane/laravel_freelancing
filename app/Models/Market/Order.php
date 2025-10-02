@@ -57,6 +57,10 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected static function newFactory()
+    {
+        return \Database\Factories\OrderFactory::new();
+    }
     protected $fillable = ['proposal_id', 'project_id', 'employer_id', 'freelancer_id', 'status', 'total_price', 'delivered_at', 'due_date'];
 
     protected function casts()

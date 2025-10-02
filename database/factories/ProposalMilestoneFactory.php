@@ -19,7 +19,10 @@ class ProposalMilestoneFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->title(),
+            'description' => fake()->text(),
+            'amount' => fake()->numberBetween(1000,10000000),
+            'duration_time' => fake()->numberBetween(1,360)
         ];
     }
 }

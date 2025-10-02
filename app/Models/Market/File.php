@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class File extends Model
 {
     use HasFactory, SoftDeletes;
+     protected static function newFactory()
+    {
+        return \Database\Factories\FileFactory::new();
+    }
     protected $fillable = [
         'filable_type',
         'filable_id',

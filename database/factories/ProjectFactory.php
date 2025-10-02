@@ -21,10 +21,10 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         $category = ProjectCategory::factory()->create();
-        $user = User::factory()->create();
+        $user = User::factory()->employer()->create();
         return [
             'project_category_id' => $category->id,
-            'user_id' => $user->id,
+            'user_id' => User::factory()->employer()->create()->id,
             'title' => fake()->title(),
             'description' => fake()->text(),
             'duration_time' => 5,

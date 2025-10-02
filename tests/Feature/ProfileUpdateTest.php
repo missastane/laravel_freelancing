@@ -5,6 +5,9 @@ namespace Tests\Feature;
 use App\Exceptions\Market\NotEnoughBalanceException;
 use App\Exceptions\User\WrongCurrentPasswordException;
 use App\Http\Services\Public\MediaStorageService;
+use App\Models\Market\Conversation;
+use App\Models\Market\Message;
+use App\Models\Market\Order;
 use App\Models\Market\Project;
 use App\Models\Market\ProjectCategory;
 use App\Models\Market\Proposal;
@@ -30,6 +33,10 @@ class ProfileUpdateTest extends TestCase
     use RefreshDatabase;
 
    
+
+
+
+
     // public function test_direct_throw_wrong_password_exception()
     // {
     //     $this->withExceptionHandling();

@@ -10,7 +10,6 @@ use App\Models\Payment\Wallet;
 use App\Models\User\User;
 use App\Notifications\ApproveProposalNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 use App\Http\Services\Proposal\ProposalApprovalService;

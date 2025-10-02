@@ -22,6 +22,10 @@ use Illuminate\Database\Eloquent\Model;
 class Conversation extends Model
 {
     use HasFactory;
+    protected static function newFactory()
+    {
+        return \Database\Factories\ConversationFactory::new();
+    }
 
     protected $fillable = ['employer_id', 'employee_id', 'status', 'conversation_context', 'conversation_context_id'];
 

@@ -52,6 +52,10 @@ use Illuminate\Database\Eloquent\Model;
 class OrderItem extends Model
 {
     use HasFactory;
+    protected static function newFactory()
+    {
+        return \Database\Factories\OrderItemFactory::new();
+    }
     protected $fillable = ['order_id', 'proposal_milestone_id', 'status', 'locked_by', 'locked_reason', 'locked_note', 'locked_at', 'price', 'freelancer_amount', 'platform_fee', 'due_date', 'delivered_at'];
 
     public function order()
@@ -65,7 +69,7 @@ class OrderItem extends Model
     }
     public function milestone()
     {
-        return $this->belongsTo(ProposalMilestone::class,'proposal_milestone_id');
+        return $this->belongsTo(ProposalMilestone::class, 'proposal_milestone_id');
     }
     protected function casts()
     {

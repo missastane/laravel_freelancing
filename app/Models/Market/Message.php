@@ -44,7 +44,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Message extends Model
 {
     use HasFactory, SoftDeletes;
-
+  protected static function newFactory()
+    {
+        return \Database\Factories\MessageFactory::new();
+    }
     protected $fillable = [
         'conversation_id',
         'sender_id',

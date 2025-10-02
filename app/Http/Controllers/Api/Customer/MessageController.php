@@ -84,7 +84,7 @@ class MessageController extends Controller
         if (Gate::denies('checkMembership', $conversation)) {
             return $this->error('امکان ارسال پیام به این مکالمه برای شما وجود ندارد', 403);
         }
-        return $this->chatService->getConversationMessages($conversation);
+        return $this->success($this->chatService->getConversationMessages($conversation));
     }
 
     /**
