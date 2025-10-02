@@ -39,7 +39,6 @@ class ProposalApprovalService
     ) {
         $this->client = auth()->user();
         $this->wallet = $this->client->wallet;
-        $this->chatService = $chatService;
     }
 
     public function approveProposal(Proposal $proposal)
@@ -84,7 +83,7 @@ class ProposalApprovalService
 
     protected function updateProjectStatus(Proposal $proposal)
     {
-        return $this->proposalRepository->update($proposal->project, ['status' => 2]); // in progress
+        return $this->projectRepository->update($proposal->project, ['status' => 2]); // in progress
     }
 
     protected function updateProposals(Proposal $proposal)

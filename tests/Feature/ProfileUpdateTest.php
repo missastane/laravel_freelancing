@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\Market\NotEnoughBalanceException;
 use App\Exceptions\User\WrongCurrentPasswordException;
 use App\Http\Services\Public\MediaStorageService;
 use App\Models\Market\Project;
@@ -12,6 +13,7 @@ use App\Models\Market\Skill;
 use App\Models\Payment\Wallet;
 use App\Models\User\OTP;
 use App\Models\User\User;
+use App\Notifications\ApproveProposalNotification;
 use App\Notifications\WithdrawProposalNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertJson;
+use App\Http\Services\Proposal\ProposalApprovalService;
 
 class ProfileUpdateTest extends TestCase
 {

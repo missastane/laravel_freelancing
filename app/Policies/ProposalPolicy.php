@@ -28,6 +28,6 @@ class ProposalPolicy
 
     public function approve(User $user, Proposal $proposal)
     {
-        return $proposal->status == 1;
+        return $proposal->status == 1 && $user->id == $proposal->project->employer->id;
     }
 }

@@ -105,7 +105,9 @@ trait ProfileTestTrait
 
         // چک کردن اینکه فایلی روی Storage ساخته نشده (همون Storage::fake)
         // @phpstan-ignore-next-line
-        Storage::disk('public')->assertMissing('tests/images/fake-avatar.jpg');
+        // Storage::disk('public')->assertMissing('tests/images/fake-avatar.jpg');
+        $this->assertFalse(Storage::disk('public')->exists('tests/images/fake-avatar.jpg'));
+
     }
 
     public function user_can_change_username_if_limit_not_exceeded($user, $prefixRoute)
