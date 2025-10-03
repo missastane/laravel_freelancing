@@ -123,7 +123,6 @@ class ChatService
         });
         // broadcasting message
         broadcast(new NewMessageEvent($newMessage))->toOthers();
-        \Log::info($newMessage->id);
         return $this->messageRepository->showMessage($newMessage);
     }
 

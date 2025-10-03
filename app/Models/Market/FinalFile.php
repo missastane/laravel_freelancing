@@ -39,7 +39,6 @@ class FinalFile extends Model
         'revision_note',
         'approved_at',
         'rejected_at',
-        'rejected_type',
         'rejected_note',
     ];
     protected function casts()
@@ -78,22 +77,14 @@ class FinalFile extends Model
                 $result = 'تأیید شده';
                 break;
             case 3:
+                $result = 'ارجاع جهت بازبینی';
+                break;
+            case 4:
                 $result = 'رد شده';
                 break;
         }
         return $result;
     }
 
-    public function getRejectedTypeValueAttribute()
-    {
-        switch ($this->rejected_type) {
-            case 1:
-                $result = 'جهت بازبینی';
-                break;
-            case 2:
-                $result = 'رد کامل فریلنسر';
-                break;
-        }
-        return $result;
-    }
+    
 }

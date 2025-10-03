@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_item_id')->constrained('order_items')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('file_id')->constrained('files')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => approved, 3 => rejected');
+            $table->tinyInteger('status')->default(1)->comment('1 => pending, 2 => approved, 3 => revision, 4 => rejected');
             $table->foreignId('freelancer_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamp('delivered_at')->nullable();
             $table->foreignId('employer_id')->nullable()->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();

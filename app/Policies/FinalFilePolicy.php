@@ -19,8 +19,15 @@ class FinalFilePolicy
     {
         $orderItem = $finalFile->orderItem;
         $order = $orderItem->order;
-         return $order->employer_id == $user->id
-        && in_array($order->status, [1, 2]) // order: pending or in progress
-        && $orderItem->status == 3;
+        return $finalFile->status == 1 && $order->employer_id == $user->id
+            && in_array($order->status, [1, 2]) // order: pending or in progress
+            && $orderItem->status == 3;
+    }
+
+    public function reject(User $user, FinalFile $finalFile)
+    {
+        $orderItem = $finalFile->orderItem;
+        $order = $orderItem->order;
+        return $finalFile->status == 1 && $order->employer_id == $user->id;
     }
 }

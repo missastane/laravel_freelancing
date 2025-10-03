@@ -77,8 +77,8 @@ class FinalFileController extends Controller
      */
     public function approveFileItem(FinalFile $finalFile)
     {
-        if(Gate::denies('approve',$finalFile)){
-            return $this->error('عملیات غیر مجاز',403);
+        if (Gate::denies('approve', $finalFile)) {
+            return $this->error('عملیات غیر مجاز', 403);
         }
         try {
             $this->finalFileService->approveFileItem($finalFile);
@@ -156,6 +156,9 @@ class FinalFileController extends Controller
      */
     public function rejectFileItem(FinalFile $finalFile, RejectFileItemRequest $request)
     {
+        if (Gate::denies('reject', $finalFile)) {
+            return $this->error('عملیات غیرمجاز', 403);
+        }
         try {
             $this->finalFileService->rejectFileItem($finalFile, $request->all());
             return $this->success(null, 'فایل سفارش توسط کارفرما قفل شد و اختلاف نظر ثبت شد. لطفا منتظر نتیجه داوری بمانید');
@@ -232,6 +235,9 @@ class FinalFileController extends Controller
      */
     public function revisionFileItem(FinalFile $finalFile, RevisionFileItemRequest $request)
     {
+        if (Gate::denies('reject', $finalFile)) {
+            return $this->error('عملیات غیرمجاز', 403);
+        }
         try {
             $this->finalFileService->revisionFileItem($finalFile, $request->all());
             return $this->success(null, 'فایل با موفقیت جهت بازبینی فریلنسر ارجاع شد');

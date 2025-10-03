@@ -59,7 +59,7 @@ class FileItemRejectService
         return DB::transaction(function () use ($finalFile, $data) {
             $this->finalFileRepository->update($finalFile, [
                 'employer_id' => auth()->id(),
-                'status' => 4,
+                'status' => 4, //rejected
                 'rejected_note' => $data['rejected_note'],
                 'rejected_at' => now()
             ]);

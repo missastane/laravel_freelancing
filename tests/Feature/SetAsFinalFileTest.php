@@ -82,37 +82,36 @@ class SetAsFinalFileTest extends TestCase
             'filable_id' => $this->message->id,
             'uploaded_by' => $this->freelancer->id
         ]);
-        \Log::info($this->order->id);
     }
-    // public function test_freelancer_can_set_file_as_final()
-    // {
-    //     Notification::fake();
-    //     $file = $this->file;
+    public function test_freelancer_can_set_file_as_final()
+    {
+        Notification::fake();
+        $file = $this->file;
 
-    //     $this->actingAs($this->freelancer);
+        $this->actingAs($this->freelancer);
 
-    //     $response = $this->postJson("/api/message/set-final-file/{$file->id}");
+        $response = $this->postJson("/api/message/set-final-file/{$file->id}");
 
-    //     $response->assertStatus(201)
-    //         ->assertJson([
-    //             'message' => 'فایل با موفقیت برای کارفرما ارسال شد',
-    //         ]);
+        $response->assertStatus(201)
+            ->assertJson([
+                'message' => 'فایل با موفقیت برای کارفرما ارسال شد',
+            ]);
 
-    //     $this->assertDatabaseHas('files', [
-    //         'id' => $file->id,
-    //         'is_final_delivery' => 1,
-    //     ]);
+        $this->assertDatabaseHas('files', [
+            'id' => $file->id,
+            'is_final_delivery' => 1,
+        ]);
 
-    //     $this->assertDatabaseHas('final_files', [
-    //         'file_id' => $file->id,
-    //         'freelancer_id' => $this->freelancer->id,
-    //     ]);
+        $this->assertDatabaseHas('final_files', [
+            'file_id' => $file->id,
+            'freelancer_id' => $this->freelancer->id,
+        ]);
 
-    //     Notification::assertSentTo(
-    //         $this->employer,
-    //         SendFinalFileNotification::class
-    //     );
-    // }
+        Notification::assertSentTo(
+            $this->employer,
+            SendFinalFileNotification::class
+        );
+    }
 
      public function test_other_user_cannot_set_final_file()
     {
