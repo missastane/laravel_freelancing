@@ -24,6 +24,10 @@ use Illuminate\Database\Eloquent\Model;
 class FinalFile extends Model
 {
     use HasFactory;
+    protected static function newFactory()
+    {
+        return \Database\Factories\FinalFileFactory::new();
+    }
     protected $fillable = [
         'order_item_id',
         'file_id',
@@ -66,8 +70,7 @@ class FinalFile extends Model
 
     public function getStatusValueAttribute()
     {
-        switch($this->status)
-        {
+        switch ($this->status) {
             case 1:
                 $result = 'معلق';
                 break;
@@ -83,8 +86,7 @@ class FinalFile extends Model
 
     public function getRejectedTypeValueAttribute()
     {
-        switch($this->rejected_type)
-        {
+        switch ($this->rejected_type) {
             case 1:
                 $result = 'جهت بازبینی';
                 break;

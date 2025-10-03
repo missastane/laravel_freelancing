@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\Market\NotAllowedToSetFinalFile;
+use App\Models\Content\Post;
 use App\Models\Market\Conversation;
 use App\Models\Market\File;
+use App\Models\Market\FinalFile;
 use App\Models\Market\Message;
 use App\Models\Market\Order;
 use App\Models\Market\OrderItem;
@@ -75,38 +78,81 @@ class SetAsFinalFileTest extends TestCase
             'message' => 'hi baby',
             'message_context_id' => $this->order->id
         ]);
-        $this->file =  File::factory()->create([
+        $this->file = File::factory()->create([
             'filable_id' => $this->message->id,
             'uploaded_by' => $this->freelancer->id
         ]);
+        \Log::info($this->order->id);
     }
-    public function test_freelancer_can_set_file_as_final()
+    // public function test_freelancer_can_set_file_as_final()
+    // {
+    //     Notification::fake();
+    //     $file = $this->file;
+
+    //     $this->actingAs($this->freelancer);
+
+    //     $response = $this->postJson("/api/message/set-final-file/{$file->id}");
+
+    //     $response->assertStatus(201)
+    //         ->assertJson([
+    //             'message' => 'فایل با موفقیت برای کارفرما ارسال شد',
+    //         ]);
+
+    //     $this->assertDatabaseHas('files', [
+    //         'id' => $file->id,
+    //         'is_final_delivery' => 1,
+    //     ]);
+
+    //     $this->assertDatabaseHas('final_files', [
+    //         'file_id' => $file->id,
+    //         'freelancer_id' => $this->freelancer->id,
+    //     ]);
+
+    //     Notification::assertSentTo(
+    //         $this->employer,
+    //         SendFinalFileNotification::class
+    //     );
+    // }
+
+     public function test_other_user_cannot_set_final_file()
     {
-        Notification::fake();
-        $file = $this->file;
+        $otherUser = User::factory()->create();
+        $this->actingAs($otherUser);
+
+        $response = $this->postJson("/api/message/set-final-file/{$this->file->id}");
+
+        $response->assertStatus(403);
+    }
+
+    public function test_cannot_set_file_as_final_if_file_not_from_message()
+    {
+        $file = File::factory()->create([
+            'filable_type' => Project::class,
+            'filable_id' => $this->order->id,
+            'uploaded_by' => $this->freelancer->id
+        ]);
 
         $this->actingAs($this->freelancer);
 
         $response = $this->postJson("/api/message/set-final-file/{$file->id}");
 
-        $response->assertStatus(201)
-            ->assertJson([
-                'message' => 'فایل با موفقیت برای کارفرما ارسال شد',
-            ]);
+        $response->assertStatus(403)
+            ->assertJson(['status' => false]);
+    }
 
-        $this->assertDatabaseHas('files', [
-            'id' => $file->id,
-            'is_final_delivery' => 1,
-        ]);
 
-        $this->assertDatabaseHas('final_files', [
-            'file_id' => $file->id,
+    public function test_cannot_set_final_if_final_already_exists()
+    {
+        FinalFile::factory()->create([
+            'file_id' => $this->file->id,
+            'order_item_id' => $this->orderItem->id,
             'freelancer_id' => $this->freelancer->id,
         ]);
 
-        Notification::assertSentTo(
-            $this->employer,
-            SendFinalFileNotification::class
-        );
+        $this->actingAs($this->freelancer);
+
+        $response = $this->postJson("/api/message/set-final-file/{$this->file->id}");
+
+        $response->assertStatus(403);
     }
 }

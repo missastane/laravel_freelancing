@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Market\File;
+use App\Models\Market\Message;
+use App\Models\Market\Order;
 use App\Models\User\User;
 use App\Repositories\Contracts\Market\FinalFileRepositoryInterface;
 use App\Repositories\Contracts\Market\MessageRepositoryInterface;
@@ -30,17 +32,23 @@ class FilePolicy
 
     public function setAsFinalFile(User $user, File $file)
     {
+        if ($file->filable_type !== Message::class) {
+            return false;
+        }
         $messageId = $file->filable_id;
         $message = $this->messageRepository->findById($messageId);
+        if ($message->message_context !== Order::class) {
+            return false;
+        }
         $orderId = $message->message_context_id;
         $order = $this->orderRepository->findById($orderId);
         $orderItem = $this->orderItemRepository->getUncompleteItem($order);
         $finalFileAlreadyExist = $this->finalFileRepository->findByFileId($file);
-        return 
-        $file->uploaded_by == $user->id &&
-        $orderItem && 
-        in_array($order->status, [1, 2]) && 
-        !$finalFileAlreadyExist;
+        return
+            $file->uploaded_by == $user->id &&
+            $orderItem &&
+            in_array($order->status, [1, 2]) &&
+            !$finalFileAlreadyExist;
     }
 
     public function canDownload(User $user, File $file)

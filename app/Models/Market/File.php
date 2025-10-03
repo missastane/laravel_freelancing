@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class File extends Model
 {
     use HasFactory, SoftDeletes;
-     protected static function newFactory()
+    protected static function newFactory()
     {
         return \Database\Factories\FileFactory::new();
     }
@@ -34,22 +34,21 @@ class File extends Model
 
     public function getFilableTypeValueAttribute()
     {
-        switch($this->filable_type)
-        {
-            case 'App\Models\Project' :
+        switch ($this->filable_type) {
+            case 'App\Models\Project':
                 $result = 'فایل متعلق به یک پروژه است';
                 break;
             case 'App\Models\Portfolio':
-                 $result = 'فایل متعلق به یک نمونه کار است';
+                $result = 'فایل متعلق به یک نمونه کار است';
                 break;
-             case 'App\Models\Message':
-                 $result = 'فایل متعلق به یک پیام است';
+            case 'App\Models\Message':
+                $result = 'فایل متعلق به یک پیام است';
                 break;
-             case 'App\Models\TicketMessage':
-                 $result = 'فایل متعلق به پیام یک تیکت است';
+            case 'App\Models\TicketMessage':
+                $result = 'فایل متعلق به پیام یک تیکت است';
                 break;
-              case 'App\Models\Post':
-                 $result = 'فایل متعلق به یک پست است';
+            case 'App\Models\Post':
+                $result = 'فایل متعلق به یک پست است';
                 break;
         }
         return $result;

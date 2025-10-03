@@ -39,9 +39,6 @@ class FileManagementService
     }
     public function setAsFinalFile(File $file)
     {
-        if ($file->filable_type !== Message::class) {
-            throw new NotAllowedToSetFinalFile();
-        }
         $messageId = $file->filable_id;
         $message = $this->messageRepository->findById($messageId);
         $orderId = $message->message_context_id;
