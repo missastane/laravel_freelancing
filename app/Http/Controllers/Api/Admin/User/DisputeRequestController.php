@@ -293,6 +293,9 @@ class DisputeRequestController extends Controller
      */
     public function judge(DisputeRequest $disputeRequest, ArbitrationRequest $request)
     {
+        if(Gate::denies('judge',$disputeRequest)){
+            return $this->error('عملیات غیرمجاز',403);
+        }
         try {
             $this->disputeRequestService->judgeDisputeRequest($disputeRequest, $request->all());
             return $this->success(null, 'نتیجه داوری با موفقیت ثبت و برای طرفین ارسال شد');

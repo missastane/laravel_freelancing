@@ -29,4 +29,9 @@ class DisputeRequestPolicy
     {
         return $disputeRequest->status == 1;
     }
+
+    public function judge(User $user, DisputeRequest $disputeRequest)
+    {
+        return $disputeRequest->status == 1;
+    }
 }
