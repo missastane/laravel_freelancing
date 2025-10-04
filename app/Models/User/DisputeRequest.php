@@ -60,6 +60,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DisputeRequest extends Model
 {
     use HasFactory, SoftDeletes;
+    protected static function newFactory()
+    {
+        return \Database\Factories\DisputeRequestFactory::new();
+    }
+
     protected $fillable = ['order_item_id', 'final_file_id', 'user_type', 'raised_by', 'reason', 'status'];
 
     protected function casts()

@@ -27,6 +27,7 @@ class ProjectFactory extends Factory
             'user_id' => User::factory()->employer()->create()->id,
             'title' => fake()->title(),
             'description' => fake()->text(),
+            'slug' => fake()->slug(),
             'duration_time' => 5,
             'amount' => 1000000,
         ];

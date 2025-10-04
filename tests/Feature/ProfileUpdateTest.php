@@ -18,8 +18,12 @@ use App\Models\Market\Proposal;
 use App\Models\Market\ProposalMilestone;
 use App\Models\Market\Skill;
 use App\Models\Payment\Wallet;
+use App\Models\Ticket\TicketDepartment;
+use App\Models\Ticket\TicketPriority;
+use App\Models\User\DisputeRequest;
 use App\Models\User\OTP;
 use App\Models\User\User;
+use App\Notifications\AddDisputeTicketNotification;
 use App\Notifications\ApproveProposalNotification;
 use App\Notifications\WithdrawProposalNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -116,26 +120,7 @@ class ProfileUpdateTest extends TestCase
         ]);
     }
 
-   
 
-
-
-    // public function test_direct_throw_wrong_password_exception()
-    // {
-    //     $this->withExceptionHandling();
-
-    //     Route::get('/_test-exception', function () {
-    //         throw new WrongCurrentPasswordException();
-    //     });
-
-    //     $response = $this->get('/_test-exception');
-
-    //     $response->assertStatus(403)
-    //         ->assertJson([
-    //             'status' => false,
-    //             'message' => 'کلمه عبور فعلی نادرست است',
-    //         ]);
-    // }
-
+  
 
 }

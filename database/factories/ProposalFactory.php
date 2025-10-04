@@ -23,6 +23,7 @@ class ProposalFactory extends Factory
         return [
             'project_id' => Project::factory()->create()->id,
             'description' => 'پیشنهاد برای پروژه فلان',
+            'freelancer_id' => User::factory()->freelancer()->create()->id
         ];
     }
 }

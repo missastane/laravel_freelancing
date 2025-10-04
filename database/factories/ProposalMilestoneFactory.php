@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Market\Proposal;
 use App\Models\Market\ProposalMilestone;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +24,9 @@ class ProposalMilestoneFactory extends Factory
             'title' => fake()->title(),
             'description' => fake()->text(),
             'amount' => fake()->numberBetween(1000,10000000),
-            'duration_time' => fake()->numberBetween(1,360)
+            'duration_time' => fake()->numberBetween(1,360),
+            'proposal_id' => Proposal::factory()->create()->id,
+           
         ];
     }
 }

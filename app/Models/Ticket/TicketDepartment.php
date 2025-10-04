@@ -22,6 +22,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TicketDepartment extends Model
 {
     use HasFactory, SoftDeletes;
+    protected static function newFactory()
+    {
+        return \Database\Factories\TicketDepartmentFactory::new();
+    }
     protected $fillable = ['name', 'status'];
     public function getStatusValueAttribute()
     {
@@ -47,7 +51,8 @@ class TicketDepartment extends Model
             'admin_ticket_department',
             'department_id',
             'admin_id'
-        )->withTimestamps();;
+        )->withTimestamps();
+        ;
     }
 
 }

@@ -198,6 +198,9 @@ class DisputeRequestController extends Controller
      */
     public function createTicket(DisputeRequest $disputeRequest, DisputeTicketRequest $request)
     {
+        if(Gate::denies('createTicket',$disputeRequest)){
+            return $this->error('عملیات غیرمجاز',403);
+        }
         try {
             $this->disputeRequestService->createDisputeTicket($disputeRequest, $request->all());
             return $this->success(null, 'تیکت داوری ثبت شد و به طرفین در این رابطه اطلاع داده شد', 201);

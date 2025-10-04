@@ -32,7 +32,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Ticket extends Model
 {
     use HasFactory, SoftDeletes;
-
+    protected static function newFactory()
+    {
+        return \Database\Factories\TicketFactory::new();
+    }
     protected $fillable = ['user_id', 'priority_id', 'department_id', 'dispute_request_id', 'ticket_type', 'subject', 'status'];
 
     public function user()
@@ -90,7 +93,7 @@ class Ticket extends Model
         return $this->hasMany(TicketMessage::class);
     }
 
-      public function scopeFilterByStatus($query, $status)
+    public function scopeFilterByStatus($query, $status)
     {
         // convert 
         $ticketStatuses = [

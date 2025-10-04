@@ -24,4 +24,9 @@ class DisputeRequestPolicy
     {
         return $disputeRequest->status == 1 && $disputeRequest->raised_by == $user->id;
     }
+
+    public function createTicket(User $user, DisputeRequest $disputeRequest)
+    {
+        return $disputeRequest->status == 1;
+    }
 }

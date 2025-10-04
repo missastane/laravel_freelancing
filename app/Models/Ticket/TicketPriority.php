@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TicketPriority extends Model
 {
     use HasFactory, SoftDeletes;
+    protected static function newFactory()
+    {
+        return \Database\Factories\TicketPriorityFactory::new();
+    }
     protected $fillable = ['name', 'status'];
     public function getStatusValueAttribute()
     {

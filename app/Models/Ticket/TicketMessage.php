@@ -42,6 +42,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TicketMessage extends Model
 {
     use HasFactory, SoftDeletes;
+    protected static function newFactory()
+    {
+        return \Database\Factories\TicketMessageFactory::new();
+    }
     protected $fillable = ['ticket_id', 'author_id', 'message', 'author_type', 'parent_id'];
     public function ticket()
     {

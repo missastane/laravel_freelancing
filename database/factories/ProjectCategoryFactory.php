@@ -20,7 +20,8 @@ class ProjectCategoryFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'image' => fake()->imageUrl()
+            'image' => fake()->imageUrl(),
+            'slug' => fake()->slug()
         ];
     }
 }
