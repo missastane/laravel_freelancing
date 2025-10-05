@@ -7,6 +7,7 @@ use App\Http\Services\Tag\TagStorageService;
 use App\Models\Market\ProjectCategory;
 use App\Repositories\Contracts\Market\ProjectCategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProjectCategoryService
@@ -22,7 +23,8 @@ class ProjectCategoryService
 
     public function getCategories()
     {
-        return $this->projectCategoryRepository->getCategoies();
+        $cacheKey = 'project_categories';
+        return Cache::rememberForever($cacheKey, fn() => $this->projectCategoryRepository->getCategoies());
     }
     public function searchCategory(string $search)
     {
@@ -34,16 +36,18 @@ class ProjectCategoryService
     }
     public function storeCategory(array $data): ProjectCategory
     {
-        return DB::transaction(function () use ($data) {
+        $result = DB::transaction(function () use ($data) {
             $data['image'] = $this->mediaStorageService->storeMultipleImages($data['image'], "images/project-category");
             $projectCategory = $this->projectCategoryRepository->create($data);
             $this->tagStorageService->storeTagsForFirstTime($projectCategory, $data['tags']);
             return $projectCategory;
         });
+        Cache::forget('project_categories');
+        return $result;
     }
     public function updateCategory(ProjectCategory $projectCategory, array $data): ProjectCategory
     {
-        return DB::transaction(function () use ($projectCategory, $data) {
+        $result = DB::transaction(function () use ($projectCategory, $data) {
             $data['image'] = $this->mediaStorageService->updateImageIfExists(
                 $data['image'],
                 $projectCategory->image,
@@ -54,11 +58,14 @@ class ProjectCategoryService
             $this->tagStorageService->syncTags($projectCategory, $data['tags']);
             return $projectCategory;
         });
+        Cache::forget('project_categories');
+        return $result;
     }
     public function toggleShowInMenu(ProjectCategory $projectCategory): string|bool
     {
         $projectCategory->show_in_menu = $projectCategory->show_in_menu == 1 ? 2 : 1;
         if ($projectCategory->save()) {
+            Cache::forget('project_categories');
             $message = $projectCategory->show_in_menu == 1
                 ? 'وضعیت نمایش دسته بندی با موفقیت فعال شد'
                 : 'وضعیت نمایش دسته بندی با موفقیت غیرفعال شد';
@@ -70,6 +77,7 @@ class ProjectCategoryService
     {
         $projectCategory->status = $projectCategory->status == 1 ? 2 : 1;
         if ($projectCategory->save()) {
+            Cache::forget('project_categories');
             $message = $projectCategory->status == 1
                 ? 'دسته بندی پروژه با موفقیت فعال شد'
                 : 'دسته بندی پروژه با موفقیت غیرفعال شد';
@@ -80,6 +88,10 @@ class ProjectCategoryService
 
     public function deleteCategory(ProjectCategory $projectCategory)
     {
-        return $this->projectCategoryRepository->delete($projectCategory);
+        $result = $this->projectCategoryRepository->delete($projectCategory);
+        if ($result) {
+            Cache::forget('project_categories');
+        }
+        return $result;
     }
 }
