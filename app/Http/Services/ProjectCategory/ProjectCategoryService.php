@@ -42,7 +42,9 @@ class ProjectCategoryService
             $this->tagStorageService->storeTagsForFirstTime($projectCategory, $data['tags']);
             return $projectCategory;
         });
-        Cache::forget('project_categories');
+        if ($result) {
+            Cache::forget('project_categories');
+        }
         return $result;
     }
     public function updateCategory(ProjectCategory $projectCategory, array $data): ProjectCategory
@@ -58,7 +60,9 @@ class ProjectCategoryService
             $this->tagStorageService->syncTags($projectCategory, $data['tags']);
             return $projectCategory;
         });
-        Cache::forget('project_categories');
+        if ($result) {
+            Cache::forget('project_categories');
+        }
         return $result;
     }
     public function toggleShowInMenu(ProjectCategory $projectCategory): string|bool

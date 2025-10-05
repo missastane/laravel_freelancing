@@ -45,7 +45,9 @@ class PostCategoryService
             $this->tagStorageService->storeTagsForFirstTime($postCategory, $data['tags']);
             return $postCategory;
         });
-        Cache::forget('post_categories');
+        if ($result) {
+            Cache::forget('post_categories');
+        }
         return $result;
     }
 
@@ -70,7 +72,9 @@ class PostCategoryService
 
             return $category;
         });
-        Cache::forget('post_categories');
+        if ($result) {
+            Cache::forget('post_categories');
+        }
         return $result;
     }
 
