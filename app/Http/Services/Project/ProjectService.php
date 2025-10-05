@@ -20,6 +20,7 @@ use App\Repositories\Contracts\Market\SkillRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Http\Services\Notification\SubscriptionUsageManagerService;
 class ProjectService
@@ -42,7 +43,9 @@ class ProjectService
     }
     public function getUserPrjects(?User $user = null, array $data)
     {
-        return $this->projectRepository->getUserProjects($user, $data);
+        $userId = $user ? $user->id : auth()->id();
+        $cacheKey = "user{$userId}_projects";
+        return Cache::rememberForever($cacheKey, fn() => $this->projectRepository->getUserProjects($user, $data));
     }
 
     public function options(): array
@@ -73,7 +76,9 @@ class ProjectService
 
             return $project;
         });
-
+        if ($project) {
+            Cache::forget("user{$user->id}_projects");
+        }
         $freelancers = $this->userRepository->getFreelancerWithSkills($data['skills']);
         SendNotificationForNewProject::dispatch($freelancers);
         return $project;
@@ -115,6 +120,10 @@ class ProjectService
             $this->projectRepository->syncSkills($project, $data['skills']);
             return $project;
         });
+        $user = auth()->user();
+        if ($updatedProject) {
+            Cache::forget("user{$user->id}_projects");
+        }
         $proposedFreelancers = $this->userRepository->getproposedFreelancers($updatedProject);
         SendNotificationForUpdatingProject::dispatch($proposedFreelancers, $updatedProject);
         return $updatedProject;
@@ -146,12 +155,21 @@ class ProjectService
     }
     public function deleteProjectFile(File $file)
     {
-        return $this->fileManagementService->deleteFile($file);
+        $user = auth()->user();
+        $result = $this->fileManagementService->deleteFile($file);
+        if($result){
+            Cache::forget("user{$user->id}_projects");
+        }
+        return $result;
     }
     public function deleteProject(Project $project)
     {
-        $this->projectRepository->delete($project);
-        if(auth()->user()->active_role === 'admin'){
+        $user = auth()->user();
+        $result = $this->projectRepository->delete($project);
+         if($result){
+            Cache::forget("user{$user->id}_projects");
+        }
+        if (auth()->user()->active_role === 'admin') {
             $project->employer->notify(new RemoveProjectNotification('پروژه شما به دلیل نقص قوانین سایت توسط ادمین حذف شد'));
         }
         return true;
