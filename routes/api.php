@@ -492,3 +492,11 @@ Route::any('/payment/callback', [CustomerPaymentController::class, 'verify'])->n
 Route::middleware('auth:api')->get('/protected-route', function () {
     return response()->json(['status' => true]);
 });
+
+Route::get('/redis-test', function () {
+    // فقط اگر وجود نداشت، مقدار بذار
+    if (!Cache::has('foo')) {
+        Cache::put('foo', 'bar', 0.05); // 0.05 دقیقه ≈ 3 ثانیه
+    }
+    return Cache::get('foo');
+});
