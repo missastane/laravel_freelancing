@@ -17,6 +17,7 @@ use App\Repositories\Contracts\Market\OrderRepositoryInterface;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class FileManagementService
@@ -71,6 +72,7 @@ class FileManagementService
         }
             return $file;
         });
+        Cache::forget("conversation_messages_{$message->conversation->id}");
         // broadcast
         $employer = $order->employer;
         $project = $order->project;

@@ -16,6 +16,7 @@ use App\Repositories\Contracts\Market\MessageRepositoryInterface;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -33,7 +34,12 @@ class ChatService
 
     public function getConversationMessages(Conversation $conversation)
     {
-        return $this->conversationRepository->getConversationMessages($conversation);
+        $cacheKey = "conversation_messages_{$conversation->id}";
+
+        // چک کن اگه کش موجوده، همونو برگردون
+        return Cache::remember($cacheKey, now()->now()->addMinute(), function () use ($conversation) {
+            return $this->conversationRepository->getConversationMessages($conversation);
+        });
     }
     public function getOrCreateConversationForProposal(Proposal $proposal)
     {
@@ -107,6 +113,7 @@ class ChatService
             $this->storeMessageFiles($message, $data, $conversation->id);
             return $message;
         });
+        Cache::forget("conversation_messages_{$conversation->id}");
 
         // broadcasting message
         broadcast(new NewMessageEvent($newMessage))->toOthers();
@@ -121,6 +128,7 @@ class ChatService
             $this->storeMessageFiles($answeredMessage, $data, $message->conversation_id);
             return $answeredMessage;
         });
+        Cache::forget("conversation_messages_{$message->conversation->id}");
         // broadcasting message
         broadcast(new NewMessageEvent($newMessage))->toOthers();
         return $this->messageRepository->showMessage($newMessage);
@@ -137,6 +145,7 @@ class ChatService
 
     public function deleteMessage(Message $message)
     {
-        return $this->messageRepository->delete($message);
+        $this->messageRepository->delete($message);
+        Cache::forget("conversation_messages_{$message->conversation->id}");
     }
 }
