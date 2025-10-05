@@ -8,6 +8,7 @@ use App\Models\User\User;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,8 @@ class CustomerService
     }
     public function getCustomers($message)
     {
-        return $this->userRepository->getUsers(1, $message);
+        $cacheKey = 'customers';
+        return Cache::rememberForever($cacheKey, fn() => $this->userRepository->getUsers(1, $message));
     }
     public function searchCustomers(string $search, $message)
     {
@@ -45,7 +47,7 @@ class CustomerService
             $data['user_type'] = 1;
             $data['active_role'] = $data['role'] == 1 ? 'employer' : 'freelancer';
             $customer = $this->userRepository->create($data);
-            $this->userRepository->assignRole($customer,$customer->active_role);
+            $this->userRepository->assignRole($customer, $customer->active_role);
             $this->walletRepository->create([
                 'user_id' => $customer->id,
                 'balance' => 0,
@@ -54,21 +56,36 @@ class CustomerService
             ]);
             return $customer;
         });
+        if ($customer) {
+            Cache::forget('customers');
+        }
         $passToken = Password::createToken($customer);
         SendResetPasswordUrl::dispatch($customer, $passToken);
         return $customer;
     }
     public function toggleActivation(User $user): string|null
     {
-        return $this->userRepository->toggleActivation($user);
+        $result = $this->userRepository->toggleActivation($user);
+        if ($result) {
+            Cache::forget('customers');
+        }
+        return $result;
     }
     public function update(User $user, array $data)
     {
-        return $this->userRepository->update($user, $data);
+        $result = $this->userRepository->update($user, $data);
+        if ($result) {
+            Cache::forget('customers');
+        }
+        return $result;
     }
     public function delete(User $user)
     {
-        return $this->userRepository->delete($user);
+        $result = $this->userRepository->delete($user);
+        if ($result) {
+            Cache::forget('customers');
+        }
+        return $result;
     }
 
     public function getEployerProjects(User $customer)
