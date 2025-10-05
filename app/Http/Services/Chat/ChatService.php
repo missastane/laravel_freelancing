@@ -37,7 +37,7 @@ class ChatService
         $cacheKey = "conversation_messages_{$conversation->id}";
 
         // چک کن اگه کش موجوده، همونو برگردون
-        return Cache::remember($cacheKey, now()->now()->addMinute(), function () use ($conversation) {
+        return Cache::remember($cacheKey, now()->addMinute(), function () use ($conversation) {
             return $this->conversationRepository->getConversationMessages($conversation);
         });
     }

@@ -7,6 +7,7 @@ use App\Http\Services\Tag\TagStorageService;
 use App\Models\Content\PostCategory;
 use App\Repositories\Contracts\Content\PostCategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PostCategoryService
@@ -20,7 +21,8 @@ class PostCategoryService
     }
     public function getCategories()
     {
-        return $this->postCategoryRepository->getCategories();
+        $cacheKey = "post_categories";
+        return Cache::rememberForever($cacheKey, fn() => $this->postCategoryRepository->getCategories());
     }
     public function searchCategories(string $search)
     {
@@ -36,18 +38,20 @@ class PostCategoryService
     }
     public function storeCategory(array $data)
     {
-        return DB::transaction(function () use ($data) {
+        $result = DB::transaction(function () use ($data) {
 
             $data['image'] = $this->mediaStorageService->storeMultipleImages($data['image'], "images/post-category");
             $postCategory = $this->postCategoryRepository->create($data);
             $this->tagStorageService->storeTagsForFirstTime($postCategory, $data['tags']);
             return $postCategory;
         });
+        Cache::forget('post_categories');
+        return $result;
     }
 
     public function updateCategory(PostCategory $category, array $data): PostCategory
     {
-        return DB::transaction(function () use ($category, $data) {
+        $result = DB::transaction(function () use ($category, $data) {
 
             // update image
             $data['image'] = $this->mediaStorageService
@@ -66,11 +70,17 @@ class PostCategoryService
 
             return $category;
         });
+        Cache::forget('post_categories');
+        return $result;
     }
 
     public function delete(PostCategory $postCategory)
     {
-        return $this->postCategoryRepository->delete($postCategory);
+        $result = $this->postCategoryRepository->delete($postCategory);
+        if ($result) {
+            Cache::forget('post_categories');
+        }
+        return $result;
     }
 
 }
