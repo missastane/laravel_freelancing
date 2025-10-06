@@ -31,7 +31,6 @@ class WithdrawalRepository extends BaseRepository implements WithdrawalRepositor
     }
     public function showRequest(Withdrawal $withdrawal)
     {
-        \Log::info($withdrawal);
         $result = $this->showWithRelations($withdrawal, ['user:id,first_name,last_name,national_code']);
         return new WithDrawalRequestResource($result);
     }

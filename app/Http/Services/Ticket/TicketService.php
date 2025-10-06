@@ -15,6 +15,7 @@ use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class TicketService
@@ -44,12 +45,14 @@ class TicketService
     }
     public function getUserTickets(string $status)
     {
-        return $this->ticketRepository->getUserTickets($status);
+        $user = auth()->user();
+        $cacheKey = "user{$user->id}_tickets";
+        return Cache::rememberForever($cacheKey, fn() => $this->ticketRepository->getUserTickets($status));
     }
     public function newTicketStore(array $data, int $authorType)
     {
-        return DB::transaction(function () use ($data, $authorType) {
-            $user = auth()->user();
+        $user = auth()->user();
+        $result = DB::transaction(function () use ($data, $authorType, $user) {
             $ticket = $this->ticketRepository->create([
                 'user_id' => $user->id,
                 'priority_id' => $data['priority_id'],
@@ -72,13 +75,16 @@ class TicketService
             );
             return $ticket;
         });
-
+        if ($result) {
+            Cache::forget("user{$user->id}_tickets");
+        }
+        return $result;
     }
 
     public function replyToTicket(TicketMessage $ticketMessage, array $data, int $authorType)
     {
-        return DB::transaction(function () use ($ticketMessage, $data, $authorType) {
-            $user = auth()->user();
+        $user = auth()->user();
+        $result = DB::transaction(function () use ($ticketMessage, $data, $authorType, $user) {
             $answeredTicketMessage = $this->ticketMessageRepository->create([
                 'ticket_id' => $ticketMessage->ticket_id,
                 'author_id' => $user->id,
@@ -96,8 +102,10 @@ class TicketService
             $this->ticketRepository->update($ticketMessage->ticket, ['status' => 2]);
             return $answeredTicketMessage;
         });
-
-
+        if ($result) {
+            Cache::forget("user{$ticketMessage->ticket->user_id}_tickets");
+        }
+        return $result;
     }
     public function showTicket(Ticket $ticket)
     {
@@ -110,7 +118,8 @@ class TicketService
     }
     public function updateTicketMessage(TicketMessage $ticketMessage, array $data)
     {
-        return DB::transaction(function () use ($ticketMessage, $data) {
+
+        $result = DB::transaction(function () use ($ticketMessage, $data) {
             $this->ticketMessageRepository->update($ticketMessage, ['message' => $data['message']]);
             $this->mediaStorageService->storeMultipleFiles(
                 $data['files'],
@@ -121,11 +130,18 @@ class TicketService
             );
             return $ticketMessage;
         });
+        if ($result) {
+            Cache::forget("user{$ticketMessage->ticket->user_id}_tickets");
+        }
+        return $result;
     }
     public function closeTicket(Ticket $ticket)
     {
         if ($ticket->status !== 3) {
-            $this->ticketRepository->update($ticket, ['status' => 3]);
+            $result = $this->ticketRepository->update($ticket, ['status' => 3]);
+            if ($result) {
+                Cache::forget("user{$ticket->user_id}_tickets");
+            }
             return true;
         } else {
             return false;
@@ -134,11 +150,16 @@ class TicketService
 
     public function deleteTicketFile(File $file)
     {
+        // If a user's ticket list contains attachments to a message, the user's ticket cache should be cleared.
         return $this->fileManagementService->deleteFile($file);
     }
     public function deleteTicket(Ticket $ticket)
     {
-        return $this->ticketRepository->delete($ticket);
+        $result = $this->ticketRepository->delete($ticket);
+        if ($result) {
+            Cache::forget("user{$ticket->user_id}_tickets");
+        }
+        return $result;
     }
 
 }

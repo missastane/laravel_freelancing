@@ -83,7 +83,7 @@ class FileManagementService
     public function deleteFile(File $file)
     {
         $this->fileService->deleteFile($file->file_path);
-        $this->fileRepository->delete($file);
+        return $this->fileRepository->delete($file);
     }
 
 }

@@ -52,7 +52,6 @@ class MediaStorageService
         if ($result === false) {
             throw new Exception('بارگذاری عکس با خطا مواجه شد', 422);
         }
-        \Log::info($result);
         return $result;
     }
     public function storeFile(UploadedFile $file, string $context, int $contextId, string $directory, string $disk = 'private'): ?File

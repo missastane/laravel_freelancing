@@ -33,9 +33,6 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
     public function showPost(Post $post)
     {
         $post = $this->showWithRelations($post, ['postCategory:id,name', 'author:id,first_name,last_name', 'tags:id,name','files']);
-        foreach($post->files() as $file){
-            \Log::info($file);
-        }
         return new PostResource($post);
     }
 
