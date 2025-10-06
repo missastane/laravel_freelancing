@@ -3,7 +3,6 @@
 namespace App\Broadcasting\SendWithLimit;
 
 use App\Http\Services\Notification\SubscriptionUsageManagerService;
-use App\Models\User\User;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;

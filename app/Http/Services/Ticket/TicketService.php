@@ -6,15 +6,11 @@ use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Public\MediaStorageService;
 use App\Models\Market\File;
 use App\Models\Ticket\Ticket;
-use App\Models\Ticket\TicketDepartment;
 use App\Models\Ticket\TicketMessage;
-use App\Models\Ticket\TicketPriority;
 use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketMessageRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketPriorityRepositoryInterface;
 use App\Repositories\Contracts\Ticket\TicketRepositoryInterface;
-use App\Traits\ApiResponseTrait;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 

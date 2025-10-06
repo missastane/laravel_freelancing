@@ -4,7 +4,6 @@ namespace App\Broadcasting\SendWithoutLimit;
 
 use App\Http\Services\Message\MessageService;
 use App\Http\Services\Message\SMS\SmsService;
-use App\Models\User\User;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
