@@ -11,7 +11,6 @@ use App\Models\Market\Portfolio;
 use App\Models\Market\Project;
 use App\Models\Market\Proposal;
 use App\Models\Market\Skill;
-use App\Models\Market\Subscription;
 use App\Models\Market\UserEducation;
 use App\Models\Market\UserSubscription;
 use App\Models\Market\WorkExperience;
@@ -150,6 +149,11 @@ class User extends Authenticatable implements JWTSubject
             2 => 'ادمین',
             default => 'نامشخص',
         };
+    }
+
+    public function isAdmin(): bool
+    {
+        return (int) $this->user_type === 2;
     }
 
     public function getActivationValueAttribute()

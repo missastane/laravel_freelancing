@@ -468,7 +468,7 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::
-        namespace('Auth')->group(function () {
+        prefix('auth')->group(function () {
             Route::post('/register', [AuthController::class, 'register'])->name('register');
             Route::post('/login', [AuthController::class, 'login'])->name('login');
             Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('jwt.refresh'); // use post method to more safety

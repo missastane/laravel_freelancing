@@ -10,6 +10,7 @@ use App\Models\Payment\Wallet;
 use App\Models\User\User;
 use App\Notifications\ApproveProposalNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 use App\Http\Services\Proposal\ProposalApprovalService;
@@ -121,10 +122,14 @@ class ProposalApproveTest extends TestCase
             'status' => 2
         ]);
 
+        $orderId = DB::table('orders')
+            ->where('proposal_id', $proposal->id)
+            ->value('id');
+
         // آیتم سفارش ثبت شده باشد
         $this->assertDatabaseHas('order_items', [
             'price' => 5000,
-            'order_id' => 1
+            'order_id' => $orderId
         ]);
 
         // موجودی بلوکه شده آپدیت شده باشد

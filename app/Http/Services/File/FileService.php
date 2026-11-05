@@ -21,19 +21,6 @@ class FileService extends FileToolsService
     }
 
 
-    // public function moveToStorage($file, $fileName)
-    // {
-    //     // set image
-    //     $this->setFile($file);
-    //     // execute provider
-    //     $this->provider($fileName);
-    //     // save image
-    //     // $image->getRealPath = $_FILE['image']['tmp_name'] in php.
-    //     // save method wants 3 arguments : image_path, image quality, image format;
-    //     $result = $file->move(storage_path($this->getFinalFileDirectory()), $this->getFinalFileName());
-    //     return $result ? $this->getFileAddress() : false;
-    // }
-
     public function moveToStorage($file, $fileName)
     {
         $this->setFile($file);

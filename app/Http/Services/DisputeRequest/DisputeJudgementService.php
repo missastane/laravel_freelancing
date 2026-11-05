@@ -2,17 +2,11 @@
 
 namespace App\Http\Services\DisputeRequest;
 
-use App\Http\Services\Payment\WalletService;
-use App\Models\Market\Order;
-use App\Models\Market\OrderItem;
-use App\Models\User\ArbitrationRequest;
 use App\Models\User\DisputeRequest;
 use App\Models\User\User;
 use App\Notifications\JudgeResultNotification;
 use App\Repositories\Contracts\User\ArbitrationRequestRepositoryInterface;
 use App\Traits\ApiResponseTrait;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
@@ -27,12 +21,21 @@ class DisputeJudgementService
 
     public function judgeRequest(DisputeRequest $disputeRequest, array $data)
     {
-       $message = DB::transaction(function () use ($disputeRequest, $data) {
+        $message = DB::transaction(function () use ($disputeRequest, $data) {
+            // $result = $this->arbitrationRequestRepository->create([
+            //     'dispute_request_id' => $disputeRequest->id,
+            //     'status' => $data['status'],
+            //     'freelancer_percent' => $data['freelancer_percent'],
+            //     'employer_percent' => $data['employer_percent'],
+            //     'description' => $data['description'],
+            //     'resolved_by' => auth()->id(),
+            //     'resolved_at' => now()
+            // ]);
             $result = $this->arbitrationRequestRepository->create([
                 'dispute_request_id' => $disputeRequest->id,
                 'status' => $data['status'],
-                'freelancer_percent' => $data['freelancer_percent'],
-                'employer_percent' => $data['employer_percent'],
+                'freelancer_percent' => $data['freelancer_percent'] ?? null,
+                'employer_percent' => $data['employer_percent'] ?? null,
                 'description' => $data['description'],
                 'resolved_by' => auth()->id(),
                 'resolved_at' => now()
@@ -65,6 +68,6 @@ class DisputeJudgementService
         $orderItem = $disputeRequest->orderItem;
         $freelancer = $orderItem->order->freelancer;
         $employer = $orderItem->order->employer;
-        Notification::send([$freelancer, $employer], new JudgeResultNotification($message,$orderItem->order->project));
+        Notification::send([$freelancer, $employer], new JudgeResultNotification($message, $orderItem->order->project));
     }
 }

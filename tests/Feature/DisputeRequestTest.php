@@ -14,7 +14,6 @@ use App\Models\User\DisputeRequest;
 use App\Models\User\User;
 use App\Notifications\AddDisputeTicketNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -338,7 +337,9 @@ class DisputeRequestTest extends TestCase
 
     public function test_non_admin_cannot_create_dispute_ticket()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'user_type' => 1
+        ]);
         $employer = User::factory()->employer()->create();
         $freelancer = User::factory()->freelancer()->create();
 

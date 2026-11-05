@@ -13,18 +13,24 @@ trait ApiResponseTrait
         ], $code);
     }
 
-    public function error($message = 'خطایی غیرمنتظره در سرور رخ داده است. لطفا دوباره تلاش کنید', $code = 500)
-    {
+    public function error(
+        $message = 'خطایی غیرمنتظره در سرور رخ داده است. لطفا دوباره تلاش کنید',
+        $code = 500
+    ) {
         return response()->json([
             'status' => false,
             'message' => $message,
+            'errors' => (object) [],
+            'error_list' => [$message],
         ], $code);
     }
 
     public function successResource($data)
     {
         return response()->json([
-           $data
+            'status' => true,
+            'message' => null,
+            'data' => $data,
         ], 200);
     }
 }

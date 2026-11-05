@@ -12,7 +12,6 @@ use App\Models\User\DisputeRequest;
 use App\Models\User\User;
 use App\Notifications\JudgeResultNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -194,14 +193,13 @@ class JudgeDisputeRequestTest extends TestCase
 
     public function test_non_admin_cannot_judge()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['user_type' => 1]);
         [$admin, $employer, $freelancer, $order, $orderItem, $dispute, $conversation] = $this->setupDisputeEnvironment();
 
         $response = $this->actingAs($user)->postJson(
             "/api/admin/user/dispute-request/judge/{$dispute->id}",
             ['status' => 2, 'description' => 'بدون تغییر']
         );
-
         $response->assertStatus(403);
     }
 }

@@ -27,11 +27,11 @@ class DisputeRequestPolicy
 
     public function createTicket(User $user, DisputeRequest $disputeRequest)
     {
-        return $disputeRequest->status == 1;
+        return $user->isAdmin() && $disputeRequest->status == 1;
     }
 
     public function judge(User $user, DisputeRequest $disputeRequest)
     {
-        return $disputeRequest->status == 1;
+        return $user->isAdmin() && $disputeRequest->status == 1;
     }
 }

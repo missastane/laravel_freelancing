@@ -7,7 +7,7 @@ use App\Models\User\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
+use App\Http\Services\OTP\OTPService;
 trait ProfileTestTrait
 {
     public function user_get_profile($user, $prefixRoute)
@@ -181,6 +181,15 @@ trait ProfileTestTrait
 
     public function user_can_change_mobile_success($user, $prefixRoute)
     {
+        $otpService = app(OTPService::class);
+
+        $otpServiceMock = \Mockery::mock($otpService)->makePartial();
+
+        $otpServiceMock->shouldReceive('sendSms')
+            ->once();
+
+        $this->app->instance(OTPService::class, $otpServiceMock);
+
         $this->actingAs($user, 'api')
             ->patchJson("$prefixRoute/profile/change-mobile", [
                 'id' => '09123456789',
