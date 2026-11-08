@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthRequest;
 use App\Http\Services\User\UserService;
-use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;

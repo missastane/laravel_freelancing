@@ -4,7 +4,6 @@ namespace App\Http\Services\User;
 
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\SendVerificationEmail;
-use App\Models\User\User;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -32,55 +31,61 @@ class UserService
     public function registerUser(array $data)
     {
         $username = Str::random(16);
+
         $user = DB::transaction(function () use ($username, $data) {
             $user = $this->userRepository->create([
-                'username' => $username,
-                'user_type' => 1,
-                'email' => $data['email'],
+                'username'    => $username,
+                'user_type'   => 1,
+                'email'       => $data['email'],
                 'active_role' => $data['role'] == 1 ? 'employer' : 'freelancer',
-                'password' => Hash::make($data['password'])
+                'password'    => Hash::make($data['password']),
             ]);
-            $role = $this->roleRepository->firstOrCreate($user->active_role);
+
+            $this->roleRepository->firstOrCreate($user->active_role);
             $user->assignRole($user->active_role);
+
             $this->walletRepository->create([
-                'user_id' => $user->id,
-                'balance' => 0,
+                'user_id'      => $user->id,
+                'balance'      => 0,
                 'hold_balance' => 0,
-                'currency' => 1
+                'currency'     => 1,
             ]);
+
             return $user;
         });
+
         dispatch(new SendVerificationEmail($user));
+
         return $user;
     }
 
-    public function loginUser(array $data)
+    public function loginUser(array $data): array
     {
         $user = $this->userRepository->findByEmail($data['email']);
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return [
-                'status' => false,
-                'message' => 'ایمیل یا رمز عبور اشتباه است یا ایمیل شما تأیید نشده',
-                'code' => 401
+                'status'  => false,
+                'message' => __('auth.failed'),
+                'code'    => 401,
             ];
         }
 
         $token = JWTAuth::fromUser($user);
 
         return [
-            'status' => true,
-            'message' => null,
-            'data' => [
+            'status'  => true,
+            'message' => __('messages.login_success', ['user' => $user->full_name]),
+            'data'    => [
                 'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60,
+                'token_type'   => 'bearer',
+                'expires_in'   => JWTAuth::factory()->getTTL() * 60,
             ],
-            'code' => 200
+            'code'    => 200,
         ];
     }
 
-    public function logoutUser()
+    public function logoutUser(): void
     {
         $token = JWTAuth::getToken();
         JWTAuth::invalidate($token);
@@ -100,79 +105,94 @@ class UserService
         }
     }
 
-    public function resendVerificationEmail(array $data)
+    public function resendVerificationEmail(array $data): bool
     {
         $user = $this->userRepository->findByEmail($data['email']);
-        if ($user->hasVerifiedEmail()) {
+
+        if (!$user || $user->hasVerifiedEmail()) {
             return false;
         }
+
         dispatch(new SendVerificationEmail($user));
+
         return true;
     }
 
+    public function checkVerificationStatus($user): array
+    {
+        if ($user->hasVerifiedEmail()) {
+            return [
+                'status'  => true,
+                'message' => 'ایمیل شما قبلا تأیید شده است',
+                'code'    => 200,
+            ];
+        }
 
-    public function checkVerificationStatus($user)
-    {
-        if ($user->hasVerifiedEmail()) {
-            return [
-                'status' => true,
-                'message' => 'ایمیل شما قبلا تأیید شده است',
-                'code' => 200
-            ];
-        } else {
-            return [
-                'status' => false,
-                'message' => 'این ایمیل قبلا تأیید نشده است',
-                'code' => 403
-            ];
-        }
-    }
-    public function verifyEmail(array $data, $id, $hash)
-    {
-        $user = $this->userRepository->findById($id);
-        if (!hash_equals($hash, sha1($user->getEmailForVerification()))) {
-            return [
-                'status' => false,
-                'message' => 'تأیید ایمیل معتبر نیست',
-                'code' => 403
-            ];
-        }
-        if ($user->hasVerifiedEmail()) {
-            return [
-                'status' => false,
-                'message' => 'ایمیل شما قبلا تأیید شده است',
-                'code' => 400
-            ];
-        }
-        $user->markEmailAsVerified();
-        $this->userRepository->update($user, [
-            'activation' => 1,
-            'activation_date' => now()
-        ]);
-        event(new Verified($user));
         return [
-            'status' => true,
-            'message' => 'ایمیل شما با موفقیت تأیید شد',
-            'data' => $user,
-            'code' => 200
+            'status'  => false,
+            'message' => 'این ایمیل قبلا تأیید نشده است',
+            'code'    => 403,
         ];
     }
 
-    public function forgotPassword(array $data)
+    public function verifyEmail(array $data, $id, string $hash): array
     {
-        // set ratelimitter
+        $user = $this->userRepository->findById($id);
+
+        if (!$user || !hash_equals($hash, sha1($user->getEmailForVerification()))) {
+            return [
+                'status'  => false,
+                'message' => 'تأیید ایمیل معتبر نیست',
+                'code'    => 403,
+            ];
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return [
+                'status'  => false,
+                'message' => 'ایمیل شما قبلا تأیید شده است',
+                'code'    => 400,
+            ];
+        }
+
+        $user->markEmailAsVerified();
+
+        $this->userRepository->update($user, [
+            'activation'      => 1,
+            'activation_date' => now(),
+        ]);
+
+        event(new Verified($user));
+
+        return [
+            'status'  => true,
+            'message' => 'ایمیل شما با موفقیت تأیید شد',
+            'data'    => $user,
+            'code'    => 200,
+        ];
+    }
+
+    public function forgotPassword(array $data): bool
+    {
         $email = $data['email'];
         $key = "reset-password-throttle:{$email}";
 
         if (RateLimiter::tooManyAttempts($key, 1)) {
             return false;
         }
+
         RateLimiter::hit($key, 60 * 30);
 
-        $user = $this->userRepository->findByEmail($data['email']);
+        $user = $this->userRepository->findByEmail($email);
+
+        if (!$user) {
+            return false;
+        }
+
         $token = Password::createToken($user);
 
         ResetPasswordJob::dispatch($user, $token);
+
         return true;
     }
 
@@ -193,25 +213,25 @@ class UserService
 
             if ($status === Password::PASSWORD_RESET) {
                 return [
-                    'status' => true,
+                    'status'  => true,
                     'message' => 'رمز عبور شما با موفقیت تغییر یافت',
+                    'code'    => 200,
                 ];
             }
 
             return [
-                'status' => false,
+                'status'  => false,
                 'message' => 'اطلاعات واردشده نامعتبر است',
-                'code' => 400,
+                'code'    => 400,
             ];
         } catch (Exception $e) {
             Log::error('Reset password method failed: ' . $e->getMessage());
 
             return [
-                'status' => false,
+                'status'  => false,
                 'message' => 'خطای سرور رخ داده است',
-                'code' => 500,
+                'code'    => 500,
             ];
         }
     }
-
 }

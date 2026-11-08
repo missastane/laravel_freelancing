@@ -25,51 +25,9 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-/**
- * @OA\Schema(
- *     schema="User",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="username", type="string", example="ایمان"),
- *     @OA\Property(property="email", type="string", example="missastaneh@yahoo.com"),
- *     @OA\Property(property="email_verified_at", type="string", format="date-time", description="email verify datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="mobile", type="string", example="09125478963"),
- *     @OA\Property(property="mobile_verified_at", type="string", format="date-time", description="mobile verify datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="first_name", type="string", example="ایمان"),
- *     @OA\Property(property="last_name", type="string", example="مدائنی"),
- *     @OA\Property(property="national_code", type="string", example="2732548965"),
- *     @OA\Property(property="gender", type="string", description="User gender: 'male' if 1, 'female' if 2", example="مذکر"),
- *     @OA\Property(property="birth_date", type="string", format="date-time", description="birth datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="avatar_photo", type="string", format="uri", example="\path\image.jpg"),
- *     @OA\Property(property="activation", type="string", description="Activation Value: 'active' if 1, 'inactive' if 2", example="فعال"),
- *     @OA\Property(property="activation_date", type="string", format="date-time", description="activation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="active_role", type="string", example="کارفرما"),
- *     @OA\Property(property="about_me", type="string", example="رشته اصلی من ریاضی است"),
- *     @OA\Property(property="created_at", type="string", format="date-time", description="creation datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="update datetime", example="2025-02-22T10:00:00Z"),
- *     @OA\Property(
- *          property="roles",
- *          type="array",
- *          description="Array of related roles with both ID and name",
- *             @OA\Items(
- *                  type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="name", type="string", example="کارفرما")
- *               )
- *        ),
- *     @OA\Property(
- *          property="permissions",
- *          type="array",
- *          description="Array of related permissions with both ID and name",
- *             @OA\Items(
- *                  type="object",
- *                  @OA\Property(property="id", type="integer", example=3),
- *                  @OA\Property(property="name", type="string", example="edit-post")
- *               )
- *        ),
- * )
- */
+
 class User extends Authenticatable implements JWTSubject
 {
 
@@ -145,9 +103,9 @@ class User extends Authenticatable implements JWTSubject
     public function getUserTypeValueAttribute()
     {
         return match ($this->user_type) {
-            1 => 'کاربر',
-            2 => 'ادمین',
-            default => 'نامشخص',
+            1 => __('entity.user'),
+            2 =>  __('entity.admin'),
+            default => __('entity.undefined'),
         };
     }
 
@@ -159,19 +117,19 @@ class User extends Authenticatable implements JWTSubject
     public function getActivationValueAttribute()
     {
         if ($this->activation == 1) {
-            return 'کاربر فعال';
+            return __('entity.active_user');
         } else {
-            return 'کاربر غیرفعال';
+            return __('entity.inactive_user');
         }
     }
     public function getGenderValueAttribute()
     {
         switch ($this->gender) {
             case 1:
-                $result = 'مذکر';
+                $result = __('entity.male');
                 break;
             case 2:
-                $result = 'مؤنث';
+                $result = __('entity.female');
                 break;
             default:
                 $result = null;
@@ -297,5 +255,16 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
+    /**
+     * Get the user's full name.
+     * 
+     * @return Attribute
+     */
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => trim("{$this->first_name} {$this->last_name}") ?: 'N/A',
+        );
+    }
 
 }

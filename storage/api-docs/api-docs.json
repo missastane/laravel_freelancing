@@ -268,6 +268,664 @@
                     }
                 ]
             }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Get Auth User details",
+                "description": "Returns the `Auth User` details",
+                "operationId": "81f26df398443e12a06321c986a5de3d",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched Auth User details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/update": {
+            "post": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Updates profile information",
+                "description": "This method updates `Profile Information` and saves it.",
+                "operationId": "ce9fd493b24979b4266dfff8f753c81b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "description": "This field can only contain Persian letters and space.",
+                                        "type": "string",
+                                        "example": "ایمان"
+                                    },
+                                    "last_name": {
+                                        "description": "This field can only contain Persian letters and space.",
+                                        "type": "string",
+                                        "example": "مدائنی"
+                                    },
+                                    "national_code": {
+                                        "type": "string",
+                                        "example": "2730154896"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "profile_photo_path": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PUT"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Profile update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/about-me": {
+            "put": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Store or Update about-me details by customers",
+                "description": "In this method customers can Store or Update about-me details",
+                "operationId": "23506231b706df5a099930386a4583a3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "about_me": {
+                                        "description": "This field can only contain Persian and English letters, numbers, and symbols (,،?!.).",
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z\\u0600-\\u06FF0-9\\s\\-\\،,?!.]+$",
+                                        "example": "این درباره من است"
+                                    },
+                                    "gender": {
+                                        "description": "1 = male, 2 = female",
+                                        "type": "integer",
+                                        "example": 1,
+                                        "enum": [
+                                            1,
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Profile Update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/change-password": {
+            "patch": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Update password by customers",
+                "description": "In this method customers can Update their password",
+                "operationId": "b061fa8bd14a102dc1963ffe9e927be8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "example": "fL520khf56",
+                                        "minimum": 8
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "example": "fL520khf56",
+                                        "minimum": 8
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "example": "fL520khf56",
+                                        "minimum": 8
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Password Update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Wrong current password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/change-mobile": {
+            "patch": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Updates Mobile number",
+                "description": "This method updates `Mobile Number` and sends verification OTP.",
+                "operationId": "c74d4ec9a7ba0451759081013984955e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "description": "Phone number format",
+                                        "type": "string",
+                                        "example": "09112356987"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully requested change of phone number",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "345dcugdbhcjolsfdtfsgh..."
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "next_step": {
+                                                            "type": "string",
+                                                            "example": "redirect_to_/confirm_otp"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "property": "data"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/confirm-mobile/{token}": {
+            "put": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Confirm OTP to change Mobile",
+                "description": "This method updates mobile if OTP code is valid.",
+                "operationId": "932d3580e124b13c0049933a18678c79",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Token from OTP record",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "otp"
+                                ],
+                                "properties": {
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mobile is Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "OTP is Invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "کد وارد شده معتبر نیست"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "kdhbvjnjcxiygfuhdijh..."
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "next_step": {
+                                                            "type": "string",
+                                                            "example": "redirect_back"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/change-username": {
+            "patch": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Change auth user's username",
+                "description": "In this method auth users can change their username up to 2 times.",
+                "operationId": "677e531ac429a9c3f5cc9bc8839f49ae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "12v34Kf56"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Username is Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "نام کاربری شما با موفقیت بروزرسانی شد"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Limit Exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -419,6 +1077,146 @@
                     }
                 },
                 "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "User details schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "ایمان"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "missastaneh@yahoo.com"
+                    },
+                    "email_verified_at": {
+                        "description": "email verify datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z",
+                        "nullable": true
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "example": "09125478963",
+                        "nullable": true
+                    },
+                    "mobile_verified_at": {
+                        "description": "mobile verify datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "example": "ایمان",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "مدائنی",
+                        "nullable": true
+                    },
+                    "national_code": {
+                        "type": "string",
+                        "example": "2732548965",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "description": "User gender: 'male' if 1, 'female' if 2",
+                        "type": "string",
+                        "example": "مذکر",
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "description": "birth datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z",
+                        "nullable": true
+                    },
+                    "avatar_photo": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "/path/image.jpg",
+                        "nullable": true
+                    },
+                    "activation": {
+                        "description": "Activation Value: 'active' if 1, 'inactive' if 2",
+                        "type": "string",
+                        "example": "فعال"
+                    },
+                    "activation_date": {
+                        "description": "activation datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z",
+                        "nullable": true
+                    },
+                    "active_role": {
+                        "type": "string",
+                        "example": "کارفرما"
+                    },
+                    "about_me": {
+                        "type": "string",
+                        "example": "رشته اصلی من ریاضی است",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "creation datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "update datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "roles": {
+                        "description": "Array of related roles with both ID and name",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "کارفرما"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "permissions": {
+                        "description": "Array of related permissions with both ID and name",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "edit-post"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -432,6 +1230,10 @@
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Customer-Profile",
+            "description": "Customer-Profile"
         }
     ]
 }
