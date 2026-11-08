@@ -97,11 +97,11 @@ class UserService
         try {
             return JWTAuth::refresh(true, true);
         } catch (TokenExpiredException $e) {
-            throw new \RuntimeException('توکن منقضی شده است', 401);
+            throw new \RuntimeException(__('errors.token_expired'), 401);
         } catch (TokenBlacklistedException $e) {
-            throw new \RuntimeException('توکن در لیست سیاه قرار گرفته است', 401);
+            throw new \RuntimeException(__('errors.token_black_listed'), 401);
         } catch (Exception $e) {
-            throw new \RuntimeException('خطایی رخ داده است', 500);
+            throw new \RuntimeException(__('errors.server_error'), 500);
         }
     }
 
@@ -123,14 +123,14 @@ class UserService
         if ($user->hasVerifiedEmail()) {
             return [
                 'status'  => true,
-                'message' => 'ایمیل شما قبلا تأیید شده است',
+                'message' => __('errors.email_has_verified'),
                 'code'    => 200,
             ];
         }
 
         return [
             'status'  => false,
-            'message' => 'این ایمیل قبلا تأیید نشده است',
+            'message' => __('errors.email_has_not_verified'),
             'code'    => 403,
         ];
     }
@@ -142,7 +142,7 @@ class UserService
         if (!$user || !hash_equals($hash, sha1($user->getEmailForVerification()))) {
             return [
                 'status'  => false,
-                'message' => 'تأیید ایمیل معتبر نیست',
+                'message' => __('errors.email_invalid_approval'),
                 'code'    => 403,
             ];
         }
@@ -150,7 +150,7 @@ class UserService
         if ($user->hasVerifiedEmail()) {
             return [
                 'status'  => false,
-                'message' => 'ایمیل شما قبلا تأیید شده است',
+                'message' => __('errors.email_has_verified'),
                 'code'    => 400,
             ];
         }
@@ -166,8 +166,8 @@ class UserService
 
         return [
             'status'  => true,
-            'message' => 'ایمیل شما با موفقیت تأیید شد',
-            'data'    => $user,
+            'message' => __('messages.email_verified'),
+            'data'    => null,
             'code'    => 200,
         ];
     }
@@ -214,14 +214,14 @@ class UserService
             if ($status === Password::PASSWORD_RESET) {
                 return [
                     'status'  => true,
-                    'message' => 'رمز عبور شما با موفقیت تغییر یافت',
+                    'message' => __('messages.success_changed_password'),
                     'code'    => 200,
                 ];
             }
 
             return [
                 'status'  => false,
-                'message' => 'اطلاعات واردشده نامعتبر است',
+                'message' => __('auth.failed'),
                 'code'    => 400,
             ];
         } catch (Exception $e) {
@@ -229,7 +229,7 @@ class UserService
 
             return [
                 'status'  => false,
-                'message' => 'خطای سرور رخ داده است',
+                'message' => __('errors.server_error'),
                 'code'    => 500,
             ];
         }

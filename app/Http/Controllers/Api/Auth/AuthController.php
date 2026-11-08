@@ -75,7 +75,7 @@ class AuthController extends Controller
     {
         try {
             $user = $this->userService->registerUser($request->all());
-            return $this->success(null, 'با تشکر از ثبت نام شما. لینک تأیید ایمیل به آدرس ایمیل وارد شده ارسال گردید. لطفا ابتدا ایمیل خود را تأیید فرمایید', 201);
+            return $this->success(null, __('messages.register_success'), 201);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -199,7 +199,7 @@ class AuthController extends Controller
     {
         try {
             $this->userService->logoutUser();
-            return $this->success(null, 'کاربر با موفقیت از حساب کاربری خود خارج شد');
+            return $this->success(null, __('messages.logout_successfull'));
         } catch (Exception $e) {
             return $this->error();
         }
@@ -268,11 +268,13 @@ class AuthController extends Controller
     {
         try {
             $newToken = $this->userService->refresh();
-            return $this->success([
+            return $this->success(
+                [
                 'access_token' => $newToken,
                 'token_type' => 'bearer',
                 'expires_in' => JWTAuth::factory()->getTTL() * 60
-            ]);
+            ],
+             __('messages.refresh_token_success'));
         } catch (\RuntimeException $e) {
             return $this->error();
         }

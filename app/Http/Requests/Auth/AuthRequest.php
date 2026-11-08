@@ -28,19 +28,25 @@ class AuthRequest extends FormRequest
             return [
                 'role' => 'required|in:1,2', // 1 => employer, 2 => freealncer
                 'email' => 'required|string|email|unique:users,email',
-                'password' => ['required', 'unique:users,password', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(), 'confirmed'],
+                'password' => [
+                    'required',
+                    Password::min(8)
+                        ->letters()
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols()
+                        ->uncompromised(),
+                    'confirmed'
+                ],
             ];
-        }
-        elseif($route === 'login')
-        {
+        } elseif ($route === 'login') {
             return [
                 'email' => 'required|string|email|exists:users,email',
                 'password' => 'required'
             ];
-        }
-        elseif($route == 'profile.update.password'){
-            return[
-                'new_password' => ['required', 'unique:users,password', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(), 'confirmed'],
+        } elseif ($route == 'profile.update.password') {
+            return [
+                'new_password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(), 'confirmed'],
             ];
         }
         return [

@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Str;
 
 return [
 
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -36,10 +36,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    'zarinpal' =>[
+    'zarinpal' => [
         'merchant_id' => env('MERCHANT_ID'),
-        'callback_url' => env('CALLBACK_URL',),
-        'base_url' => env('BASE_URL','https://api/zarinpal.com/pg/v4/payment'),
+        'callback_url' => env('CALLBACK_URL', ),
+        'base_url' => env('BASE_URL', 'https://api/zarinpal.com/pg/v4/payment'),
     ],
 
 ];
