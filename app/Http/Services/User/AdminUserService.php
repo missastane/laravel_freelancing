@@ -6,7 +6,7 @@ use App\Jobs\SendResetPasswordUrl;
 use App\Models\User\User;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
-use App\Repositories\Contracts\User\UserRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
