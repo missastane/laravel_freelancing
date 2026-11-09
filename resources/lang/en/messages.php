@@ -9,6 +9,9 @@ return [
    'logout_successfull' => 'The user has successfully logged out of their account.',
    'refresh_token_success' => 'The refreshed token was generated successfully.',
    'password_recovery_link_sent' => 'If an account exists with this email address, a password recovery link will be sent.',
+   'password_recovery_link_sent_to_email' => 'The password recovery link has been successfully sent to :email upon user request.',
+   'recovery_password_request_delivered' => 'The password change request has been received.',
+   'ignore_reset_password' => 'If you did not request a password reset, please ignore this email.',
 
 
 

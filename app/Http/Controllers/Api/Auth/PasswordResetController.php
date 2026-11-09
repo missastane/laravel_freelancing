@@ -72,7 +72,16 @@ class PasswordResetController extends Controller
     public function forgotPassword(ForgotPasswaordRequest $request)
     {
         try {
-            $this->userService->forgotPassword($request->validated());
+            $result = $this->userService->forgotPassword(
+                $request->validated()
+            );
+
+            if (!$result) {
+                return $this->error(
+                    __('errors.link_already_sent'),
+                    429
+                );
+            }
 
             return $this->success(
                 null,
@@ -81,7 +90,7 @@ class PasswordResetController extends Controller
         } catch (Exception $e) {
             Log::error('Forgot password caused an error: ' . $e->getMessage());
 
-            return $this->error();
+            throw $e;
         }
     }
 

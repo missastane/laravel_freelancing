@@ -36,11 +36,18 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $resetUrl = rtrim(config('services.frontend_url'), '/') .
+            '/auth/reset-password?' .
+            http_build_query([
+                'token' => $this->token,
+                'email' => $notifiable->email,
+            ]);
+
         return (new MailMessage)
-            ->subject('بازیابی رمز عبور')
-            ->line('درخواست تغییر رمز عبور دریافت شد')
-            ->action('تغییر رمز عبور', url("/api/reset-password?token={$this->token}&email={$notifiable->email}"))
-            ->line('اگر این درخواست توسط شما انجام نشده است، این پیام را نادیده بگیرید');
+            ->subject(__('entity.password_recovery'))
+            ->line(__('messages.recovery_password_request_delivered'))
+            ->action(__('entity.reset_password'), $resetUrl)
+            ->line(__('messages.ignore_reset_password'));
     }
 
     /**

@@ -9,4 +9,9 @@ return [
     'logout_successfull' => 'کاربر با موفقیت از حساب کاربری خود خارج شد',
     'refresh_token_success' => 'توکن بروزشده با موفقیت ساخته شد',
     'password_recovery_link_sent' => 'در صورت وجود حساب کاربری با این ایمیل، لینک بازیابی رمز عبور برای شما ارسال خواهد شد.',
+    'password_recovery_link_sent_to_email' => 'لینک بازیابی کلمه عبور بنابر درخواست کاربر به آدرس :email با موفقیت ارسال شد.',
+    'recovery_password_request_delivered' => 'درخواست تغییر رمز عبور دریافت شد',
+    'ignore_reset_password' => 'اگر این درخواست توسط شما انجام نشده است، این پیام را نادیده بگیرید',
+
+
 ];

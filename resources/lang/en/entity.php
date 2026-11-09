@@ -7,5 +7,7 @@ return [
     'inactive_user' => 'inactive user',
     'active_user' => 'active user',
     'male' => 'male',
-    'female' => 'female'
+    'female' => 'female',
+    'password_recovery' => 'Password Recovery',
+    'reset_password' => 'Reset Password',
 ];

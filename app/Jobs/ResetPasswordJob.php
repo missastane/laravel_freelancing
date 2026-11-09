@@ -23,7 +23,7 @@ class ResetPasswordJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->user->notify(new ResetPasswordNotification($this->token, ['message' => 'لینک بازیابی کلمه عبور بنابر درخواست کاربر به آدرس  ' . $this->user->email . ' با موفقیت ارسال شد']));
+        $this->user->notify(new ResetPasswordNotification($this->token, ['message' => __('messages.password_recovery_link_sent_to_email', ['email' => $this->user->email])]));
 
     }
 }
