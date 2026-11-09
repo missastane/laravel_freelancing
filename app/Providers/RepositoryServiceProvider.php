@@ -45,7 +45,7 @@ use App\Repositories\Contracts\User\PortfolioRepositoryInterface;
 use App\Repositories\Contracts\User\RatingRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserEducationRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Repositories\Contracts\User\WorkExperienceRepositoryInterface;
 use App\Repositories\Eloquent\Content\CommentRepository;
 use App\Repositories\Eloquent\Content\FaqRepository;
