@@ -8,5 +8,5 @@ return [
     'sent_email_verification_link' => "لینک تأیید ایمیل با موفقیت ارسال شد",
     'logout_successfull' => 'کاربر با موفقیت از حساب کاربری خود خارج شد',
     'refresh_token_success' => 'توکن بروزشده با موفقیت ساخته شد',
-    'password_recovery_link_sent' => 'لینک بازیابی کلمه عبور به ایمیل شما ارسال شد',
+    'password_recovery_link_sent' => 'در صورت وجود حساب کاربری با این ایمیل، لینک بازیابی رمز عبور برای شما ارسال خواهد شد.',
 ];

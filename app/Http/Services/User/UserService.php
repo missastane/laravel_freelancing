@@ -170,13 +170,13 @@ class UserService
         ];
     }
 
-    public function forgotPassword(array $data): bool
+    public function forgotPassword(array $data): void
     {
         $email = $data['email'];
         $key = "reset-password-throttle:{$email}";
 
         if (RateLimiter::tooManyAttempts($key, 1)) {
-            return false;
+            return;
         }
 
         RateLimiter::hit($key, 60 * 30);
@@ -184,14 +184,12 @@ class UserService
         $user = $this->userRepository->findByEmail($email);
 
         if (!$user) {
-            return false;
+            return;
         }
 
         $token = Password::createToken($user);
 
         ResetPasswordJob::dispatch($user, $token);
-
-        return true;
     }
 
     public function resetPassword(array $data): array

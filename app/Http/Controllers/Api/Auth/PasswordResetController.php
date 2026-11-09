@@ -72,13 +72,15 @@ class PasswordResetController extends Controller
     public function forgotPassword(ForgotPasswaordRequest $request)
     {
         try {
-            $result = $this->userService->forgotPassword($request->all());
-            if (!$result) {
-                return $this->error(__('errors.link_already_sent'), 429);
-            }
-            return $this->success(null, __('messages.password_recovery_link_sent'));
+            $this->userService->forgotPassword($request->validated());
+
+            return $this->success(
+                null,
+                __('messages.password_recovery_link_sent')
+            );
         } catch (Exception $e) {
             Log::error('Forgot password caused an error: ' . $e->getMessage());
+
             return $this->error();
         }
     }
@@ -124,7 +126,7 @@ class PasswordResetController extends Controller
             new OA\Response(
                 response: 200,
                 description: "Password reset successfully",
-                 content: new OA\JsonContent(
+                content: new OA\JsonContent(
                     ref: "#/components/schemas/SuccessResponse"
                 )
             ),
@@ -142,7 +144,7 @@ class PasswordResetController extends Controller
                     ref: "#/components/schemas/ValidationErrorResponse"
                 )
             ),
-           new OA\Response(
+            new OA\Response(
                 response: 500,
                 description: "Server error",
                 content: new OA\JsonContent(
