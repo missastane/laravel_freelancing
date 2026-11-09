@@ -8,7 +8,7 @@ return [
    'sent_email_verification_link' => "Verification link sent successfully",
    'logout_successfull' => 'The user has successfully logged out of their account.',
    'refresh_token_success' => 'The refreshed token was generated successfully.',
-
+   'password_recovery_link_sent' => 'A Your password has been successfully changed. recovery link has been sent to your email.',
 
 
 

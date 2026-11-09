@@ -34,21 +34,21 @@ class UserService
 
         $user = DB::transaction(function () use ($username, $data) {
             $user = $this->userRepository->create([
-                'username'    => $username,
-                'user_type'   => 1,
-                'email'       => $data['email'],
+                'username' => $username,
+                'user_type' => 1,
+                'email' => $data['email'],
                 'active_role' => $data['role'] == 1 ? 'employer' : 'freelancer',
-                'password'    => Hash::make($data['password']),
+                'password' => Hash::make($data['password']),
             ]);
 
             $this->roleRepository->firstOrCreate($user->active_role);
             $user->assignRole($user->active_role);
 
             $this->walletRepository->create([
-                'user_id'      => $user->id,
-                'balance'      => 0,
+                'user_id' => $user->id,
+                'balance' => 0,
                 'hold_balance' => 0,
-                'currency'     => 1,
+                'currency' => 1,
             ]);
 
             return $user;
@@ -65,23 +65,23 @@ class UserService
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => __('auth.failed'),
-                'code'    => 401,
+                'code' => 401,
             ];
         }
 
         $token = JWTAuth::fromUser($user);
 
         return [
-            'status'  => true,
+            'status' => true,
             'message' => __('messages.login_success', ['user' => $user->full_name]),
-            'data'    => [
+            'data' => [
                 'access_token' => $token,
-                'token_type'   => 'bearer',
-                'expires_in'   => JWTAuth::factory()->getTTL() * 60,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60,
             ],
-            'code'    => 200,
+            'code' => 200,
         ];
     }
 
@@ -109,11 +109,9 @@ class UserService
     {
         $user = $this->userRepository->findByEmail($data['email']);
 
-        if (!$user || $user->hasVerifiedEmail()) {
-            return false;
+        if ($user && !$user->hasVerifiedEmail()) {
+            dispatch(new SendVerificationEmail($user));
         }
-
-        dispatch(new SendVerificationEmail($user));
 
         return true;
     }
@@ -122,16 +120,16 @@ class UserService
     {
         if ($user->hasVerifiedEmail()) {
             return [
-                'status'  => true,
+                'status' => true,
                 'message' => __('errors.email_has_verified'),
-                'code'    => 200,
+                'code' => 200,
             ];
         }
 
         return [
-            'status'  => false,
+            'status' => false,
             'message' => __('errors.email_has_not_verified'),
-            'code'    => 403,
+            'code' => 403,
         ];
     }
 
@@ -141,34 +139,34 @@ class UserService
 
         if (!$user || !hash_equals($hash, sha1($user->getEmailForVerification()))) {
             return [
-                'status'  => false,
-                'message' => __('errors.email_invalid_approval'),
-                'code'    => 403,
+                'status' => false,
+                'message' => __('errors.email_verification_invalid'),
+                'code' => 403,
             ];
         }
 
         if ($user->hasVerifiedEmail()) {
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => __('errors.email_has_verified'),
-                'code'    => 400,
+                'code' => 400,
             ];
         }
 
         $user->markEmailAsVerified();
 
         $this->userRepository->update($user, [
-            'activation'      => 1,
+            'activation' => 1,
             'activation_date' => now(),
         ]);
 
         event(new Verified($user));
 
         return [
-            'status'  => true,
+            'status' => true,
             'message' => __('messages.email_verified'),
-            'data'    => null,
-            'code'    => 200,
+            'data' => null,
+            'code' => 200,
         ];
     }
 
@@ -213,24 +211,24 @@ class UserService
 
             if ($status === Password::PASSWORD_RESET) {
                 return [
-                    'status'  => true,
+                    'status' => true,
                     'message' => __('messages.success_changed_password'),
-                    'code'    => 200,
+                    'code' => 200,
                 ];
             }
 
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => __('auth.failed'),
-                'code'    => 400,
+                'code' => 400,
             ];
         } catch (Exception $e) {
             Log::error('Reset password method failed: ' . $e->getMessage());
 
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => __('errors.server_error'),
-                'code'    => 500,
+                'code' => 500,
             ];
         }
     }

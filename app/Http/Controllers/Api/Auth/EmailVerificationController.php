@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Auth\ResendEmailVerificationRequest;
 use App\Http\Services\User\UserService;
-use App\Models\User\User;
+
 use App\Traits\ApiResponseTrait;
 use Exception;
 use OpenApi\Attributes as OA;
@@ -73,18 +73,18 @@ class EmailVerificationController extends Controller
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
-            ),
+            )
         ]
     )]
     public function resendVerificationEmail(ResendEmailVerificationRequest $request)
     {
         try {
-            $bool = $this->userService->resendVerificationEmail($request->all());
-            if ($bool) {
-                return $this->success(null, __('messages.sent_email_verification_link'));
-            } else {
-                return $this->error(__('errors.email_has_verified'), 400);
-            }
+            $this->userService->resendVerificationEmail($request->all());
+
+            return $this->success(
+                null,
+                __('messages.sent_email_verification_link')
+            );
         } catch (Exception $e) {
             return $this->error();
         }
