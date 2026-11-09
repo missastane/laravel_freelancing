@@ -5,7 +5,6 @@ namespace App\Repositories\Contracts\User;
 use App\Models\Market\Project;
 use App\Models\User\Role;
 use App\Models\User\User;
-use App\Repositories\Contracts\BaseRepositoryInterface;
 use App\Repositories\Contracts\CreatableRepositoryInterface;
 use App\Repositories\Contracts\DeletableRepositoryInterface;
 use App\Repositories\Contracts\ShowableRepositoryInterface;
@@ -17,6 +16,7 @@ interface UserRepositoryInterface extends
   ShowableRepositoryInterface,
   UpdatableRepositoryInterface,
   DeletableRepositoryInterface
+  
 {
   public function findById(int $id);
   public function findByEmail(string $email): User|null;

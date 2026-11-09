@@ -3,7 +3,6 @@
 namespace App\Repositories\Eloquent\User;
 
 use App\Http\Resources\ResourceCollections\BaseCollection;
-use App\Http\Resources\ResourceCollections\UserResourceCollection;
 use App\Http\Resources\User\UserResource;
 use App\Models\Market\Project;
 use App\Models\User\Role;
@@ -14,10 +13,8 @@ use App\Traits\HasCreateTrait;
 use App\Traits\HasDeleteTrait;
 use App\Traits\HasShowTrait;
 use App\Traits\HasUpdateTrait;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
