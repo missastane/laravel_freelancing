@@ -42,7 +42,9 @@ class AuthRequest extends FormRequest
         } elseif ($route === 'login') {
             return [
                 'email' => 'required|string|email|exists:users,email',
-                'password' => 'required'
+                'password' => 'required',
+                'client_type' => 'sometimes|required|in:web,mobile',
+                'remember_me' => 'sometimes|boolean',
             ];
         } elseif ($route == 'profile.update.password') {
             return [

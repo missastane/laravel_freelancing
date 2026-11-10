@@ -2,8 +2,10 @@
 
 namespace App\Http\Services\User;
 
+use App\Http\Services\Auth\RefreshTokenService;
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\SendVerificationEmail;
+use App\Models\User\AuthSession;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -24,7 +26,8 @@ class UserService
     public function __construct(
         protected UserRepositoryInterface $userRepository,
         protected WalletRepositoryInterface $walletRepository,
-        protected RoleRepositoryInterface $roleRepository
+        protected RoleRepositoryInterface $roleRepository,
+        protected RefreshTokenService $refreshTokenService
     ) {
     }
 
@@ -59,6 +62,7 @@ class UserService
         return $user;
     }
 
+
     public function loginUser(array $data): array
     {
         $user = $this->userRepository->findByEmail($data['email']);
@@ -71,15 +75,33 @@ class UserService
             ];
         }
 
-        $token = JWTAuth::fromUser($user);
+        $clientType = $data['client_type'] ?? 'web';
+        $rememberMe = (bool) ($data['remember_me'] ?? false);
+
+        // Create a new authentication session and refresh token.
+        $sessionData = $this->refreshTokenService->createSession(
+            user: $user,
+            clientType: $clientType,
+            rememberMe: $rememberMe,
+            ipAddress: $data['ip_address'] ?? null,
+            userAgent: $data['user_agent'] ?? null
+        );
+
+        // Generate an access token linked to this session.
+        $token = JWTAuth::claims([
+            'sid' => $sessionData['session']->id,
+        ])->fromUser($user);
 
         return [
             'status' => true,
-            'message' => __('messages.login_success', ['user' => $user->full_name]),
+            'message' => __('messages.login_success', [
+                'user' => $user->full_name,
+            ]),
             'data' => [
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => JWTAuth::factory()->getTTL() * 60,
+                'refresh_token' => $sessionData['refresh_token'],
             ],
             'code' => 200,
         ];
@@ -88,21 +110,71 @@ class UserService
     public function logoutUser(): void
     {
         $token = JWTAuth::getToken();
+
+        if (!$token) {
+            throw new \RuntimeException('Unauthenticated.', 401);
+        }
+
+        // Read the session ID from the current access token.
+        $payload = JWTAuth::getPayload();
+        $sessionId = $payload->get('sid');
+
+        $userId = auth()->id();
+
+        if (!$sessionId || !$userId) {
+            throw new \RuntimeException('Invalid authentication session.', 401);
+        }
+
+        DB::transaction(function () use ($sessionId, $userId) {
+            $session = AuthSession::whereKey($sessionId)
+                ->where('user_id', $userId)
+                ->lockForUpdate()
+                ->first();
+
+            if ($session && $session->revoked_at === null) {
+                $now = now();
+
+                // Revoke all active refresh tokens of this session.
+                $session->refreshTokens()
+                    ->whereNull('revoked_at')
+                    ->update([
+                        'revoked_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+
+                // Revoke the current authentication session.
+                $session->update([
+                    'revoked_at' => $now,
+                ]);
+            }
+        });
+
+        // Invalidate the current access token.
         JWTAuth::invalidate($token);
-        auth()->logout();
     }
 
-    public function refresh(): string
-    {
-        try {
-            return JWTAuth::refresh(true, true);
-        } catch (TokenExpiredException $e) {
-            throw new \RuntimeException(__('errors.token_expired'), 401);
-        } catch (TokenBlacklistedException $e) {
-            throw new \RuntimeException(__('errors.token_black_listed'), 401);
-        } catch (Exception $e) {
-            throw new \RuntimeException(__('errors.server_error'), 500);
-        }
+    public function refresh(
+        string $plainRefreshToken,
+        string $clientType
+    ): array {
+        // Validate and rotate the refresh token.
+        $result = $this->refreshTokenService->rotate(
+            $plainRefreshToken,
+            $clientType
+        );
+
+        $session = $result['session'];
+
+        // Generate a new access token linked to the existing session.
+        $accessToken = JWTAuth::claims([
+            'sid' => $session->id,
+        ])->fromUser($session->user);
+
+        return [
+            'access_token' => $accessToken,
+            'refresh_token' => $result['refresh_token'],
+            'session' => $session,
+        ];
     }
 
     public function resendVerificationEmail(array $data): bool

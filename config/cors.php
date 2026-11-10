@@ -1,0 +1,30 @@
+
+<?php
+
+return [
+
+    'paths' => ['api/*'],
+
+    'allowed_methods' => ['*'],
+
+    'allowed_origins' => [
+        env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
+
+    'allowed_origins_patterns' => [],
+
+    'allowed_headers' => [
+        'Accept',
+        'Authorization',
+        'Content-Type',
+        'X-Requested-With',
+        'X-CSRF-TOKEN',
+    ],
+
+    'exposed_headers' => [],
+
+    'max_age' => 600,
+
+    'supports_credentials' => true,
+
+];

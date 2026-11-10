@@ -48,7 +48,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -65,7 +65,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = $this->profileService->getBasicInfo();
-        return $this->success($user, __('messages.login_success',['user' => $user->full_name]));
+        return $this->success($user, __('messages.login_success', ['user' => $user->full_name]));
     }
 
     #[OA\Post(
@@ -116,7 +116,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -189,7 +189,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -251,7 +251,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -339,7 +339,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -402,7 +402,7 @@ class ProfileController extends Controller
                 response: 200,
                 description: "Mobile is Updated Successfully",
                 content: new OA\JsonContent(
-                   allOf: [
+                    allOf: [
                         new OA\Schema(
                             ref: "#/components/schemas/SuccessResponse"
                         ),
@@ -488,14 +488,14 @@ class ProfileController extends Controller
                     ]
                 )
             ),
-             new OA\Response(
+            new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
             ),
-             new OA\Response(
+            new OA\Response(
                 response: 403,
                 description: "Limit Exceeded",
                 content: new OA\JsonContent(

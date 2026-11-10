@@ -107,7 +107,7 @@ class EmailVerificationController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated",
+                description: "Unauthenticated - Invalid or expired token",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -133,7 +133,7 @@ class EmailVerificationController extends Controller
     #[OA\Get(
         path: "/api/auth/email/verify/{id}/{hash}",
         summary: "Verify user email",
-        description: "Verifies the user's email address using the ID and hash provided in the verification link.",
+        description: "Verifies the user's email address. Regardless of the verification result, the user is redirected to the frontend email verification page. The redirect URL contains a status query parameter: success, already_verified, or failed.",
         operationId: "verifyEmail",
         tags: ["Authentication"],
         parameters: [
@@ -142,67 +142,36 @@ class EmailVerificationController extends Controller
                 description: "User ID",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "integer", example: 1)
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
             ),
             new OA\Parameter(
                 name: "hash",
-                description: "Hashed email token",
+                description: "SHA-1 hash of the user's email address.",
                 in: "path",
                 required: true,
-                schema: new OA\Schema(type: "string", example: "c4ca4238a0b923820dcc509a6f75849b")
+                schema: new OA\Schema(
+                    type: "string",
+                    example: "0123456789abcdef0123456789abcdef01234567"
+                )
             ),
         ],
         responses: [
             new OA\Response(
-                response: 200,
-                description: "Email verified successfully",
-                content: new OA\JsonContent(
-                    allOf: [
-                        new OA\Schema(
-                            ref: "#/components/schemas/SuccessResponse"
-                        ),
-                        new OA\Property(
-                            property: "data",
-                            ref: "#/components/schemas/User",
-                            type: "object"
+                response: 302,
+                description: "Redirect to the frontend email verification page. The status query parameter indicates the verification result.",
+                headers: [
+                    new OA\Header(
+                        header: "Location",
+                        description: "Frontend redirect URL.",
+                        schema: new OA\Schema(
+                            type: "string",
+                            example: "http://localhost:5173/auth/email-verified?status=success"
                         )
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 400,
-                description: "Email already verified",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/ErrorResponse"
-                )
-            ),
-            new OA\Response(
-                response: 401,
-                description: "Unauthenticated",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/ErrorResponse"
-                )
-            ),
-            new OA\Response(
-                response: 403,
-                description: "Invalid verification link",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/ErrorResponse"
-                )
-            ),
-            new OA\Response(
-                response: 404,
-                description: "User not found",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/ErrorResponse"
-                )
-            ),
-            new OA\Response(
-                response: 500,
-                description: "Internal server error",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/ErrorResponse"
-                )
+                    )
+                ]
             ),
         ]
     )]

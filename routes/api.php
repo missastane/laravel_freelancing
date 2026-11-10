@@ -471,7 +471,7 @@ Route::
         prefix('auth')->group(function () {
             Route::post('/register', [AuthController::class, 'register'])->name('register');
             Route::post('/login', [AuthController::class, 'login'])->name('login');
-            Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('jwt.refresh'); // use post method to more safety
+            Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('csrf.refresh'); // use post method to more safety
             Route::middleware(['auth:api'])->group(function () {
                 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
                 Route::get('/email/verify', [EmailVerificationController::class, 'checkVerificationStatus']);

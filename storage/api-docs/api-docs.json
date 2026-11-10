@@ -71,7 +71,7 @@
                     "Authentication"
                 ],
                 "summary": "User Login",
-                "description": "Authenticate a user and return a JWT token if credentials are valid and email is verified.",
+                "description": "Authenticate a user and create an authentication session. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies. Mobile clients receive both access and refresh tokens in JSON.",
                 "operationId": "be2e78e5f93182d4403f839cc516d312",
                 "requestBody": {
                     "required": true,
@@ -86,12 +86,28 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "missastaneh@gmail.com"
+                                        "example": "user@example.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "r@mZ4Ob00r"
+                                        "example": "StrongPassword@123"
+                                    },
+                                    "client_type": {
+                                        "description": "Client type. Defaults to web if omitted.",
+                                        "type": "string",
+                                        "example": "web",
+                                        "default": "web",
+                                        "enum": [
+                                            "web",
+                                            "mobile"
+                                        ]
+                                    },
+                                    "remember_me": {
+                                        "description": "Whether to create a persistent authentication session.",
+                                        "type": "boolean",
+                                        "example": true,
+                                        "default": false
                                     }
                                 },
                                 "type": "object"
@@ -101,7 +117,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful login",
+                        "description": "Successful login. Web clients receive refresh_token and XSRF-TOKEN cookies. The refresh_token cookie is HttpOnly; the XSRF-TOKEN cookie is accessible to JavaScript. Mobile clients receive refresh_token in the JSON response instead.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -114,6 +130,7 @@
                                                 "data": {
                                                     "properties": {
                                                         "access_token": {
+                                                            "description": "JWT access token.",
                                                             "type": "string",
                                                             "example": "eyJ0eXAiOiJK..."
                                                         },
@@ -122,8 +139,14 @@
                                                             "example": "bearer"
                                                         },
                                                         "expires_in": {
+                                                            "description": "Access token lifetime in seconds.",
                                                             "type": "integer",
                                                             "example": 3600
+                                                        },
+                                                        "refresh_token": {
+                                                            "description": "Returned only to mobile clients. Web clients receive this token through an HttpOnly cookie.",
+                                                            "type": "string",
+                                                            "example": "random_refresh_token_value"
                                                         }
                                                     },
                                                     "type": "object"
@@ -137,7 +160,7 @@
                         }
                     },
                     "401": {
-                        "description": "Invalid credentials",
+                        "description": "Invalid credentials or authentication failure.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -165,11 +188,20 @@
                     "Authentication"
                 ],
                 "summary": "User Logout",
-                "description": "Invalidate the current JWT token and log the user out.",
+                "description": "Log out the authenticated user from the current device. The current authentication session and its associated refresh tokens are revoked, and the current JWT access token is invalidated. For web clients, the refresh_token and XSRF-TOKEN cookies are also cleared.",
                 "operationId": "0b366af9c6842623aab9c8827c519b89",
                 "responses": {
                     "200": {
-                        "description": "Successful logout",
+                        "description": "Successful logout. For web clients, the refresh_token and XSRF-TOKEN cookies are expired.",
+                        "headers": {
+                            "Set-Cookie": {
+                                "description": "Web clients receive expired refresh_token (HttpOnly) and XSRF-TOKEN cookies. Mobile clients do not use these cookies.",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "refresh_token=; Max-Age=0; HttpOnly"
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -179,7 +211,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired access token.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -201,12 +233,73 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Refresh JWT Token",
-                "description": "Refresh the expired JWT token and return a new token.",
+                "summary": "Refresh Access Token",
+                "description": "Refresh the access token using an independent refresh token. Web clients must send the refresh_token HttpOnly cookie, the XSRF-TOKEN cookie, the matching X-CSRF-TOKEN header, and an allowed Origin header. Mobile clients must send the refresh token through the Authorization Bearer header. Exactly one refresh token source must be provided. Every successful refresh rotates the refresh token. The CSRF token remains unchanged during refresh.",
                 "operationId": "1a1e54a850ca4218b0388d92093ab652",
+                "parameters": [
+                    {
+                        "name": "refresh_token",
+                        "in": "cookie",
+                        "description": "Web only. HttpOnly refresh token cookie. Do not send this together with the Authorization Bearer header.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "random_refresh_token_value"
+                        }
+                    },
+                    {
+                        "name": "XSRF-TOKEN",
+                        "in": "cookie",
+                        "description": "Web only. JavaScript-readable signed CSRF cookie.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "csrf_nonce.csrf_signature"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Mobile only. Send the refresh token as a Bearer token.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer random_refresh_token_value"
+                        }
+                    },
+                    {
+                        "name": "X-CSRF-TOKEN",
+                        "in": "header",
+                        "description": "Web only. Must exactly match the XSRF-TOKEN cookie.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "csrf_nonce.csrf_signature"
+                        }
+                    },
+                    {
+                        "name": "Origin",
+                        "in": "header",
+                        "description": "Web only. Must match the configured frontend origin.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "http://localhost:5173"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Token refreshed successfully",
+                        "description": "Access token refreshed successfully. Mobile clients receive the rotated refresh token in JSON. Web clients receive it through a new HttpOnly cookie. The existing XSRF-TOKEN cookie is not rotated.",
+                        "headers": {
+                            "Set-Cookie": {
+                                "description": "Web only. Contains the rotated refresh_token cookie with HttpOnly enabled.",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "refresh_token=new_random_refresh_token; HttpOnly; Path=/; SameSite=Lax"
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -219,6 +312,7 @@
                                                 "data": {
                                                     "properties": {
                                                         "access_token": {
+                                                            "description": "New JWT access token.",
                                                             "type": "string",
                                                             "example": "eyJ0eXAiOiJK..."
                                                         },
@@ -227,8 +321,14 @@
                                                             "example": "bearer"
                                                         },
                                                         "expires_in": {
+                                                            "description": "Access token lifetime in seconds.",
                                                             "type": "integer",
                                                             "example": 3600
+                                                        },
+                                                        "refresh_token": {
+                                                            "description": "Rotated refresh token. Returned only to mobile clients; web clients receive it through an HttpOnly cookie.",
+                                                            "type": "string",
+                                                            "example": "new_random_refresh_token"
                                                         }
                                                     },
                                                     "type": "object"
@@ -242,7 +342,27 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated - Invalid or expired token",
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid or disallowed request Origin.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "419": {
+                        "description": "CSRF token mismatch. The XSRF-TOKEN cookie and X-CSRF-TOKEN header must contain the same valid signed token.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -252,7 +372,7 @@
                         }
                     },
                     "500": {
-                        "description": "Unexpected server error",
+                        "description": "Unexpected server error.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -261,12 +381,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/email/verification-notification": {
@@ -371,7 +486,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -404,7 +519,7 @@
                     "Authentication"
                 ],
                 "summary": "Verify user email",
-                "description": "Verifies the user's email address using the ID and hash provided in the verification link.",
+                "description": "Verifies the user's email address. Regardless of the verification result, the user is redirected to the frontend email verification page. The redirect URL contains a status query parameter: success, already_verified, or failed.",
                 "operationId": "verifyEmail",
                 "parameters": [
                     {
@@ -420,78 +535,23 @@
                     {
                         "name": "hash",
                         "in": "path",
-                        "description": "Hashed email token",
+                        "description": "SHA-1 hash of the user's email address.",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "c4ca4238a0b923820dcc509a6f75849b"
+                            "example": "0123456789abcdef0123456789abcdef01234567"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Email verified successfully",
-                        "content": {
-                            "application/json": {
+                    "302": {
+                        "description": "Redirect to the frontend email verification page. The status query parameter indicates the verification result.",
+                        "headers": {
+                            "Location": {
+                                "description": "Frontend redirect URL.",
                                 "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/SuccessResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/User"
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Email already verified",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Invalid verification link",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "type": "string",
+                                    "example": "http://localhost:5173/auth/email-verified?status=success"
                                 }
                             }
                         }
@@ -687,7 +747,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -781,7 +841,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -869,7 +929,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -962,7 +1022,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1072,7 +1132,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1271,7 +1331,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated - Invalid or expired token",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1375,10 +1435,15 @@
                         "type": "string",
                         "example": "An unexpected server error occurred."
                     },
+                    "error_code": {
+                        "description": "Machine-readable error identifier. May be null or omitted when not applicable.",
+                        "type": "string",
+                        "example": "TOKEN_EXPIRED",
+                        "nullable": true
+                    },
                     "errors": {
                         "description": "Field-specific errors. Empty object when no field errors exist.",
                         "type": "object",
-                        "example": [],
                         "additionalProperties": {
                             "type": "array",
                             "items": {
