@@ -4,9 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User\User;
 use App\Notifications\ResetPasswordNotification;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
@@ -22,14 +20,14 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $response = $this->postJson('/api/forgot-password', [
+        $response = $this->postJson('/api/auth/forgot-password', [
             'email' => $user->email,
         ]);
 
         $response->assertStatus(200)
             ->assertJson([
                 'status' => true,
-                'message' => 'لینک بازیابی کلمه عبور به ایمیل شما ارسال شد',
+                'message' => 'در صورت وجود حساب کاربری با این ایمیل، لینک بازیابی رمز عبور برای شما ارسال خواهد شد.',
                 'data' => null
             ]);
 
@@ -45,7 +43,7 @@ class PasswordResetTest extends TestCase
         $token = Password::createToken($user);
 
         $newPassword = 'r@mZ4Ob00r';
-        $response = $this->postJson('/api/reset-password', [
+        $response = $this->postJson('/api/auth/reset-password', [
             'email' => $user->email,
             'token' => $token,
             'password' => $newPassword,
