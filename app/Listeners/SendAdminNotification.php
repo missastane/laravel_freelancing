@@ -5,9 +5,7 @@ namespace App\Listeners;
 use App\Events\AddWithDrawalRequest;
 use App\Models\User\User;
 use App\Notifications\NewWithDrawalRequestNot;
-use App\Repositories\Contracts\UserRepositoryInterface;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\Notification;
 
 class SendAdminNotification
