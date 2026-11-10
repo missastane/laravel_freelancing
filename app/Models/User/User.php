@@ -19,6 +19,7 @@ use App\Models\Payment\Payment;
 use App\Models\Payment\Wallet;
 use App\Models\Ticket\TicketDepartment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -104,7 +105,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return match ($this->user_type) {
             1 => __('entity.user'),
-            2 =>  __('entity.admin'),
+            2 => __('entity.admin'),
             default => __('entity.undefined'),
         };
     }
@@ -223,6 +224,11 @@ class User extends Authenticatable implements JWTSubject
     public function featurePerchased()
     {
         return $this->hasMany(FeaturePerchased::class, 'user_id');
+    }
+
+    public function authSessions(): HasMany
+    {
+        return $this->hasMany(AuthSession::class);
     }
 
     public function activeSubscription()
