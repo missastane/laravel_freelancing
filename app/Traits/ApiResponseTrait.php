@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Support\ApiResponse;
+
 trait ApiResponseTrait
 {
     public function success($data = null, $message = null, $code = 200)
@@ -14,15 +16,16 @@ trait ApiResponseTrait
     }
 
     public function error(
-        $message = 'خطایی غیرمنتظره در سرور رخ داده است. لطفا دوباره تلاش کنید',
-        $code = 500
+        $message = null,
+        $code = 500,
+        $errorCode = null
     ) {
-        return response()->json([
-            'status' => false,
-            'message' => $message,
-            'errors' => (object) [],
-            'error_list' => [$message],
-        ], $code);
+
+        return ApiResponse::error(
+            $message ?? __('errors.server_error'),
+            $code,
+            $errorCode
+        );
     }
 
     public function successResource($data)
