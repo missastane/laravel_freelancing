@@ -17,7 +17,7 @@ use App\Repositories\Contracts\Market\ProjectCategoryRepositoryInterface;
 use App\Repositories\Contracts\Market\ProjectRepositoryInterface;
 use App\Repositories\Contracts\Market\ProposalRepositoryInterface;
 use App\Repositories\Contracts\Market\SkillRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;

@@ -8,7 +8,7 @@ use App\Exceptions\WrongCurrentPasswordException;
 use App\Http\Services\OTP\OTPService;
 use App\Http\Services\Public\MediaStorageService;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;

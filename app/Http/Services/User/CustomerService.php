@@ -6,12 +6,11 @@ use App\Http\Services\Contracts\User\CustomerServiceInterface;
 use App\Jobs\SendResetPasswordUrl;
 use App\Models\User\User;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
