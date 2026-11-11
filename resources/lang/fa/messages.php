@@ -12,6 +12,6 @@ return [
     'password_recovery_link_sent_to_email' => 'لینک بازیابی کلمه عبور بنابر درخواست کاربر به آدرس :email با موفقیت ارسال شد.',
     'recovery_password_request_delivered' => 'درخواست تغییر رمز عبور دریافت شد',
     'ignore_reset_password' => 'اگر این درخواست توسط شما انجام نشده است، این پیام را نادیده بگیرید',
-
+    'language_updated' => 'زبان پروفایل شما با موفقیت بروزرسانی شد.',
 
 ];

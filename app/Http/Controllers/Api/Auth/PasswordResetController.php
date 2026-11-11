@@ -24,6 +24,9 @@ class PasswordResetController extends Controller
         description: "Sends a password reset link to the given email address. Rate limiting is applied to prevent spam.",
         operationId: "forgotPassword",
         tags: ["Authentication"],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -100,6 +103,9 @@ class PasswordResetController extends Controller
         description: "Resets the password using the provided token and new password.",
         operationId: "resetPassword",
         tags: ["Authentication"],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(

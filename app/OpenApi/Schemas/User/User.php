@@ -19,6 +19,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: "first_name", type: "string", example: "ایمان", nullable: true),
         new OA\Property(property: "last_name", type: "string", example: "مدائنی", nullable: true),
         new OA\Property(property: "national_code", type: "string", example: "2732548965", nullable: true),
+        new OA\Property(property: "locale", type: "string", example: "en"),
         new OA\Property(property: "gender", description: "User gender: 'male' if 1, 'female' if 2", type: "string", example: "مذکر", nullable: true),
         new OA\Property(property: "birth_date", description: "birth datetime", type: "string", format: "date-time", example: "2025-02-22T10:00:00Z", nullable: true),
         new OA\Property(property: "avatar_photo", type: "string", format: "uri", example: "/path/image.jpg", nullable: true),

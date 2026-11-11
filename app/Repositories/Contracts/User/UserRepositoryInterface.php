@@ -29,6 +29,7 @@ interface UserRepositoryInterface extends
   public function getFreelancerWithSkills(array $skills): Collection|null;
   public function getproposedFreelancers(Project $project): Collection|null;
   public function updatePassword(User $user, string $password): User;
+  public function updateLocale(User $user, string $locale): User;
   public function verifyUser(User $user): User;
   public function assignRole(User $user, string|int|array|Role|Collection $roles);
   public function rolesSync(User $user, array $roles);

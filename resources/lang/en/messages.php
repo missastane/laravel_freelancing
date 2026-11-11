@@ -12,7 +12,7 @@ return [
    'password_recovery_link_sent_to_email' => 'The password recovery link has been successfully sent to :email upon user request.',
    'recovery_password_request_delivered' => 'The password change request has been received.',
    'ignore_reset_password' => 'If you did not request a password reset, please ignore this email.',
-
+   'language_updated' => 'Your profile language updated successfully.',
 
 
 

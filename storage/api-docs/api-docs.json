@@ -21,6 +21,11 @@
                 "summary": "Register a new user",
                 "description": "This method registers a new user and sends an approval link to verify the email.",
                 "operationId": "d43ecdfd17aca209ecd9b0a8b370e2c0",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -73,6 +78,11 @@
                 "summary": "User Login",
                 "description": "Authenticate a user and create an authentication session. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies. Mobile clients receive both access and refresh tokens in JSON.",
                 "operationId": "be2e78e5f93182d4403f839cc516d312",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -86,12 +96,12 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "user@example.com"
+                                        "example": "missastane@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "StrongPassword@123"
+                                        "example": "r@mZ4Ob00r"
                                     },
                                     "client_type": {
                                         "description": "Client type. Defaults to web if omitted.",
@@ -190,6 +200,11 @@
                 "summary": "User Logout",
                 "description": "Log out the authenticated user from the current device. The current authentication session and its associated refresh tokens are revoked, and the current JWT access token is invalidated. For web clients, the refresh_token and XSRF-TOKEN cookies are also cleared.",
                 "operationId": "0b366af9c6842623aab9c8827c519b89",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful logout. For web clients, the refresh_token and XSRF-TOKEN cookies are expired.",
@@ -237,6 +252,9 @@
                 "description": "Refresh the access token using an independent refresh token. Web clients must send the refresh_token HttpOnly cookie, the XSRF-TOKEN cookie, the matching X-CSRF-TOKEN header, and an allowed Origin header. Mobile clients must send the refresh token through the Authorization Bearer header. Exactly one refresh token source must be provided. Every successful refresh rotates the refresh token. The CSRF token remains unchanged during refresh.",
                 "operationId": "1a1e54a850ca4218b0388d92093ab652",
                 "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    },
                     {
                         "name": "refresh_token",
                         "in": "cookie",
@@ -392,6 +410,11 @@
                 "summary": "Resend email verification link",
                 "description": "Resends the email verification link to the user if their email is not already verified.",
                 "operationId": "resendVerificationEmail",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -474,6 +497,11 @@
                 "summary": "Check email verification status",
                 "description": "Checks whether the authenticated user's email is verified or not.",
                 "operationId": "checkVerificationStatus",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Email is already verified",
@@ -567,6 +595,11 @@
                 "summary": "Request password reset email",
                 "description": "Sends a password reset link to the given email address. Rate limiting is applied to prevent spam.",
                 "operationId": "forgotPassword",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -639,6 +672,11 @@
                 "summary": "Reset user password",
                 "description": "Resets the password using the provided token and new password.",
                 "operationId": "resetPassword",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -728,6 +766,11 @@
                 "summary": "Get Auth User details",
                 "description": "Returns the `Auth User` details",
                 "operationId": "81f26df398443e12a06321c986a5de3d",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successfully fetched Auth User details",
@@ -782,6 +825,11 @@
                 "summary": "Updates profile information",
                 "description": "This method updates `Profile Information` and saves it.",
                 "operationId": "ce9fd493b24979b4266dfff8f753c81b",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -886,6 +934,11 @@
                 "summary": "Store or Update about-me details by customers",
                 "description": "In this method customers can Store or Update about-me details",
                 "operationId": "23506231b706df5a099930386a4583a3",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -974,6 +1027,11 @@
                 "summary": "Update password by customers",
                 "description": "In this method customers can Update their password",
                 "operationId": "b061fa8bd14a102dc1963ffe9e927be8",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1077,6 +1135,11 @@
                 "summary": "Updates Mobile number",
                 "description": "This method updates `Mobile Number` and sends verification OTP.",
                 "operationId": "c74d4ec9a7ba0451759081013984955e",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1178,6 +1241,9 @@
                 "description": "This method updates mobile if OTP code is valid.",
                 "operationId": "932d3580e124b13c0049933a18678c79",
                 "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    },
                     {
                         "name": "token",
                         "in": "path",
@@ -1286,6 +1352,11 @@
                 "summary": "Change auth user's username",
                 "description": "In this method auth users can change their username up to 2 times.",
                 "operationId": "677e531ac429a9c3f5cc9bc8839f49ae",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1352,6 +1423,111 @@
                     },
                     "422": {
                         "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/change-locale": {
+            "patch": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Change authenticated user's locale",
+                "description": "Allows any authenticated user to change their preferred application language.",
+                "operationId": "be6c68533d9e9f0a3421e795bedf9c2f",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "locale"
+                                ],
+                                "properties": {
+                                    "locale": {
+                                        "description": "The preferred application language.",
+                                        "type": "string",
+                                        "example": "fa",
+                                        "enum": [
+                                            "fa",
+                                            "en"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Language updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "زبان برنامه با موفقیت تغییر کرد"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "locale": {
+                                                    "type": "string",
+                                                    "example": "fa"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated - Invalid or expired token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error - Unsupported locale",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1585,6 +1761,10 @@
                         "example": "2732548965",
                         "nullable": true
                     },
+                    "locale": {
+                        "type": "string",
+                        "example": "en"
+                    },
                     "gender": {
                         "description": "User gender: 'male' if 1, 'female' if 2",
                         "type": "string",
@@ -1675,6 +1855,22 @@
                 "type": "object"
             }
         },
+        "parameters": {
+            "XLocale": {
+                "name": "X-Locale",
+                "in": "header",
+                "description": "Preferred language for the request.",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "default": "en",
+                    "enum": [
+                        "fa",
+                        "en"
+                    ]
+                }
+            }
+        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -1690,6 +1886,10 @@
         {
             "name": "Customer-Profile",
             "description": "Customer-Profile"
+        },
+        {
+            "name": "Profile",
+            "description": "Profile"
         }
     ]
 }

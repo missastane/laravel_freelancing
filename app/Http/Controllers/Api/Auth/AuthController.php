@@ -28,6 +28,22 @@ use OpenApi\Attributes as OA;
     type: "http",
     scheme: "bearer"
 )]
+#[OA\Components(
+    parameters: [
+        new OA\Parameter(
+            parameter: "XLocale",
+            name: "X-Locale",
+            in: "header",
+            required: false,
+            description: "Preferred language for the request.",
+            schema: new OA\Schema(
+                type: "string",
+                enum: ["fa", "en"],
+                default: "en"
+            )
+        )
+    ]
+)]
 class AuthController extends Controller
 {
     use ApiResponseTrait;
@@ -42,6 +58,9 @@ class AuthController extends Controller
         summary: "Register a new user",
         description: "This method registers a new user and sends an approval link to verify the email.",
         tags: ["Authentication"],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -88,6 +107,9 @@ class AuthController extends Controller
         summary: "User Login",
         description: "Authenticate a user and create an authentication session. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies. Mobile clients receive both access and refresh tokens in JSON.",
         tags: ["Authentication"],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -97,13 +119,13 @@ class AuthController extends Controller
                         property: "email",
                         type: "string",
                         format: "email",
-                        example: "user@example.com"
+                        example: "missastane@gmail.com"
                     ),
                     new OA\Property(
                         property: "password",
                         type: "string",
                         format: "password",
-                        example: "StrongPassword@123"
+                        example: "r@mZ4Ob00r"
                     ),
                     new OA\Property(
                         property: "client_type",
@@ -271,6 +293,9 @@ class AuthController extends Controller
         description: "Log out the authenticated user from the current device. The current authentication session and its associated refresh tokens are revoked, and the current JWT access token is invalidated. For web clients, the refresh_token and XSRF-TOKEN cookies are also cleared.",
         tags: ["Authentication"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -349,6 +374,7 @@ class AuthController extends Controller
         description: "Refresh the access token using an independent refresh token. Web clients must send the refresh_token HttpOnly cookie, the XSRF-TOKEN cookie, the matching X-CSRF-TOKEN header, and an allowed Origin header. Mobile clients must send the refresh token through the Authorization Bearer header. Exactly one refresh token source must be provided. Every successful refresh rotates the refresh token. The CSRF token remains unchanged during refresh.",
         tags: ["Authentication"],
         parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
             new OA\Parameter(
                 name: "refresh_token",
                 in: "cookie",

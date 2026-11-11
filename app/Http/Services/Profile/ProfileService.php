@@ -9,7 +9,8 @@ use App\Http\Services\OTP\OTPService;
 use App\Http\Services\Public\MediaStorageService;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
-use Exception;
+use Illuminate\Support\Facades\App;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -50,7 +51,7 @@ class ProfileService
     {
         $user = auth()->user();
         if (!Hash::check($data['current_password'], $user->password)) {
-           throw new WrongCurrentPasswordException();
+            throw new WrongCurrentPasswordException();
         }
         return $this->userRepository->update($user, [
             'password' => Hash::make($data['new_password'])
@@ -143,6 +144,26 @@ class ProfileService
         ]);
 
         return $user->fresh();
+    }
+
+    public function changeLocale(string $locale)
+    {
+        $supportedLocales = config('app.supported_locales', ['en']);
+
+        if (!in_array($locale, $supportedLocales, true)) {
+            throw ValidationException::withMessages([
+                'locale' => ['The selected language is not supported.'],
+            ]);
+        }
+
+        $user = auth()->user();
+
+        $user = $this->userRepository->updateLocale($user, $locale);
+
+        // Apply the new locale to the current request.
+        App::setLocale($locale);
+
+        return $user;
     }
 
 }

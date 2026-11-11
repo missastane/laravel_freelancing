@@ -28,6 +28,9 @@ class ProfileController extends Controller
         description: "Returns the `Auth User` details",
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -74,6 +77,9 @@ class ProfileController extends Controller
         description: "This method updates `Profile Information` and saves it.",
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\MediaType(
@@ -154,6 +160,9 @@ class ProfileController extends Controller
         description: "In this method customers can Store or Update about-me details",
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -226,6 +235,9 @@ class ProfileController extends Controller
         description: "In this method customers can Update their password",
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -297,6 +309,9 @@ class ProfileController extends Controller
         description: "This method updates `Mobile Number` and sends verification OTP.",
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -380,6 +395,7 @@ class ProfileController extends Controller
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
         parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
             new OA\Parameter(
                 name: "token",
                 description: "Token from OTP record",
@@ -467,6 +483,9 @@ class ProfileController extends Controller
         description: "In this method auth users can change their username up to 2 times.",
         tags: ["Customer-Profile"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(

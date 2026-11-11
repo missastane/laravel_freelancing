@@ -126,6 +126,15 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     return $user;
   }
 
+  public function updateLocale(User $user, string $locale): User
+  {
+    $user->forceFill([
+      'locale' => $locale,
+    ])->save();
+
+    return $user;
+  }
+
   public function verifyUser(User $user): User
   {
     $user->forceFill([
@@ -161,7 +170,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     return $user->permissions()->detach();
   }
 
-  public function syncDepartments(User $user,array $data)
+  public function syncDepartments(User $user, array $data)
   {
     return $user->departments()->sync($data);
   }

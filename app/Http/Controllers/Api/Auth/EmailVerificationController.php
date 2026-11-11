@@ -24,6 +24,9 @@ class EmailVerificationController extends Controller
         description: "Resends the email verification link to the user if their email is not already verified.",
         operationId: "resendVerificationEmail",
         tags: ["Authentication"],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -97,6 +100,9 @@ class EmailVerificationController extends Controller
         operationId: "checkVerificationStatus",
         tags: ["Authentication"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -137,6 +143,9 @@ class EmailVerificationController extends Controller
         operationId: "verifyEmail",
         tags: ["Authentication"],
         parameters: [
+            new OA\Schema(
+                ref: "#/components/schemas/SuccessResponse"
+            ),
             new OA\Parameter(
                 name: "id",
                 description: "User ID",

@@ -55,6 +55,7 @@ use App\Http\Controllers\Api\Customer\UserPortfolioController;
 use App\Http\Controllers\Api\Customer\WithdrawalRequestController as CustomerWithdrawalRequestController;
 use App\Http\Controllers\Api\Admin\Market\WithdrawalController;
 use App\Http\Controllers\Api\FileController;
+use App\Http\Controllers\LocaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\OTPController;
@@ -364,6 +365,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('profile')->group(function () {
         Route::get('/', [CustomerProfileController::class, 'index']);
         Route::put('/update', [CustomerProfileController::class, 'updateBasicInfo']);
+        Route::patch('/change-locale', [LocaleController::class, 'update'])
+            ->name('profile.locale.update');
         Route::put('/about-me', [CustomerProfileController::class, 'addAboutMe']);
         Route::patch('/change-password', [CustomerProfileController::class, 'updatePassword']);
         Route::patch('/change-username', [CustomerProfileController::class, 'changeUsername']);
@@ -468,19 +471,19 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::
-        prefix('auth')->group(function () {
-            Route::post('/register', [AuthController::class, 'register'])->name('register');
-            Route::post('/login', [AuthController::class, 'login'])->name('login');
-            Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('csrf.refresh'); // use post method to more safety
-            Route::middleware(['auth:api'])->group(function () {
-                Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-                Route::get('/email/verify', [EmailVerificationController::class, 'checkVerificationStatus']);
-            });
-            Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
-            Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware('signed', 'throttle:6,1')->name('verification.verify');
-            Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->name('reset-password');
-            Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])->name('forgot-password');
+    prefix('auth')->group(function () {
+        Route::post('/register', [AuthController::class, 'register'])->name('register');
+        Route::post('/login', [AuthController::class, 'login'])->name('login');
+        Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('csrf.refresh'); // use post method to more safety
+        Route::middleware(['auth:api'])->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+            Route::get('/email/verify', [EmailVerificationController::class, 'checkVerificationStatus']);
         });
+        Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
+        Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware('signed', 'throttle:6,1')->name('verification.verify');
+        Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->name('reset-password');
+        Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])->name('forgot-password');
+    });
 
 Route::post('/broadcasting/auth', function (Request $request) {
     return Broadcast::auth($request);

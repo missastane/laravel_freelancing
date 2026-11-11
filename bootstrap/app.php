@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\DetectExpiredJwtToken::class
         );
 
+        $middleware->append(
+            \App\Http\Middleware\SetLocale::class
+        );
+
         $middleware->appendToGroup(
             'auth',
             \Tymon\JWTAuth\Http\Middleware\Authenticate::class
