@@ -221,7 +221,10 @@ class AuthController extends Controller
             );
 
             $rememberMe = (bool) ($data['remember_me'] ?? false);
-            $cookieMinutes = $rememberMe ? 30 * 24 * 60 : 0;
+
+            $cookieMinutes = $rememberMe
+                ? 30 * 24 * 60
+                : null;
 
             // Generate a signed CSRF token.
             $csrfToken = app(\App\Support\CsrfToken::class)->generate();
@@ -534,7 +537,7 @@ class AuthController extends Controller
 
             $cookieMinutes = $session->remember_me
                 ? max(1, now()->diffInMinutes($session->expires_at, false))
-                : 0;
+                : null;
 
             $response = $this->success(
                 $responseData,
