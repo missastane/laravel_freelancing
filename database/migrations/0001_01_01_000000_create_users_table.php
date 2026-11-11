@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('national_code')->unique()->nullable();
+            $table->string('locale',5)->default('en');
             $table->string('profile_photo_path')->nullable();
             $table->tinyInteger('gender')->nullable()->comment('1 => male, 2 => female');
             $table->timestamp('birth_date')->nullable();
