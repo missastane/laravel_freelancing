@@ -1,4 +1,3 @@
-
 <?php
 
 return [
@@ -14,11 +13,13 @@ return [
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => [
-        'Accept',
-        'Authorization',
         'Content-Type',
         'X-Requested-With',
+        'Authorization',
         'X-CSRF-TOKEN',
+        'X-XSRF-TOKEN',
+        'Accept',
+        'X-Locale',
     ],
 
     'exposed_headers' => [],
