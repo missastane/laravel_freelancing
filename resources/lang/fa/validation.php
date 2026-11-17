@@ -96,6 +96,11 @@ return [
         'group_id' => array(
             'required' => 'Please choose a group or choose temp!',
         ),
+
+        'name_only' => 'فیلد :attribute فقط می‌تواند شامل حروف، فاصله، نیم‌فاصله، خط تیره و آپاستروف باشد.',
+        'safe_title' => 'فیلد :attribute نباید شامل تگ‌های HTML باشد.',
+        'plain_text_only' => 'فیلد :attribute باید شامل متن ساده باشد و نباید حاوی تگ HTML یا کاراکترهای غیرمجاز باشد.',
+        'system_name' => 'فیلد :attribute باید با حرف انگلیسی شروع شود و فقط شامل حروف انگلیسی، اعداد و اندرلاین باشد.',
     ),
 
     /*
@@ -204,7 +209,7 @@ return [
         "g-recaptcha-response" => 'اعتبارسنجی کپچا',
         "postal_tracking_code" => 'کد رهگیری پستی',
         "guarantee" => 'گارانتی',
-        
+
 
 
 
