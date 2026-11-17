@@ -8,6 +8,7 @@ use App\Http\Services\Role\RoleService;
 use App\Models\User\Role;
 use App\Traits\ApiResponseTrait;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
 
@@ -17,7 +18,7 @@ class RoleController extends Controller
     public function __construct(protected RoleService $roleService)
     {
     }
-    
+
     #[OA\Get(
         path: "/api/admin/user/role",
         summary: "Get a paginated list of all roles",
@@ -58,9 +59,12 @@ class RoleController extends Controller
             ),
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        $roles = $this->roleService->getRoles();
+        $perPage = $request->integer('per_page', 15);
+
+        $roles = $this->roleService->getRoles($perPage);
+
         return $this->success($roles);
     }
 
@@ -193,7 +197,7 @@ class RoleController extends Controller
     {
         try {
             $role = $this->roleService->storeRole($request->all());
-            return $this->success($role, __('messages.role_created') , 201);
+            return $this->success($role, __('messages.role_created'), 201);
         } catch (Exception $e) {
             return $this->error();
         }
