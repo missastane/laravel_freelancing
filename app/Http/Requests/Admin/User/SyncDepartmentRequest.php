@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SyncDepartmentRequest extends FormRequest
 {
@@ -21,9 +22,23 @@ class SyncDepartmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $admin = $this->route('admin');
+
         return [
-            'departments' => 'required|array',
-            'departments.*' => 'required|exists:ticket_departments,id',
+            'departments' => 'present|array',
+            'departments.*' => [
+                'required',
+                'integer',
+                'distinct',
+                Rule::exists('ticket_departments', 'id')
+                    ->where(function ($query) use ($admin) {
+                        $query->where('status', 1)
+                            ->orWhereIn(
+                                'id',
+                                $admin->departments()->pluck('ticket_departments.id')
+                            );
+                    }),
+            ],
         ];
     }
 
