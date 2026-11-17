@@ -197,11 +197,11 @@
                     "Admin/Form"
                 ],
                 "summary": "Get necessary options for admin forms",
-                "description": "This endpoint returns all `Roles` and `Permissions` to be used for admin forms.",
+                "description": "This endpoint returns all `Roles` and `Permissions` and `Departments`  to be used for admin forms.",
                 "operationId": "46eb642efe24e3dcc95668a18ca72f4a",
                 "responses": {
                     "200": {
-                        "description": "Successfully fetched Permissions and Roles for admin forms",
+                        "description": "Successfully fetched Permissions and Roles and Departments for admin forms",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -223,6 +223,12 @@
                                                             "type": "array",
                                                             "items": {
                                                                 "$ref": "#/components/schemas/PermissionOption"
+                                                            }
+                                                        },
+                                                        "departments": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/DepartmentOption"
                                                             }
                                                         }
                                                     },
@@ -2884,6 +2890,27 @@
                 },
                 "type": "object"
             },
+            "DepartmentOption": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Financial department"
+                    },
+                    "status": {
+                        "description": "1 => active, 2 => deactive",
+                        "type": "integer",
+                        "enum": [
+                            1,
+                            2
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "PaginationLinks": {
                 "title": "Pagination Links",
                 "description": "Pagination navigation links",
@@ -3243,6 +3270,27 @@
                                 "name": {
                                     "type": "string",
                                     "example": "edit-post"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "departemnts": {
+                        "description": "Array of related departemnts with ID and name and status",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "financial"
+                                },
+                                "status": {
+                                    "description": "1 => active and 2 => deactive",
+                                    "type": "integer"
                                 }
                             },
                             "type": "object"
