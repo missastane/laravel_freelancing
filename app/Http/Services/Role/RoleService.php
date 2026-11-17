@@ -25,7 +25,7 @@ class RoleService
 
     public function showRole(Role $role): Role
     {
-        return $this->roleRepository->showWithRelations($role, ['users:id,username']);
+        return $this->roleRepository->showWithRelations($role);
     }
 
     public function storeRole(array $data)
