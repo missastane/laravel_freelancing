@@ -6,6 +6,7 @@ use App\Models\User\Role;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCRUDTrait;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class RoleRepository extends BaseRepository implements RoleRepositoryInterface
@@ -16,6 +17,15 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
         parent::__construct($model);
     }
 
+    public function getRoles(int $perPage = 15): Paginator
+    {
+        return $this->model
+            ->with('permissions')
+            ->withCount('permissions')
+            ->orderBy('created_at', 'asc')
+            ->paginate($perPage);
+    }
+
     public function getRoleOptions(): Collection
     {
         return $this->model->query()->select('id', 'name')->get();
@@ -23,9 +33,15 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
 
     public function firstOrCreate(string $role)
     {
-        return $this->model->firstOrCreate(['name' => $role],['guard_name' => 'api']);
+        return $this->model->firstOrCreate(['name' => $role], ['guard_name' => 'api']);
     }
-    
+
+    public function show(Role $role): Role
+    {
+        return $this->showWithRelations($role, ['permissions'])
+            ->loadCount('permissions');
+    }
+
     public function storeRole(array $data): Role
     {
         $name = $data['name'];
@@ -63,7 +79,7 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
 
     public function findByName(string $name)
     {
-        return $this->model->where('name',$name)->first();
+        return $this->model->where('name', $name)->first();
     }
 
 
