@@ -14,6 +14,7 @@ return [
     'please_do_login' => 'لطفا جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید',
     'access_token_expired' => 'توکن دسترسی منقضی شده است',
     'validation_failed' => 'داده‌های ارسال شده نامعتبر است.',
+    'admin_role_can_not_be_deleted' => 'نقش ادمین قابل حذف نیست',
 
 
 
