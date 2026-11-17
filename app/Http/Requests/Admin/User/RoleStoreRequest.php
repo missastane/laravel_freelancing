@@ -22,8 +22,9 @@ class RoleStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-              'roles' => 'nullable|exists:roles,id|array',
-                // 'g-recaptcha-response' => 'recaptcha',
+            'roles' => 'nullable|array',
+            'roles.*' => 'integer|distinct|exists:roles,id',
+            // 'g-recaptcha-response' => 'recaptcha',
         ];
     }
 
