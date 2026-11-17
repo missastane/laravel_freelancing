@@ -14,5 +14,6 @@ return [
     'please_do_login' => 'Please log in to your account first to perform this action.',
     'access_token_expired' => 'The access token has expired.',
     'validation_failed' => 'The submitted data is invalid.',
+    'admin_role_can_not_be_deleted' => 'The admin role cannot be deleted.',
 
 ];
