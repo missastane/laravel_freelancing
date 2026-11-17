@@ -13,9 +13,9 @@ class RoleService
     {
     }
 
-    public function getRoles(): Paginator
+    public function getRoles(int $perPage = 15): Paginator
     {
-        return $this->roleRepository->all();
+        return $this->roleRepository->getRoles($perPage);
     }
 
     public function getOptions(): Collection
@@ -25,7 +25,7 @@ class RoleService
 
     public function showRole(Role $role): Role
     {
-        return $this->roleRepository->showWithRelations($role);
+        return $this->roleRepository->show($role);
     }
 
     public function storeRole(array $data)
@@ -43,7 +43,7 @@ class RoleService
     }
     public function syncPermissionsToRole(Role $role, array $data): Role
     {
-        return $this->roleRepository->syncPermissions($role,$data['permissions']);
+        return $this->roleRepository->syncPermissions($role, $data['permissions']);
     }
 
 }
