@@ -158,13 +158,13 @@ class AdminUserController extends Controller
     #[OA\Get(
         path: "/api/admin/user/admin-user/options",
         summary: "Get necessary options for admin forms",
-        description: "This endpoint returns all `Roles` and `Permissions` to be used for admin forms.",
+        description: "This endpoint returns all `Roles` and `Permissions` and `Departments`  to be used for admin forms.",
         tags: ["Admin", "Admin/Form"],
         security: [["bearerAuth" => []]],
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Successfully fetched Permissions and Roles for admin forms",
+                description: "Successfully fetched Permissions and Roles and Departments for admin forms",
                 content: new OA\JsonContent(
                     allOf: [
                         new OA\Schema(ref: "#/components/schemas/SuccessResponse"),
@@ -183,6 +183,11 @@ class AdminUserController extends Controller
                                             property: "permissions",
                                             type: "array",
                                             items: new OA\Items(ref: "#/components/schemas/PermissionOption")
+                                        ),
+                                         new OA\Property(
+                                            property: "departments",
+                                            type: "array",
+                                            items: new OA\Items(ref: "#/components/schemas/DepartmentOption")
                                         ),
                                     ]
                                 ),
@@ -210,7 +215,8 @@ class AdminUserController extends Controller
         $data = $this->adminUserService->options();
         return $this->success([
             'roles' => $data['roles'],
-            'permissions' => $data['permissions']
+            'permissions' => $data['permissions'],
+            'departments' => $data['departments']
         ]);
     }
 
@@ -436,7 +442,7 @@ class AdminUserController extends Controller
     public function update(AdminUserRequest $request, User $admin)
     {
         try {
-            $inputs = $request->all();
+            $inputs = $request->validated();
             $this->adminUserService->update($admin, $inputs);
             return $this->success($admin->fresh(), __('messages.user_updated'));
         } catch (Exception $e) {
@@ -589,7 +595,7 @@ class AdminUserController extends Controller
             return $this->error(__('errors.unauthorized'), 403);
         }
         try {
-            $this->adminUserService->syncRoles($admin, $request->roles);
+            $this->adminUserService->syncRoles($admin, $request->validated());
             return $this->success($admin->fresh('roles'), __('messages.admin_roles_updated'));
         } catch (Exception $e) {
             return $this->error($e->getMessage());
@@ -676,10 +682,10 @@ class AdminUserController extends Controller
             return $this->error(__('errors.unauthorized'), 403);
         }
         try {
-            $this->adminUserService->permissionsStore($admin, $request->permissions);
+            $this->adminUserService->permissionsStore($admin, $request->validated());
             return $this->success($admin->fresh('permissions'), __('messages.admin_permissions_updated'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
