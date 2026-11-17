@@ -3698,6 +3698,46 @@
                 },
                 "type": "object"
             },
+            "PermissionSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "edit-comments"
+                    },
+                    "guard_name": {
+                        "type": "string",
+                        "example": "api"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-24T14:12:24.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-24T14:12:24.000000Z"
+                    },
+                    "pivot": {
+                        "properties": {
+                            "role_id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "permission_id": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "RoleSchema": {
                 "properties": {
                     "id": {
@@ -3712,15 +3752,23 @@
                         "type": "string",
                         "example": "api"
                     },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionSchema"
+                        }
+                    },
+                    "permissions_count": {
+                        "type": "integer",
+                        "example": 12
+                    },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2024-01-01T12:00:00Z"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2024-01-01T12:00:00Z"
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
