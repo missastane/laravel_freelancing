@@ -54,6 +54,19 @@ use OpenApi\Attributes as OA;
                 ]
             )
         ),
+          new OA\Property(
+            property: "departemnts",
+            description: "Array of related departemnts with ID and name and status",
+            type: "array",
+            items: new OA\Items(
+                type: "object",
+                properties: [
+                    new OA\Property(property: "id", type: "integer", example: 3),
+                    new OA\Property(property: "name", type: "string", example: "financial"),
+                    new OA\Property(property: "status", type: "integer", description: "1 => active and 2 => deactive"),
+                ]
+            )
+        ),
     ]
 )]
 class User
