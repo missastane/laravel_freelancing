@@ -31,7 +31,7 @@ class TicketDepartmentRepository extends BaseRepository implements TicketDepartm
     }
     public function getDepartmentOption(): Collection
     {
-        $departments = $this->model->query()->select('id', 'name')->get();
+        $departments = $this->model->query()->select('id', 'name', 'status')->get();
         return $departments;
     }
 
