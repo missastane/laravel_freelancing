@@ -4,6 +4,7 @@ namespace App\Http\Services\User;
 
 use App\Jobs\SendResetPasswordUrl;
 use App\Models\User\User;
+use App\Repositories\Contracts\Ticket\TicketDepartmentRepositoryInterface;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -17,7 +18,8 @@ class AdminUserService
     public function __construct(
         protected UserRepositoryInterface $userRepository,
         protected PermissionRepositoryInterface $permissionRepository,
-        protected RoleRepositoryInterface $roleRepository
+        protected RoleRepositoryInterface $roleRepository,
+        protected TicketDepartmentRepositoryInterface $ticketDepartmentRepository
     ) {
 
     }
@@ -30,7 +32,8 @@ class AdminUserService
     {
         return [
             'roles' => $this->roleRepository->getRoleOptions(),
-            'permissions' => $this->permissionRepository->getPermissionOptions()
+            'permissions' => $this->permissionRepository->getPermissionOptions(),
+            'departments' => $this->ticketDepartmentRepository->getDepartmentOption()
         ];
     }
     public function showAdmin(User $admin)
@@ -74,20 +77,32 @@ class AdminUserService
     public function syncRoles(User $admin, array $data): User
     {
         $adminRole = $this->roleRepository->findByName('admin');
+
         if (!$adminRole) {
-            $adminRole = $this->roleRepository->create(['name' => 'admin', 'guard_name' => 'api']);
+            $adminRole = $this->roleRepository->create([
+                'name' => 'admin',
+                'guard_name' => 'api',
+            ]);
         }
-        $adminRoleId = $adminRole->id;
-        array_push($data, $adminRoleId);
-        $this->userRepository->rolesSync($admin, $data);
-        return $admin;
+
+        $roles = $data['roles'] ?? [];
+
+        // Admin role must always be assigned.
+        $roles[] = $adminRole->id;
+
+        $this->userRepository->rolesSync(
+            $admin,
+            array_unique($roles)
+        );
+
+        return $admin->fresh('roles');
     }
     public function permissionsStore(User $admin, array $data): User
     {
         $this->userRepository->permissionsSync($admin, $data);
-        return $admin;
-    }
 
+        return $admin->fresh('permissions');
+    }
     public function syncDepartments(User $user, array $data)
     {
         return $this->userRepository->syncDepartments($user, $data);
