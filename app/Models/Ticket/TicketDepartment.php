@@ -3,6 +3,7 @@
 namespace App\Models\Ticket;
 
 use App\Models\User\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -53,6 +54,11 @@ class TicketDepartment extends Model
             'admin_id'
         )->withTimestamps();
         ;
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 1);
     }
 
 }
