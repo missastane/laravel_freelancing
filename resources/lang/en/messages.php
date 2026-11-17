@@ -21,8 +21,10 @@ return [
    'admin_roles_updated' => 'The admin roles have been successfully updated.',
    'admin_permissions_updated' => 'The admin permissions have been successfully updated.',
    'admin_departments_updated' => 'The admin departments have been successfully updated.',
-
-
+   'role_created' => 'The role has been successfully created.',
+   'role_updated' => 'The role has been successfully updated.',
+   'permissions_synced_role' => 'The permissions have been successfully assigned to the role.',
+   'role_deleted' => 'The role and its dependencies have been successfully deleted.',
 
 
 ];
