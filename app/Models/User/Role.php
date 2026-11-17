@@ -8,14 +8,14 @@ use Spatie\Permission\Traits\HasPermissions;
 
 class Role extends Model
 {
-     use HasFactory, HasPermissions;
-    protected $fillable = ['name','guard_name'];
+    use HasFactory, HasPermissions;
+    protected $fillable = ['name', 'guard_name'];
 
     public function users()
     {
         return $this->morphedByMany(User::class, 'model', 'model_has_roles');
     }
-    
+
     public function permissions()
     {
         return $this->belongsToMany(
