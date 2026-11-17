@@ -13,5 +13,13 @@ return [
     'recovery_password_request_delivered' => 'درخواست تغییر رمز عبور دریافت شد',
     'ignore_reset_password' => 'اگر این درخواست توسط شما انجام نشده است، این پیام را نادیده بگیرید',
     'language_updated' => 'زبان پروفایل شما با موفقیت بروزرسانی شد.',
+    'change_password_link_sent' => 'لینک تغییر رمز عبور به ایمیل ارسال شد',
+    'user_activated' => 'کاربر با موفقیت فعال شد',
+    'user_deactivated' => 'کاربر با موفقیت غیرفعال شد',
+    'user_updated' => 'کاربر با موفقیت بروزرسانی شد',
+    'user_deleted' => 'ادمین با موفقیت حذف شد',
+    'admin_roles_updated' =>  'نقش های ادمین با موفقیت بروزرسانی شد',
+    'admin_permissions_updated' => 'دسترسی های ادمین با موفقیت بروزرسانی شد',
+    'admin_departments_updated' => 'دپارتمان های ادمین با موفقیت بروزرسانی شد',
 
 ];

@@ -21,9 +21,9 @@ class AdminUserService
     ) {
 
     }
-    public function getAdmins($message)
+    public function getAdmins($message, ?string $search, int $perPage = 15)
     {
-        return $this->userRepository->getUsers(2,$message);
+        return $this->userRepository->getUsers(2, $search, $message, $perPage);
     }
 
     public function options(): array
@@ -32,10 +32,6 @@ class AdminUserService
             'roles' => $this->roleRepository->getRoleOptions(),
             'permissions' => $this->permissionRepository->getPermissionOptions()
         ];
-    }
-    public function searchAdmins(string $search, $message)
-    {
-        return $this->userRepository->searchUsers(2, $search,$message);
     }
     public function showAdmin(User $admin)
     {
@@ -54,7 +50,7 @@ class AdminUserService
 
             $admin = $this->userRepository->create($data);
 
-            $this->userRepository->assignRole($admin,$admin->active_role);
+            $this->userRepository->assignRole($admin, $admin->active_role);
 
             $token = Password::createToken($admin);
             SendResetPasswordUrl::dispatch($admin, $token);
@@ -78,22 +74,22 @@ class AdminUserService
     public function syncRoles(User $admin, array $data): User
     {
         $adminRole = $this->roleRepository->findByName('admin');
-        if(!$adminRole){
-            $adminRole =$this->roleRepository->create(['name' => 'admin','guard_name' => 'api']);
+        if (!$adminRole) {
+            $adminRole = $this->roleRepository->create(['name' => 'admin', 'guard_name' => 'api']);
         }
         $adminRoleId = $adminRole->id;
-        array_push($data,$adminRoleId);
-        $this->userRepository->rolesSync($admin,$data);
+        array_push($data, $adminRoleId);
+        $this->userRepository->rolesSync($admin, $data);
         return $admin;
     }
     public function permissionsStore(User $admin, array $data): User
     {
-        $this->userRepository->permissionsSync($admin,$data);
+        $this->userRepository->permissionsSync($admin, $data);
         return $admin;
     }
 
     public function syncDepartments(User $user, array $data)
     {
-        return $this->userRepository->syncDepartments($user,$data);
+        return $this->userRepository->syncDepartments($user, $data);
     }
 }

@@ -13,6 +13,15 @@ return [
    'recovery_password_request_delivered' => 'The password change request has been received.',
    'ignore_reset_password' => 'If you did not request a password reset, please ignore this email.',
    'language_updated' => 'Your profile language updated successfully.',
+   'change_password_link_sent' => 'The password change link has been sent to the email.',
+   'user_activated' => 'The user has been successfully activated.',
+   'user_deactivated' => 'The user has been successfully deactivated.',
+   'user_updated' => 'The user has been successfully updated.',
+   'user_deleted' => 'The admin has been successfully deleted.',
+   'admin_roles_updated' => 'The admin roles have been successfully updated.',
+   'admin_permissions_updated' => 'The admin permissions have been successfully updated.',
+   'admin_departments_updated' => 'The admin departments have been successfully updated.',
+
 
 
 

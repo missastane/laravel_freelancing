@@ -16,14 +16,12 @@ interface UserRepositoryInterface extends
   ShowableRepositoryInterface,
   UpdatableRepositoryInterface,
   DeletableRepositoryInterface
-  
 {
   public function findById(int $id);
   public function findByEmail(string $email): User|null;
   public function findByMobile(string $mobile);
-  public function getUsers(int $type,$message);
+  public function getUsers(int $type, null|string $search, $message, int $perPage);
   public function getAdmins();
-  public function searchUsers(int $type, string $search, $message);
   public function showUser(User $user);
   public function toggleActivation(User $user): string|null;
   public function getFreelancerWithSkills(array $skills): Collection|null;
@@ -34,8 +32,8 @@ interface UserRepositoryInterface extends
   public function assignRole(User $user, string|int|array|Role|Collection $roles);
   public function rolesSync(User $user, array $roles);
   public function permissionsSync(User $user, array $permissions);
-  
-  public function syncDepartments(User $user,array $data);
+
+  public function syncDepartments(User $user, array $data);
   public function detachRoles(User $user);
   public function detachPermissions(User $user);
   public function deleteAdmin(User $admin);

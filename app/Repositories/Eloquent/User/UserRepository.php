@@ -32,15 +32,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     return $this->model
       ->where('user_type', $type)
       ->with('roles', 'permissions')
-      ->orderBy('last_name');
-  }
-
-
-  public function getUsers(int $type, $message)
-  {
-    $users = $this->getUsersQuery($type)->paginate(15);
-    return new BaseCollection($users, UserResource::class, $message);
-
+      ->orderBy('id');
   }
 
   public function getAdmins()
@@ -50,21 +42,32 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     })->get();
   }
 
-  public function searchUsers(int $type, string $search, $message)
+  public function getUsers(int $type, null|string $search, $message, int $perPage = 15)
   {
-    $users = $this->getUsersQuery($type)
-      ->where(function ($query) use ($search) {
+    $query = $this->getUsersQuery($type);
+
+    if ($search) {
+      $query->where(function ($query) use ($search) {
         $query->where('first_name', 'LIKE', "%{$search}%")
-          ->orWhere('last_name', 'LIKE', "%{$search}%");
-      })
-      ->paginate(15);
-    return new BaseCollection($users, UserResource::class, $message);
+          ->orWhere('last_name', 'LIKE', "%{$search}%")
+          ->orWhere('username', 'LIKE', "%{$search}%")
+          ->orWhere('email', 'LIKE', "%{$search}%");
+      });
+    }
+
+    $users = $query->paginate($perPage);
+
+    return new BaseCollection(
+      $users,
+      UserResource::class,
+      $message
+    );
   }
   public function showUser(User $user)
   {
     $user = $this->showWithRelations($user, ['roles', 'permissions']);
-
-    return new UserResource($user);
+    $resource = new UserResource($user);
+    return $resource;
   }
 
   public function findByEmail(string $email): User
@@ -77,8 +80,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     $user->activation = $user->activation == 1 ? 2 : 1;
     if ($user->save()) {
       $message = $user->activation == 1
-        ? 'کاربر با موفقیت فعال شد'
-        : 'کاربر با موفقیت غیرفعال شد';
+        ? __('messages.user_activated')
+        : __('messages.user_deactivated');
       return $message;
     }
     return null;

@@ -124,20 +124,15 @@ class User extends Authenticatable implements JWTSubject
             return __('entity.inactive_user');
         }
     }
-    public function getGenderValueAttribute()
+    protected function genderValue(): Attribute
     {
-        switch ($this->gender) {
-            case 1:
-                $result = __('entity.male');
-                break;
-            case 2:
-                $result = __('entity.female');
-                break;
-            default:
-                $result = null;
-                break;
-        }
-        return $result;
+        return Attribute::make(
+            get: fn() => match ($this->gender) {
+                1 => __('entity.male'),
+                2 => __('entity.female'),
+                default => null,
+            }
+        );
     }
 
     public function userEducations()

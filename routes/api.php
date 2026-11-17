@@ -58,7 +58,6 @@ use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\OTPController;
 use App\Http\Controllers\API\Admin\Locale\ProvinceController;
 use App\Http\Controllers\Api\Customer\WalletController as CustomerWalletController;
 
@@ -209,7 +208,6 @@ Route::prefix('admin')->middleware(['auth:api', 'admin'])->group(function () {
 
         Route::prefix('admin-user')->group(function () {
             Route::get('/', [AdminUserController::class, 'index'])->name('admin.user.admin-user');
-            Route::get('/search', [AdminUserController::class, 'search'])->name('admin.user.admin-user.search');
             Route::get('/options', [AdminUserController::class, 'options'])->name('admin.user.admin-user.options');
             Route::post('/store', [AdminUserController::class, 'store'])->name('admin.user.admin-user.store');
             Route::middleware('adminity')->group(function () {

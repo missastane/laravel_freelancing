@@ -22,7 +22,8 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search' => 'required|string|min:1|regex:/^[ا-یa-zA-Z0-9\-۰-۹ء-ي.,،\.?؟! ]+$/u'
+            'search' => 'nullable|string|min:1',
+            'per_page' => 'nullable|integer'
         ];
     }
 
