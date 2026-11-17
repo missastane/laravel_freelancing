@@ -22,8 +22,9 @@ class PermissionStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-             'permissions' => 'nullable|exists:permissions,id|array',
-                // 'g-recaptcha-response' => 'recaptcha',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'integer|distinct|exists:permissions,id',
+            // 'g-recaptcha-response' => 'recaptcha',
         ];
     }
 
