@@ -65,7 +65,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
   }
   public function showUser(User $user)
   {
-    $user = $this->showWithRelations($user, ['roles', 'permissions']);
+    $user = $this->showWithRelations($user, ['roles', 'permissions', 'departments']);
     $resource = new UserResource($user);
     return $resource;
   }
@@ -156,12 +156,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
   public function rolesSync(User $user, array $roles)
   {
-    $user->roles()->sync($roles);
+    return $user->syncRoles($roles);
 
   }
   public function permissionsSync(User $user, array $permissions)
   {
-    return $user->permissions()->sync($permissions);
+    return $user->syncPermissions($permissions);
   }
 
   public function detachRoles(User $user)
