@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasShowTrait
 {
-     public function showWithRelations(Model $model, ?array $relations = [])
+    public function showWithRelations(Model $model, ?array $relations = [])
     {
-        if(!empty($relations)){{
+        if (!empty($relations)) {
             return $model->load($relations);
-        }}
+        }
+
         return $model;
     }
 }
