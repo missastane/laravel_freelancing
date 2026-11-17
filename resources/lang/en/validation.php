@@ -96,6 +96,10 @@ return [
         'group_id' => array(
             'required' => 'Please choose a group or choose temp!',
         ),
+        'name_only' => 'The :attribute field may only contain letters, spaces, hyphens, and apostrophes.',
+        'safe_title' => 'The :attribute field must not contain HTML tags.',
+        'plain_text_only' => 'The :attribute field must contain plain text and must not include HTML tags or invalid characters.',
+        'system_name' => 'The :attribute field must start with an English letter and contain only English letters, numbers, and underscores.',
     ),
 
     /*
