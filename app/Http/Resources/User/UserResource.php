@@ -23,7 +23,8 @@ class UserResource extends JsonResource
             'gender_type' => $this->gender_value,
             'birth_date' => $this->birth_date,
             'avatar_photo' => $this->profile_photo_path,
-            'activation' => $this->activation_value,
+            'activation' => $this->activation,
+            'activation_type' => $this->activation_value,
             'activation_date' => $this->activation_date,
             'active_role' => $this->active_role,
             'about_me' => $this->about_me,
@@ -31,6 +32,7 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at,
             'roles' => RoleResource::collection($this->whenLoaded('roles')),
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+            'departments' => DepartmentOptionResource::collection($this->whenLoaded('departments'))
         ];
     }
 }
