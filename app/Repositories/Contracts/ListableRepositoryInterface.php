@@ -6,5 +6,12 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface ListableRepositoryInterface
 {
-    public function all(?array $relations = [], string $sort = 'created_at',string $dir="asc",  int $perPage = 15):Paginator;
+    public function all(
+        ?array $relations = [],
+        string $sort = 'created_at',
+        string $dir = 'asc',
+        ?string $search = null,
+        int $perPage = 15,
+        ?string $searchScope = null
+    ): Paginator;
 }

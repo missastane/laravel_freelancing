@@ -11,9 +11,9 @@ class SkillService
     public function __construct(protected SkillRepositoryInterface $skillRepository)
     {
     }
-    public function getSkills(): Paginator
+    public function getSkills(int $perPage = 15, ?string $search): Paginator
     {
-        return $this->skillRepository->all();
+        return $this->skillRepository->all(search: $search, perPage: $perPage, searchScope: 'search');
     }
 
     public function searchSkill(string $search): Paginator

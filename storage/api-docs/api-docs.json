@@ -13,6 +13,466 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/admin/market/skill": {
+            "get": {
+                "tags": [
+                    "Skill"
+                ],
+                "summary": "List all Skills",
+                "description": "Retrieve a paginated list of all Skills available in the system.",
+                "operationId": "listSkills",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search bu skill name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of Skills",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/SkillSchema"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/skill/show/{skill}": {
+            "get": {
+                "tags": [
+                    "Skill",
+                    "Skill/Form"
+                ],
+                "summary": "Show a specific Skill",
+                "description": "Retrieve the details of a specific Skill.",
+                "operationId": "showSkill",
+                "parameters": [
+                    {
+                        "name": "skill",
+                        "in": "path",
+                        "description": "ID of the skill to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Skill details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SkillSchema"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Skill not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/skill/store": {
+            "post": {
+                "tags": [
+                    "Skill"
+                ],
+                "summary": "Create new Skill",
+                "description": "This method creates a new `Skill` and stores it.",
+                "operationId": "storeSkill",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SkillRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Skill creation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SkillSchema"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/skill/update/{skill}": {
+            "put": {
+                "tags": [
+                    "Skill"
+                ],
+                "summary": "Updates a Skill",
+                "description": "This method updates a `Skill` and saves it.",
+                "operationId": "updateSkill",
+                "parameters": [
+                    {
+                        "name": "skill",
+                        "in": "path",
+                        "description": "Skill ID to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SkillRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Skill update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SkillSchema"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Skill not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/skill/delete/{skill}": {
+            "delete": {
+                "tags": [
+                    "Skill"
+                ],
+                "summary": "Delete a Skill",
+                "description": "This endpoint allows the user to `delete an existing Skill`.",
+                "operationId": "deleteSkill",
+                "parameters": [
+                    {
+                        "name": "skill",
+                        "in": "path",
+                        "description": "The ID of the Skill to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Skill deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Skill not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/user/admin-user": {
             "get": {
                 "tags": [
@@ -3952,6 +4412,25 @@
                 },
                 "type": "object"
             },
+            "SkillRequestSchema": {
+                "required": [
+                    "persian_title",
+                    "original_title"
+                ],
+                "properties": {
+                    "persian_title": {
+                        "description": "Only Persian letters, numbers and spaces are allowed. Any other character results in a validation error.",
+                        "type": "string",
+                        "example": "ترجمه"
+                    },
+                    "original_title": {
+                        "description": "Only English letters, numbers and spaces are allowed. Any other character results in a validation error.",
+                        "type": "string",
+                        "example": "translate"
+                    }
+                },
+                "type": "object"
+            },
             "ErrorResponse": {
                 "required": [
                     "status",
@@ -4219,6 +4698,42 @@
                     "name": {
                         "type": "string",
                         "example": "superadmin"
+                    }
+                },
+                "type": "object"
+            },
+            "SkillSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "persian_title": {
+                        "type": "string",
+                        "example": "ورد"
+                    },
+                    "original_title": {
+                        "type": "string",
+                        "example": "word"
+                    },
+                    "deleted_at": {
+                        "description": "Delete datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T14:30:00Z",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Creation datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Update datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
                     }
                 },
                 "type": "object"
@@ -4679,6 +5194,14 @@
         }
     },
     "tags": [
+        {
+            "name": "Skill",
+            "description": "Skill"
+        },
+        {
+            "name": "Skill/Form",
+            "description": "Skill/Form"
+        },
         {
             "name": "Admin",
             "description": "Admin"

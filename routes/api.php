@@ -171,7 +171,6 @@ Route::prefix('admin')->middleware(['auth:api', 'admin'])->group(function () {
         });
         Route::prefix('skill')->group(function () {
             Route::get('/', [SkillController::class, 'index'])->name('admin.market.skill');
-            Route::get('/search', [SkillController::class, 'search'])->name('admin.market.skill.search');
             Route::get('/show/{skill}', [SkillController::class, 'show'])->name('admin.market.skill.show');
             Route::post('/store', [SkillController::class, 'store'])->name('admin.market.skill.store');
             Route::put('/update/{skill}', [SkillController::class, 'update'])->name('admin.market.skill.update');
