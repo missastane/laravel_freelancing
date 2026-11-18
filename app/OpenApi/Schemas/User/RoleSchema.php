@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: "permissions",
             type: "array",
-            items: new OA\Items(ref: "#/components/schemas/PermissionSchema")
+            items: new OA\Items(ref: "#/components/schemas/PermissionWithPivotSchema")
         ),
         new OA\Property(
             property: "permissions_count",

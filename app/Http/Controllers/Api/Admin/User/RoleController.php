@@ -26,6 +26,21 @@ class RoleController extends Controller
         operationId: "getRolesList",
         tags: ["Role"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                required: false,
+                description: 'Page number for pagination',
+                schema: new OA\Schema(type: 'integer', minimum: 1, example: 1)
+            ),
+            new OA\Parameter(
+                name: 'per_page',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, example: 1)
+            ),
+        ],
         responses: [
             new OA\Response(
                 response: 200,

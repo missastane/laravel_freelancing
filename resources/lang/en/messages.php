@@ -25,6 +25,10 @@ return [
    'role_updated' => 'The role has been successfully updated.',
    'permissions_synced_role' => 'The permissions have been successfully assigned to the role.',
    'role_deleted' => 'The role and its dependencies have been successfully deleted.',
+   'permission_created' => 'The permission has been successfully created.',
+   'permission_updated' => 'The permission has been successfully updated.',
+   'roles_synced_permission' => 'The roles have been successfully assigned to the permission.',
+   'permission_deleted' => 'The permissions and their dependencies have been successfully deleted.',
 
 
 ];

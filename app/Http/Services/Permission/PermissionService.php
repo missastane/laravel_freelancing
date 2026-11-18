@@ -13,14 +13,14 @@ class PermissionService
     {
     }
 
-    public function getPermissions(): Paginator
+    public function getPermissions(int $perPage = 15): Paginator
     {
-        return $this->permissionRepository->all();
+        return $this->permissionRepository->getPermissions($perPage);
     }
 
     public function showPermission(Permission $permission): Permission
     {
-        return $this->permissionRepository->showWithRelations($permission, ['users:id,username']);
+        return $this->permissionRepository->show($permission);
     }
 
     public function storePermission(array $data): Permission
@@ -33,11 +33,11 @@ class PermissionService
     }
     public function syncPermissionToRoles(Permission $permission, array $data)
     {
-       return $this->permissionRepository->syncPermissionToRoles($permission,$data['roles']);
+        return $this->permissionRepository->syncPermissionToRoles($permission, $data['roles']);
     }
 
     public function deletePermission(Permission $permission)
     {
-       return $this->permissionRepository->deletePermission($permission);
+        return $this->permissionRepository->deletePermission($permission);
     }
 }

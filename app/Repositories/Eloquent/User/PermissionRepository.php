@@ -6,6 +6,7 @@ use App\Models\User\Permission;
 use App\Repositories\Contracts\User\PermissionRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCRUDTrait;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,9 +17,25 @@ class PermissionRepository extends BaseRepository implements PermissionRepositor
     {
         parent::__construct($model);
     }
+
+    public function getPermissions(int $perPage = 15): Paginator
+    {
+        return $this->model
+            ->with('roles')
+            ->withCount('roles')
+            ->orderBy('created_at', 'asc')
+            ->paginate($perPage);
+    }
+
     public function getPermissionOptions(): Collection
     {
         return $this->model->query()->select('id', 'name')->get();
+    }
+
+    public function show(Permission $role): Permission
+    {
+        return $this->showWithRelations($role, ['roles'])
+            ->loadCount('roles');
     }
 
     public function storePermission(array $data): Permission
