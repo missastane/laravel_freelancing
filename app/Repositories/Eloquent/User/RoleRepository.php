@@ -17,10 +17,11 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getRoles(int $perPage = 15): Paginator
+    public function getRoles(int $perPage = 15, null|string $search): Paginator
     {
         return $this->model
             ->with('permissions')
+            ->search($search)
             ->withCount('permissions')
             ->orderBy('created_at', 'asc')
             ->paginate($perPage);

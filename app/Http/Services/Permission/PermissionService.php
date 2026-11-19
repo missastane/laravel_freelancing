@@ -13,9 +13,9 @@ class PermissionService
     {
     }
 
-    public function getPermissions(int $perPage = 15): Paginator
+    public function getPermissions(int $perPage = 15, string $search = null): Paginator
     {
-        return $this->permissionRepository->getPermissions($perPage);
+        return $this->permissionRepository->getPermissions($perPage, $search);
     }
 
     public function showPermission(Permission $permission): Permission

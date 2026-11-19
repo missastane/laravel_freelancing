@@ -13,9 +13,9 @@ class RoleService
     {
     }
 
-    public function getRoles(int $perPage = 15): Paginator
+    public function getRoles(int $perPage = 15, string $search = null): Paginator
     {
-        return $this->roleRepository->getRoles($perPage);
+        return $this->roleRepository->getRoles($perPage, $search);
     }
 
     public function getOptions(): Collection

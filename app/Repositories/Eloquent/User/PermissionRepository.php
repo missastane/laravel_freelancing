@@ -18,10 +18,11 @@ class PermissionRepository extends BaseRepository implements PermissionRepositor
         parent::__construct($model);
     }
 
-    public function getPermissions(int $perPage = 15): Paginator
+    public function getPermissions(int $perPage = 15, null|string $search): Paginator
     {
         return $this->model
             ->with('roles')
+            ->search($search)
             ->withCount('roles')
             ->orderBy('created_at', 'asc')
             ->paginate($perPage);

@@ -1523,7 +1523,18 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 1,
+                            "example": 15,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search by name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": null,
                             "minimum": 1
                         }
                     }
@@ -2102,7 +2113,18 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 1,
+                            "example": 15,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search by name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": null,
                             "minimum": 1
                         }
                     }
@@ -4715,13 +4737,6 @@
                     "original_title": {
                         "type": "string",
                         "example": "word"
-                    },
-                    "deleted_at": {
-                        "description": "Delete datetime",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-02-22T14:30:00Z",
-                        "nullable": true
                     },
                     "created_at": {
                         "description": "Creation datetime",

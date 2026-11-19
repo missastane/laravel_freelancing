@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface RoleRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getRoles(int $perPage = 15): Paginator;
+    public function getRoles(int $perPage = 15, null|string $search): Paginator;
     public function getRoleOptions(): Collection;
     public function firstOrCreate(string $role);
     public function show(Role $role): Role;

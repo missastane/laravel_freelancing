@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\PermissionRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Services\Permission\PermissionService;
 use App\Models\User\Permission;
 use App\Traits\ApiResponseTrait;
@@ -36,7 +37,14 @@ class PermissionController extends Controller
                 name: 'per_page',
                 in: 'query',
                 required: false,
-                schema: new OA\Schema(type: 'integer', minimum: 1, example: 1)
+                schema: new OA\Schema(type: 'integer', minimum: 1, example: 15)
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                required: false,
+                description: 'Search by name',
+                schema: new OA\Schema(type: 'string', minimum: 1, example: null)
             ),
         ],
         responses: [
@@ -76,10 +84,11 @@ class PermissionController extends Controller
             ),
         ]
     )]
-    public function index()
+    public function index(SearchRequest $request)
     {
-        $perPage = request()->input('per_page', 15);
-        $permissions = $this->permissionService->getPermissions($perPage);
+        $perPage = $request->integer('per_page', 15);
+        $search = $request->validated('search');
+        $permissions = $this->permissionService->getPermissions($perPage, $search);
         return $this->success($permissions);
     }
 

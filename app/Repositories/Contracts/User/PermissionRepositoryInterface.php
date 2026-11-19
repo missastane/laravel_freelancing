@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface PermissionRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getPermissions(int $perPage = 15): Paginator;
+    public function getPermissions(int $perPage = 15, null|string $search): Paginator;
     public function getPermissionOptions(): Collection;
     public function show(Permission $role): Permission;
     public function storePermission(array $data): Permission;

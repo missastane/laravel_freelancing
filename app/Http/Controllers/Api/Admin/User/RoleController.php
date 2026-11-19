@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\RoleRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Services\Role\RoleService;
 use App\Models\User\Role;
 use App\Traits\ApiResponseTrait;
@@ -38,7 +39,14 @@ class RoleController extends Controller
                 name: 'per_page',
                 in: 'query',
                 required: false,
-                schema: new OA\Schema(type: 'integer', minimum: 1, example: 1)
+                schema: new OA\Schema(type: 'integer', minimum: 1, example: 15)
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                required: false,
+                description: 'Search by name',
+                schema: new OA\Schema(type: 'string', minimum: 1, example: null)
             ),
         ],
         responses: [
@@ -74,12 +82,11 @@ class RoleController extends Controller
             ),
         ]
     )]
-    public function index(Request $request)
+    public function index(SearchRequest $request)
     {
         $perPage = $request->integer('per_page', 15);
-
-        $roles = $this->roleService->getRoles($perPage);
-
+        $search = $request->validated('search');
+        $roles = $this->roleService->getRoles($perPage, $search);
         return $this->success($roles);
     }
 
