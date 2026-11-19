@@ -100,6 +100,9 @@ return [
         'safe_title' => 'The :attribute field must not contain HTML tags.',
         'plain_text_only' => 'The :attribute field must contain plain text and must not include HTML tags or invalid characters.',
         'system_name' => 'The :attribute field must start with an English letter and contain only English letters, numbers, and underscores.',
+        'persian_title' => 'The Persian title may only contain Persian letters, Persian digits, and spaces.',
+        'english_title' => 'The English title may only contain English letters, digits, and spaces.',
+        
     ),
 
     /*

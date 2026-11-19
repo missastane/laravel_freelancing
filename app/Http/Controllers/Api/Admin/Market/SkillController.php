@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api\Admin\Market;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Market\SkillRequest;
 use App\Http\Requests\SearchRequest;
+use App\Http\Resources\Market\SkillResource;
 use App\Http\Services\Skill\SkillService;
 use App\Models\Market\Skill;
 use App\Traits\ApiResponseTrait;
 use Exception;
-use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 class SkillController extends Controller
@@ -82,12 +82,12 @@ class SkillController extends Controller
             ),
         ]
     )]
-    public function index()
+    public function index(SearchRequest $request)
     {
-        $perPage = request()->input('per_page', 15);
-        $search = request()->input('search');
-
-        return $this->skillService->getSkills($perPage, $search);
+        $perPage = $request->input('per_page', 15);
+        $search = $request->validated('search');
+        $skills = $this->skillService->getSkills($perPage, $search);
+        return $skills;
     }
 
     #[OA\Get(
@@ -149,7 +149,7 @@ class SkillController extends Controller
     )]
     public function show(Skill $skill)
     {
-        return $this->success($this->skillService->showSkill($skill));
+        return $this->success(new SkillResource($this->skillService->showSkill($skill)));
     }
 
     #[OA\Post(
@@ -219,7 +219,7 @@ class SkillController extends Controller
             $inputs = $request->all();
             $skill = $this->skillService->storeSkill($inputs);
 
-            return $this->success($skill, __('messages.skill_created'), 201);
+            return $this->success(new SkillResource($skill), __('messages.skill_created'), 201);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -308,9 +308,9 @@ class SkillController extends Controller
             $inputs = $request->all();
             $skill = $this->skillService->updateSkill($skill, $inputs);
 
-            return $this->success($skill, __('messages.skill_updated'));
+            return $this->success(new SkillResource($skill), __('messages.skill_updated'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Services\Skill;
 
+use App\Http\Resources\Market\SkillResource;
+use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Market\Skill;
 use App\Repositories\Contracts\Market\SkillRepositoryInterface;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -11,9 +13,14 @@ class SkillService
     public function __construct(protected SkillRepositoryInterface $skillRepository)
     {
     }
-    public function getSkills(int $perPage = 15, ?string $search): Paginator
+    public function getSkills(int $perPage = 15, ?string $search, string $message = null)
     {
-        return $this->skillRepository->all(search: $search, perPage: $perPage, searchScope: 'search');
+        $skills = $this->skillRepository->all(search: $search, perPage: $perPage, searchScope: 'search');
+        return new BaseCollection(
+            $skills,
+            SkillResource::class,
+            $message
+        );
     }
 
     public function searchSkill(string $search): Paginator
@@ -33,7 +40,8 @@ class SkillService
 
     public function updateSkill(Skill $skill, array $data)
     {
-        return $this->skillRepository->update($skill, $data);
+        $this->skillRepository->update($skill, $data);
+        return $skill;
     }
 
     public function deleteSkill(Skill $skill)

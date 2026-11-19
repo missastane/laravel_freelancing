@@ -15,6 +15,12 @@ class RegexPatterns
 
     public const SYSTEM_NAME = '/^[a-zA-Z][a-zA-Z0-9_]*$/';
 
+    // عنوان فارسی: حروف فارسی و عربی، اعداد فارسی و فاصله
+    public const PERSIAN_TITLE = '/^[ا-یء-ي۰-۹ ]+$/u';
+
+    // عنوان انگلیسی: حروف انگلیسی، اعداد و فاصله
+    public const ENGLISH_TITLE = '/^[a-zA-Z0-9 ]+$/';
+
     // موبایل
     public const MOBILE = '/^(\+|00)?[0-9\-\s]{9,15}$/';
 
@@ -27,5 +33,5 @@ class RegexPatterns
     // شماره ساختمان: حداقل یک رقم
     public const HOME_NUMBER = '/^(?=.*\d)[a-zA-Z0-9\s\-\/]+$/';
 
-   
+
 }

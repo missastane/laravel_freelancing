@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Admin\Market;
 
+use App\Rules\EnglishTitleRule;
+use App\Rules\PersianTitleRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,15 +26,31 @@ class SkillRequest extends FormRequest
     {
         if ($this->isMethod('post')) {
             return [
-                'persian_title' => 'required|unique:skills,persian_title|regex:/^[ا-یء-ي۰-۹ ]+$/u',
-                'original_title' => 'required|unique:skills,original_title|regex:/^[a-zA-Z0-9 ]+$/u',
+                'persian_title' => [
+                    'required',
+                    'unique:skills,persian_title',
+                    new PersianTitleRule(),
+                ],
+                'original_title' => [
+                    'required',
+                    'unique:skills,original_title',
+                    new EnglishTitleRule(),
+                ],
             ];
         }
-         return [
-            'persian_title' => ['required','regex:/^[ا-یء-ي۰-۹ ]+$/u',Rule::unique('skills','persian_title')->ignore($this->route('skill'))],
-            'original_title' => ['required','regex:/^[a-zA-Z0-9 ]+$/u',Rule::unique('skills','original_title')->ignore($this->route('skill'))],
-        ];
 
+        return [
+            'persian_title' => [
+                'required',
+                new PersianTitleRule(),
+                Rule::unique('skills', 'persian_title')->ignore($this->route('skill')),
+            ],
+            'original_title' => [
+                'required',
+                new EnglishTitleRule(),
+                Rule::unique('skills', 'original_title')->ignore($this->route('skill')),
+            ],
+        ];
     }
 
     public function attributes()
