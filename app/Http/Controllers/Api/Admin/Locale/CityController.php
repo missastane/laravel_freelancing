@@ -103,8 +103,8 @@ class CityController extends Controller
     {
         $perPage = $request->integer('per_page', 15);
         $search = $request->validated('search');
-        $province = $this->cityService->getCities($province, $perPage, $search);
-        return $this->success($province);
+        $cities = $this->cityService->getCities($province, $perPage, $search);
+        return $cities;
     }
 
     #[OA\Get(

@@ -28,16 +28,15 @@ class CityRepository extends BaseRepository implements CityRepositoryInterface
 
     public function getCities(Province $province, int $perPage, null|string $search, null|string $message)
     {
-        $result = $this->model->where('id', $province->id)
-            ->with('province')
+        $result = $this->model->where('province_id', $province->id)
             ->search($search)
-            ->orderBy('id', 'desc')->paginate($perPage);
+            ->orderBy('name', 'asc')->paginate($perPage);
         return new BaseCollection($result, CityResource::class, $message);
     }
 
     public function showCity(City $city)
     {
-        return $this->showWithRelations($city, ['province:id,name']);
+        return $this->showWithRelations($city);
     }
 
 }

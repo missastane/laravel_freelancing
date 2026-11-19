@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Locale;
 
+use App\Rules\NameRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,7 @@ class CityRequest extends FormRequest
             return [
                 'name' => [
                     'required',
-                    'regex:/^[ا-یء-ي ]+$/u',
+                    new NameRule(),
                     Rule::unique('cities')
                         ->where(fn($query) => $query->where('province_id', $this->route('province')->id))
                 ],
@@ -36,9 +37,13 @@ class CityRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                'regex:/^[ا-یء-ي ]+$/u',
+                new NameRule(),
                 Rule::unique('cities')
-                    ->where(fn($query) => $query->where('province_id', $this->province_id))->ignore($this->route('city'))
+                    ->where(fn($query) => $query->where(
+                        'province_id',
+                        $this->route('city')->province_id
+                    ))
+                    ->ignore($this->route('city'))
             ],
             // 'g-recaptcha-response' => 'recaptcha',
         ];

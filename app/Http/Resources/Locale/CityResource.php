@@ -17,12 +17,9 @@ class CityResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'province_id' => $this->province_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'province' => [
-                'id' => $this->province_id,
-                'name' => $this->province->name
-            ]
         ];
     }
 }

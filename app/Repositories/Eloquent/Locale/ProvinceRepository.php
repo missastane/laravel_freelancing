@@ -6,7 +6,6 @@ use App\Models\Locale\Province;
 use App\Repositories\Contracts\Locale\ProvinceRepositoryInterface;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Traits\HasCRUDTrait;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class ProvinceRepository extends BaseRepository implements ProvinceRepositoryInterface
