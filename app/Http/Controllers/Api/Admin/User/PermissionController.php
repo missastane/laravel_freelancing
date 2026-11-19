@@ -9,7 +9,6 @@ use App\Http\Services\Permission\PermissionService;
 use App\Models\User\Permission;
 use App\Traits\ApiResponseTrait;
 use Exception;
-use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 class PermissionController extends Controller

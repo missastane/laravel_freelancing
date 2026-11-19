@@ -32,6 +32,10 @@ return [
    'skill_created' => 'The skill has been successfully added.',
    'skill_updated' => 'The skill has been successfully updated.',
    'skill_deleted' => 'The skill has been successfully deleted.',
+   'province_created' => 'The province has been successfully added.',
+   'province_updated' => 'The province has been successfully updated.',
+   'province_deleted' => 'The province has been successfully deleted.',
+
 
 
 ];

@@ -8,31 +8,29 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 class ProvinceService
 {
-    public function __construct(protected ProvinceRepositoryInterface $provinceRepository){}
-
-    public function getProvinces():Paginator
+    public function __construct(protected ProvinceRepositoryInterface $provinceRepository)
     {
-        return $this->provinceRepository->all(null);
     }
 
-    public function searchProvince(string $search):Paginator
+    public function getProvinces(int $perPage = 15, string $search = null, string $message = null): Paginator
     {
-        return $this->provinceRepository->searchProvince($search);
+        return $this->provinceRepository->all(perPage: $perPage, search: $search, searchScope: 'search');
     }
 
-    public function showProvince(Province $province):Province
+    public function showProvince(Province $province): Province
     {
         return $this->provinceRepository->showWithRelations($province);
     }
 
-    public function storeProvince(array $data):Province
+    public function storeProvince(array $data): Province
     {
         return $this->provinceRepository->create($data);
     }
 
     public function updateProvince(Province $province, array $data)
     {
-        return $this->provinceRepository->update($province,$data);
+        $this->provinceRepository->update($province, $data);
+        return $province;
     }
 
     public function deleteProvince(Province $province)

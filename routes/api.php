@@ -115,7 +115,6 @@ Route::prefix('admin')->middleware(['auth:api', 'admin'])->group(function () {
     Route::prefix('locale')->group(function () {
         Route::prefix('province')->group(function () {
             Route::get('/', [ProvinceController::class, 'index'])->name('admin.locale.province');
-            Route::get('/search', [ProvinceController::class, 'search'])->name('admin.locale.province.search');
             Route::get('/show/{province}', [ProvinceController::class, 'show'])->name('admin.locale.province.show');
             Route::post('/store', [ProvinceController::class, 'store'])->name('admin.locale.province.store');
             Route::put('/update/{province}', [ProvinceController::class, 'update'])->name('admin.locale.province.update');

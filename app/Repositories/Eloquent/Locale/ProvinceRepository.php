@@ -16,19 +16,11 @@ class ProvinceRepository extends BaseRepository implements ProvinceRepositoryInt
     {
         parent::__construct($model);
     }
-    public function searchProvince(string $search): Paginator
-    {
-        $result = $this->model->where('name', 'LIKE', "%{$search}%")
-            ->orderBy('name', 'asc')->simplePaginate(15);
-        return $result;
-    }
 
     public function provinceOption(): Collection
     {
         return $this->model->query()->select('id','name')->orderBy('name')->get();
     }
-
-   
 
 
 }

@@ -8,6 +8,5 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ProvinceRepositoryInterface extends BaseRepositoryInterface
 {
-    public function searchProvince(string $search): Paginator;
     public function provinceOption(): Collection;
 }

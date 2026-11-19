@@ -32,5 +32,8 @@ return [
     'skill_created' => 'مهارت با موفقیت افزوده شد',
     'skill_updated' => 'مهارت با موفقیت بروزرسانی شد',
     'skill_deleted' => 'مهارت با موفقیت حذف شد',
+    'province_created' => 'استان با موفقیت افزوده شد',
+    'province_updated' => 'استان با موفقیت بروزرسانی شد',
+    'province_deleted' => 'استان با موفقیت حذف شد',
 
 ];
