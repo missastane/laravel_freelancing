@@ -13,9 +13,9 @@ class CityService
     {
     }
 
-    public function getCities(Province $province)
-    { 
-        return $this->cityRepository->getCities($province);
+    public function getCities(Province $province, int $perPage = 15, string $search = null, string $message = null)
+    {
+        return $this->cityRepository->getCities($province, $perPage, $search, $message);
     }
 
     public function searchCity(string $search)

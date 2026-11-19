@@ -18,7 +18,6 @@ CreatableRepositoryInterface,
 UpdatableRepositoryInterface,
 DeletableRepositoryInterface
 {
-    public function getCities(Province $province);
-    public function searchCity(string $search);
+    public function getCities(Province $province, int $perPage, null|string $search, null|string $message);
      public function showCity(City $city);
 }

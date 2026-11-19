@@ -35,5 +35,8 @@ return [
     'province_created' => 'استان با موفقیت افزوده شد',
     'province_updated' => 'استان با موفقیت بروزرسانی شد',
     'province_deleted' => 'استان با موفقیت حذف شد',
+    'city_created' => 'شهر با موفقیت افزوده شد',
+    'city_updated' => 'شهر با موفقیت بروزرسانی شد',
+    'city_deleted' => 'شهر با موفقیت حذف شد',
 
 ];

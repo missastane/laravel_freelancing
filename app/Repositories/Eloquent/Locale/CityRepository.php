@@ -26,17 +26,13 @@ class CityRepository extends BaseRepository implements CityRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getCities(Province $province)
+    public function getCities(Province $province, int $perPage, null|string $search, null|string $message)
     {
-        $province = $this->showWithRelations($province, ['cities']);
-        return new ProvinceResource($province);
-    }
-    public function searchCity(string $search)
-    {
-        $result = $this->model->where('name', 'LIKE', "%{$search}%")
+        $result = $this->model->where('id', $province->id)
             ->with('province')
-            ->orderBy('name', 'asc')->paginate(15);
-        return new BaseCollection($result, CityResource::class, null);
+            ->search($search)
+            ->orderBy('id', 'desc')->paginate($perPage);
+        return new BaseCollection($result, CityResource::class, $message);
     }
 
     public function showCity(City $city)

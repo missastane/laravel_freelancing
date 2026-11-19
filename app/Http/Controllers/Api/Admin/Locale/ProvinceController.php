@@ -315,7 +315,7 @@ class ProvinceController extends Controller
 
             return $this->success($province, __('messages.province_updated'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

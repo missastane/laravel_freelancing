@@ -1,6 +1,6 @@
 <?php
 
-namespace App\OpenApi\Requests\Admin\User;
+namespace App\OpenApi\Requests\Admin\User\AdminUser;
 
 use OpenApi\Attributes as OA;
 

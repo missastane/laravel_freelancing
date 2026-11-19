@@ -1,22 +1,21 @@
 <?php
 
-namespace App\OpenApi\Requests\Admin\Role;
-
+namespace App\OpenApi\Requests\Admin\User\Permission;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'RoleSyncPermissionsRequestSchema',
+    schema: 'PermissionSyncRolesRequestSchema',
     type: 'object',
-    required: ['permissions'],
+    required: ['roles'],
     properties: [
         new OA\Property(
-            property: 'permissions',
+            property: 'roles',
             type: 'array',
             items: new OA\Items(type: 'integer'),
             example: [1, 2, 3]
         ),
     ]
 )]
-class RoleSyncPermissionsRequestSchema
+class PermissionSyncRolesRequestSchema
 {
 }

@@ -35,6 +35,9 @@ return [
    'province_created' => 'The province has been successfully added.',
    'province_updated' => 'The province has been successfully updated.',
    'province_deleted' => 'The province has been successfully deleted.',
+   'city_created' => 'The city has been successfully added.',
+   'city_updated' => 'The city has been successfully updated.',
+   'city_deleted' => 'The city has been successfully deleted.',
 
 
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\OpenApi\Requests\Admin\Province;
+namespace App\OpenApi\Requests\Admin\Locale\Province;
 
 use OpenApi\Attributes as OA;
 

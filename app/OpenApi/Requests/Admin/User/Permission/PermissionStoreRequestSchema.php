@@ -1,6 +1,6 @@
 <?php
 
-namespace App\OpenApi\Requests\Admin\Permission;
+namespace App\OpenApi\Requests\Admin\User\Permission;
 
 use OpenApi\Attributes as OA;
 
