@@ -9,7 +9,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface SubscriptionRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getAllSubscriptions();
+    public function getAllSubscriptions(null|string $search, int $perPage = 15);
     public function getAllowedSubscriptionPlans();
     public function userActivePlan();
     public function firstOrCreate(array $attributes, array $values);

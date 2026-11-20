@@ -42,7 +42,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     })->get();
   }
 
-  public function getUsers(int $type, null|string $search, $message, int $perPage = 15)
+  public function getUsers(int $type, null|string $search, int $perPage = 15)
   {
     $query = $this->getUsersQuery($type);
 
@@ -57,17 +57,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     $users = $query->paginate($perPage);
 
-    return new BaseCollection(
-      $users,
-      UserResource::class,
-      $message
-    );
+    return $users;
   }
   public function showUser(User $user)
   {
     $user = $this->showWithRelations($user, ['roles', 'permissions', 'departments']);
-    $resource = new UserResource($user);
-    return $resource;
+    return $user;
   }
 
   public function findByEmail(string $email): User

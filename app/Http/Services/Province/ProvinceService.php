@@ -12,7 +12,7 @@ class ProvinceService
     {
     }
 
-    public function getProvinces(int $perPage = 15, string $search = null, string $message = null): Paginator
+    public function getProvinces(int $perPage = 15, string $search = null): Paginator
     {
         return $this->provinceRepository->all(
             perPage: $perPage,

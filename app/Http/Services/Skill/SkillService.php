@@ -13,19 +13,10 @@ class SkillService
     public function __construct(protected SkillRepositoryInterface $skillRepository)
     {
     }
-    public function getSkills(int $perPage = 15, ?string $search, string $message = null)
+    public function getSkills(int $perPage = 15, ?string $search)
     {
         $skills = $this->skillRepository->all(search: $search, perPage: $perPage, searchScope: 'search');
-        return new BaseCollection(
-            $skills,
-            SkillResource::class,
-            $message
-        );
-    }
-
-    public function searchSkill(string $search): Paginator
-    {
-        return $this->skillRepository->searchSkill($search);
+        return $skills;
     }
 
     public function showSkill(Skill $skill): Skill

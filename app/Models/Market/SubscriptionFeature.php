@@ -5,18 +5,6 @@ namespace App\Models\Market;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @OA\Schema(
- *     schema="SubscriptionFeature",
- *     type="object",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="feature_key", type="string", example="vip-proposal"),
- *     @OA\Property(property="feature_persian_key", type="string", example="پیشنهاد اختصاصی"),
- *     @OA\Property(property="feature_value", type="string", example="10"),
- *     @OA\Property(property="feature_value_type", type="string", example="عدد"),
- *     @OA\Property(property="is_limited", type="string", description="1 => yes, 2 => no", example="بله")
- * )
- */
 class SubscriptionFeature extends Model
 {
     use HasFactory;
@@ -41,9 +29,9 @@ class SubscriptionFeature extends Model
     public function getIsLimitedValueAttribute()
     {
         if ($this->is_limited == 1) {
-            return 'بله';
+            return true;
         } else {
-            return 'نه';
+            return false;
         }
     }
 

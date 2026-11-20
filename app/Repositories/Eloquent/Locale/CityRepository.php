@@ -2,9 +2,6 @@
 
 namespace App\Repositories\Eloquent\Locale;
 
-use App\Http\Resources\Locale\CityResource;
-use App\Http\Resources\Locale\ProvinceResource;
-use App\Http\Resources\ResourceCollections\BaseCollection;
 use App\Models\Locale\City;
 use App\Models\Locale\Province;
 use App\Repositories\Contracts\Locale\CityRepositoryInterface;
@@ -13,7 +10,7 @@ use App\Traits\HasCreateTrait;
 use App\Traits\HasDeleteTrait;
 use App\Traits\HasShowTrait;
 use App\Traits\HasUpdateTrait;
-use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class CityRepository extends BaseRepository implements CityRepositoryInterface
 {
@@ -26,12 +23,16 @@ class CityRepository extends BaseRepository implements CityRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getCities(Province $province, int $perPage, null|string $search, null|string $message)
-    {
-        $result = $this->model->where('province_id', $province->id)
+    public function getCities(
+        Province $province,
+        int $perPage = 15,
+        null|string $search = null
+    ): LengthAwarePaginator {
+        return $this->model
+            ->where('province_id', $province->id)
             ->search($search)
-            ->orderBy('name', 'asc')->paginate($perPage);
-        return new BaseCollection($result, CityResource::class, $message);
+            ->orderBy('name', 'asc')
+            ->paginate($perPage);
     }
 
     public function showCity(City $city)

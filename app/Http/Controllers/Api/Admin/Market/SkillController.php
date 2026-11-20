@@ -87,7 +87,7 @@ class SkillController extends Controller
         $perPage = $request->input('per_page', 15);
         $search = $request->validated('search');
         $skills = $this->skillService->getSkills($perPage, $search);
-        return $skills;
+        return $this->success($skills, resource: SkillResource::class);
     }
 
     #[OA\Get(
@@ -149,7 +149,7 @@ class SkillController extends Controller
     )]
     public function show(Skill $skill)
     {
-        return $this->success(new SkillResource($this->skillService->showSkill($skill)));
+        return $this->success($this->skillService->showSkill($skill), resource: SkillResource::class);
     }
 
     #[OA\Post(
@@ -219,7 +219,7 @@ class SkillController extends Controller
             $inputs = $request->all();
             $skill = $this->skillService->storeSkill($inputs);
 
-            return $this->success(new SkillResource($skill), __('messages.skill_created'), 201);
+            return $this->success($skill, __('messages.skill_created'), 201, SkillResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -308,7 +308,7 @@ class SkillController extends Controller
             $inputs = $request->all();
             $skill = $this->skillService->updateSkill($skill, $inputs);
 
-            return $this->success(new SkillResource($skill), __('messages.skill_updated'));
+            return $this->success($skill, __('messages.skill_updated'), resource: SkillResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -340,7 +340,7 @@ class SkillController extends Controller
                     ]
                 )
             ),
-             new OA\Response(
+            new OA\Response(
                 response: 401,
                 description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
@@ -377,7 +377,7 @@ class SkillController extends Controller
 
             return $this->success(null, __('messages.skill_deleted'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

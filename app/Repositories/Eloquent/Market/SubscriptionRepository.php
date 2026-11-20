@@ -20,10 +20,10 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
         parent::__construct($model);
     }
 
-    public function getAllSubscriptions()
+    public function getAllSubscriptions(null|string $search, int $perPage = 15)
     {
-        $subscriptions = $this->all();
-        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class,null);
+        $subscriptions = $this->all(search: $search, perPage: $perPage, searchScope: 'search');
+        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class, null);
     }
 
     public function getAllowedSubscriptionPlans()
@@ -31,7 +31,7 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
         $user = auth()->user();
         $subscriptions = $this->model->with('features')
             ->orderBy('amount', 'desc')->paginate(5);
-        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class,null);
+        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class, null);
     }
 
     public function showSubscription(Subscription $subscription)

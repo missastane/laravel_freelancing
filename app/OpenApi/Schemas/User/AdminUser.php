@@ -31,17 +31,26 @@ use OpenApi\Attributes as OA;
             type: "array",
             items: new OA\Items(
                 type: "object",
-                properties: [
-                    new OA\Property(property: "id", type: "integer", example: 2),
-                    new OA\Property(property: "name", type: "string", example: "employer"),
-                ]
+                ref: "#/components/schemas/RoleOption"
             )
         ),
         new OA\Property(
             property: "permissions",
             type: "array",
-            items: new OA\Items(type: "string", example: "view-users")
+            items: new OA\Items(
+                type: "object",
+                ref: "#/components/schemas/PermissionOption"
+            )
         ),
+        new OA\Property(
+            property: "departments",
+            type: "array",
+            items: new OA\Items(
+                type: "object",
+                ref: "#/components/schemas/DepartmentOption"
+            )
+        ),
+
     ]
 )]
 class AdminUser

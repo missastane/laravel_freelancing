@@ -1446,6 +1446,99 @@
                 ]
             }
         },
+        "/api/admin/market/subscription": {
+            "get": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Retrieve list of Subscriptions",
+                "description": "Retrieve list of all `Subscriptions`",
+                "operationId": "listSubscriptions",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page (default: 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search term to filter subscriptions",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of Subscriptions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/SubscriptionSchema"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/user/admin-user": {
             "get": {
                 "tags": [
@@ -5808,6 +5901,99 @@
                 },
                 "type": "object"
             },
+            "SubscriptionFeatureSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "feature_key": {
+                        "type": "string",
+                        "example": "vip-proposal"
+                    },
+                    "feature_persian_key": {
+                        "type": "string",
+                        "example": "پیشنهاد اختصاصی"
+                    },
+                    "feature_value": {
+                        "type": "string",
+                        "example": "10"
+                    },
+                    "feature_value_type": {
+                        "type": "string",
+                        "example": "عدد"
+                    },
+                    "is_limited": {
+                        "description": "Whether the feature is limited or not.",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "پلن نقره ای"
+                    },
+                    "amount": {
+                        "type": "integer",
+                        "example": 300000
+                    },
+                    "duration_days": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "commission_rate": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "max_target_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_notification_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_email_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_sms_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_view_details_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "created_at": {
+                        "description": "Creation datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Update datetime",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-02-22T10:00:00Z"
+                    },
+                    "features": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubscriptionFeatureSchema"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "AdminUser": {
                 "title": "Admin User",
                 "description": "Admin User schema",
@@ -5895,24 +6081,19 @@
                     "roles": {
                         "type": "array",
                         "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "example": 2
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "employer"
-                                }
-                            },
-                            "type": "object"
+                            "$ref": "#/components/schemas/RoleOption"
                         }
                     },
                     "permissions": {
                         "type": "array",
                         "items": {
-                            "type": "string",
-                            "example": "view-users"
+                            "$ref": "#/components/schemas/PermissionOption"
+                        }
+                    },
+                    "departments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DepartmentOption"
                         }
                     }
                 },
@@ -6287,6 +6468,10 @@
         {
             "name": "Skill/Form",
             "description": "Skill/Form"
+        },
+        {
+            "name": "Subscription",
+            "description": "Subscription"
         },
         {
             "name": "Admin",

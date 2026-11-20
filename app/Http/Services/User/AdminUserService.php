@@ -23,9 +23,9 @@ class AdminUserService
     ) {
 
     }
-    public function getAdmins($message, ?string $search, int $perPage = 15)
+    public function getAdmins(?string $search, int $perPage = 15)
     {
-        return $this->userRepository->getUsers(2, $search, $message, $perPage);
+        return $this->userRepository->getUsers(2, $search, $perPage);
     }
 
     public function options(): array

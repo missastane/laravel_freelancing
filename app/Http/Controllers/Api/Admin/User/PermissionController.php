@@ -317,7 +317,7 @@ class PermissionController extends Controller
 
             return $this->success($permission, __('messages.permission_updated'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -418,7 +418,7 @@ class PermissionController extends Controller
                 __('messages.roles_synced_permission')
             );
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -488,7 +488,7 @@ class PermissionController extends Controller
                 __('messages.permission_deleted')
             );
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

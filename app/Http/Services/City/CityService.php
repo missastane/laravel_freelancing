@@ -5,6 +5,7 @@ namespace App\Http\Services\City;
 use App\Models\Locale\City;
 use App\Models\Locale\Province;
 use App\Repositories\Contracts\Locale\CityRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 
 class CityService
@@ -13,9 +14,12 @@ class CityService
     {
     }
 
-    public function getCities(Province $province, int $perPage = 15, string $search = null, string $message = null)
-    {
-        return $this->cityRepository->getCities($province, $perPage, $search, $message);
+    public function getCities(
+        Province $province,
+        int $perPage = 15,
+        string $search = null
+    ): LengthAwarePaginator {
+        return $this->cityRepository->getCities($province, $perPage, $search);
     }
 
     public function searchCity(string $search)

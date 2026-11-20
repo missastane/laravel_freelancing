@@ -382,7 +382,7 @@ class ProvinceController extends Controller
 
             return $this->success(null, __('messages.province_deleted'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

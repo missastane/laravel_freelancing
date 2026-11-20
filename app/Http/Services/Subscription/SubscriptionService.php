@@ -21,9 +21,9 @@ class SubscriptionService
         protected SubscriptionFeatureRepositoryInterface $subscriptionFeatureRepository
     ) {
     }
-    public function getAllSubscriptions()
+    public function getAllSubscriptions(string $search = null, int $perPage = 15)
     {
-        $subscriptions = $this->subscriptionRepository->getAllSubscriptions();
+        $subscriptions = $this->subscriptionRepository->getAllSubscriptions($search, $perPage);
         return $subscriptions;
     }
     public function getAllowedSubscriptionPlans()

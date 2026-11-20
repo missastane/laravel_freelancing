@@ -27,11 +27,12 @@ class Permission extends Model
 
     public function scopeSearch(Builder $query, null|string $search): void
     {
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%");
-            });
+        if (empty($search)) {
+            return;
         }
-        return;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'LIKE', "%{$search}%");
+        });
     }
 }

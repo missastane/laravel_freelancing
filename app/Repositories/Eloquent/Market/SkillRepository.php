@@ -16,13 +16,6 @@ class SkillRepository extends BaseRepository implements SkillRepositoryInterface
     {
         parent::__construct($model);
     }
-    public function searchSkill(string $search): Paginator
-    {
-        $skills = $this->model->where('original_title', 'LIKE', "%" . $search . "%")
-            ->orWhere('persian_title', 'LIKE', '%' . $search . '%')
-            ->orderBy('persian_title')->paginate(20);
-        return $skills;
-    }
 
     public function skillOption(): Collection
     {

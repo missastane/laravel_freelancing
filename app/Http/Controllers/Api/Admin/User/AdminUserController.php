@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\User\PermissionStoreRequest;
 use App\Http\Requests\Admin\User\RoleStoreRequest;
 use App\Http\Requests\Admin\User\SyncDepartmentRequest;
 use App\Http\Requests\SearchRequest;
+use App\Http\Resources\User\UserResource;
 use App\Http\Services\User\AdminUserService;
 use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
@@ -86,9 +87,9 @@ class AdminUserController extends Controller
     )]
     public function index(SearchRequest $request)
     {
-        $perPage = $request->integer('per_page', 1);
-        $admins = $this->adminUserService->getAdmins(null, $request->validated('search'), $perPage);
-        return $admins;
+        $perPage = $request->integer('per_page', 15);
+        $admins = $this->adminUserService->getAdmins($request->validated('search'), $perPage);
+        return $this->success($admins, resource: UserResource::class);
     }
 
     #[OA\Get(
@@ -152,7 +153,7 @@ class AdminUserController extends Controller
     public function show(User $admin)
     {
         $admin = $this->adminUserService->showAdmin($admin);
-        return $this->success($admin);
+        return $this->success($admin, resource: UserResource::class);
     }
 
     #[OA\Get(
@@ -184,7 +185,7 @@ class AdminUserController extends Controller
                                             type: "array",
                                             items: new OA\Items(ref: "#/components/schemas/PermissionOption")
                                         ),
-                                         new OA\Property(
+                                        new OA\Property(
                                             property: "departments",
                                             type: "array",
                                             items: new OA\Items(ref: "#/components/schemas/DepartmentOption")
@@ -282,7 +283,7 @@ class AdminUserController extends Controller
         try {
             $inputs = $request->all();
             $admin = $this->adminUserService->storeNewAdmin($inputs);
-            return $this->success($admin, __('messages.change_password_link_sent'), 201);
+            return $this->success($admin, __('messages.change_password_link_sent'), 201, resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -355,7 +356,7 @@ class AdminUserController extends Controller
         try {
             $message = $this->adminUserService->toggleActivation($admin);
             if ($message) {
-                return $this->success($admin->fresh(), $message);
+                return $this->success($admin->fresh(), $message, resource: UserResource::class);
             }
             return $this->error();
         } catch (Exception $e) {
@@ -444,7 +445,7 @@ class AdminUserController extends Controller
         try {
             $inputs = $request->validated();
             $this->adminUserService->update($admin, $inputs);
-            return $this->success($admin->fresh(), __('messages.user_updated'));
+            return $this->success($admin->fresh(), __('messages.user_updated'), resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -596,7 +597,7 @@ class AdminUserController extends Controller
         }
         try {
             $this->adminUserService->syncRoles($admin, $request->validated());
-            return $this->success($admin->fresh('roles'), __('messages.admin_roles_updated'));
+            return $this->success($admin->fresh('roles'), __('messages.admin_roles_updated'), resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -683,7 +684,7 @@ class AdminUserController extends Controller
         }
         try {
             $this->adminUserService->permissionsStore($admin, $request->validated());
-            return $this->success($admin->fresh('permissions'), __('messages.admin_permissions_updated'));
+            return $this->success($admin->fresh('permissions'), __('messages.admin_permissions_updated'), resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -770,7 +771,7 @@ class AdminUserController extends Controller
         // }
         try {
             $this->adminUserService->syncDepartments($admin, $request->departments);
-            return $this->success($admin->fresh('departments'), __('messages.admin_departments_updated'));
+            return $this->success($admin->fresh('departments'), __('messages.admin_departments_updated'), resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }

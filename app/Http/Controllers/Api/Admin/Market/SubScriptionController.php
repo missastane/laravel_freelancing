@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Api\Admin\Market;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Market\SubscriptionRequest;
 use App\Http\Requests\Admin\Market\UpdateSubscriptionRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Services\Subscription\SubscriptionService;
 use App\Models\Market\Subscription;
 use App\Models\Market\SubscriptionFeature;
 use App\Traits\ApiResponseTrait;
 use Exception;
+use OpenApi\Attributes as OA;
 
 class SubScriptionController extends Controller
 {
@@ -17,92 +19,79 @@ class SubScriptionController extends Controller
     public function __construct(protected SubscriptionService $subscriptionService)
     {
     }
-    /**
-     * @OA\Get(
-     *     path="/api/admin/market/subscription",
-     *     summary="Retrieve list of Subscriptions",
-     *     description="Retrieve list of all `Subscriptions`",
-     *     tags={"Subscription"},
-     *     security={
-     *         {"bearerAuth": {}}
-     *     },
-     *     @OA\Response(
-     *         response=200,
-     *         description="A list of Subscriptions",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", nullable=true, example=null),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="data", type="array",
-     *                     @OA\Items(
-     *                      ref="#/components/schemas/Subscription"
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="first_page_url", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
-     *                 @OA\Property(property="from", type="integer", example=1),
-     *                 @OA\Property(property="next_page_url", type="string", nullable=true, example=null),
-     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
-     *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="prev_page_url", type="string", nullable=true, example=null),
-     *                 @OA\Property(property="to", type="integer", example=4)
-     *             ),
-     *             @OA\Property(property="total", type="integer", example=4),
-     *             @OA\Property(property="last_page", type="integer", example=1),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
-     *                 @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/admin/user/customer?page=1"),
-     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
-     *                 @OA\Property(property="next", type="string", nullable=true, example=null)
-     *             ),
-     *             @OA\Property(
-     *                 property="meta",
-     *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="from", type="integer", example=1),
-     *                 @OA\Property(property="last_page", type="integer", example=1),
-     *                 @OA\Property(
-     *                     property="links",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="url", type="string", nullable=true, example=null),
-     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
-     *                         @OA\Property(property="active", type="boolean", example=false)
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="path", type="string", example="http://127.0.0.1:8000/api/admin/user/customer"),
-     *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="to", type="integer", example=4),
-     *                 @OA\Property(property="total", type="integer", example=4)
-     *             )
-     *         )
-     *     ),
-     *  @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="bool", example="false"),
-     *             @OA\Property(property="message", type="string", example="جهت انجام عملیات ابتدا وارد حساب کاربری خود شوید")
-     *     )),
-     *  @OA\Response(
-     *         response=403,
-     *         description="You are not authorized to do this action.",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="شما مجاز به انجام این عملیات نیستید")
-     *         ),
-     *     )
-     * )
-     */
-    public function index()
+
+    #[OA\Get(
+        path: '/api/admin/market/subscription',
+        summary: 'Retrieve list of Subscriptions',
+        description: 'Retrieve list of all `Subscriptions`',
+        operationId: 'listSubscriptions',
+        tags: ['Subscription'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                required: false,
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', example: 1)
+            ),
+            new OA\Parameter(
+                name: 'per_page',
+                in: 'query',
+                required: false,
+                description: 'Number of items per page (default: 15)',
+                schema: new OA\Schema(type: 'integer', example: 15)
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                required: false,
+                description: 'Search term to filter subscriptions',
+                schema: new OA\Schema(type: 'string')
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'A list of Subscriptions',
+                content: new OA\JsonContent(
+                    allOf: [
+                        new OA\Schema(ref: '#/components/schemas/SuccessResponse'),
+                        new OA\Schema(
+                            properties: [
+                                new OA\Property(
+                                    property: 'data',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        ref: '#/components/schemas/SubscriptionSchema'
+                                    )
+                                ),
+                            ]
+                        ),
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'You are not authorized to do this action.',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/ErrorResponse'
+                )
+            ),
+        ]
+    )]
+    public function index(SearchRequest $request)
     {
-        return $this->subscriptionService->getAllSubscriptions();
+        $perPage = $request->integer('per_page', 15);
+        $search = $request->validated('search');
+        return $this->subscriptionService->getAllSubscriptions($search, $perPage);
     }
 
     /**

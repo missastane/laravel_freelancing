@@ -221,7 +221,7 @@ class RoleController extends Controller
             $role = $this->roleService->storeRole($request->all());
             return $this->success($role, __('messages.role_created'), 201);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -309,7 +309,7 @@ class RoleController extends Controller
 
             return $this->success($role, __('messages.role_updated'));
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -400,7 +400,7 @@ class RoleController extends Controller
                 __('messages.permissions_synced_role')
             );
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -477,7 +477,7 @@ class RoleController extends Controller
                 __('messages.role_deleted')
             );
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 

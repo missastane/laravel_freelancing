@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin\Locale;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Locale\CityRequest;
 use App\Http\Requests\SearchRequest;
+use App\Http\Resources\Locale\CityResource;
 use App\Http\Services\City\CityService;
 use App\Models\Locale\City;
 use App\Models\Locale\Province;
@@ -104,7 +105,7 @@ class CityController extends Controller
         $perPage = $request->integer('per_page', 15);
         $search = $request->validated('search');
         $cities = $this->cityService->getCities($province, $perPage, $search);
-        return $cities;
+        return $this->success($cities, resource: CityResource::class);
     }
 
     #[OA\Get(
@@ -168,7 +169,7 @@ class CityController extends Controller
     {
         $city = $this->cityService->showCity($city);
 
-        return $this->success($city);
+        return $this->success($city, resource: CityResource::class);
     }
 
     #[OA\Post(
@@ -255,7 +256,7 @@ class CityController extends Controller
             $inputs['province_id'] = $province->id;
             $city = $this->cityService->storeCity($inputs);
 
-            return $this->success($city, __('messages.city_created') , 201);
+            return $this->success($city, __('messages.city_created'), 201, CityResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -344,7 +345,7 @@ class CityController extends Controller
             $inputs = $request->all();
             $this->cityService->updateCity($city, $inputs);
 
-            return $this->success($city->fresh(), __('messages.city_updated'));
+            return $this->success($city->fresh(), __('messages.city_updated'), CityResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
