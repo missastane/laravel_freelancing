@@ -76,6 +76,13 @@ class UserService
         $clientType = $data['client_type'] ?? 'web';
         $rememberMe = (bool) ($data['remember_me'] ?? false);
 
+        if (!$user->hasVerifiedEmail()) {
+            return [
+                'status' => false,
+                'message' => __('errors.email_has_not_verified'),
+                'code' => 403,
+            ];
+        }
         // Create a new authentication session and refresh token.
         $sessionData = $this->refreshTokenService->createSession(
             user: $user,
@@ -301,5 +308,11 @@ class UserService
                 'code' => 500,
             ];
         }
+    }
+
+    public function getMe()
+    {
+        $user = auth()->user();
+        return $user;
     }
 }
