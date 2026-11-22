@@ -10,6 +10,7 @@ use App\Http\Requests\Profile\AboutMeRequest;
 use App\Http\Requests\Profile\ChangePasswordRequest;
 use App\Http\Requests\Profile\ChangerUsernameRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
+use App\Http\Resources\User\UserResource;
 use App\Http\Services\Profile\ProfileService;
 use App\Traits\ApiResponseTrait;
 use Exception;
@@ -51,7 +52,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated - Invalid or expired token",
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -68,7 +69,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = $this->profileService->getBasicInfo();
-        return $this->success($user, __('messages.login_success', ['user' => $user->full_name]));
+        return $this->success($user, __('messages.login_success', ['user' => $user->full_name]), resource: UserResource::class);
     }
 
     #[OA\Post(
@@ -116,13 +117,18 @@ class ProfileController extends Controller
                         new OA\Schema(
                             ref: "#/components/schemas/SuccessResponse"
                         ),
-                    ]
 
+                        new OA\Property(
+                            property: "data",
+                            ref: "#/components/schemas/User",
+                            type: "object"
+                        )
+                    ]
                 )
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated - Invalid or expired token",
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -147,8 +153,8 @@ class ProfileController extends Controller
     {
         try {
             $inputs = $request->all();
-            $this->profileService->updateProfile($inputs);
-            return $this->success(null, 'اطلاعات پروفایل با موفقیت بروزرسانی شد');
+            $user = $this->profileService->updateProfile($inputs);
+            return $this->success($user, __('messages.profile_updated'), resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -193,12 +199,18 @@ class ProfileController extends Controller
                         new OA\Schema(
                             ref: "#/components/schemas/SuccessResponse"
                         ),
+
+                        new OA\Property(
+                            property: "data",
+                            ref: "#/components/schemas/User",
+                            type: "object"
+                        )
                     ]
                 )
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated - Invalid or expired token",
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -222,8 +234,8 @@ class ProfileController extends Controller
     public function addAboutMe(AboutMeRequest $request)
     {
         try {
-            $this->profileService->aboutMe($request->all());
-            return $this->success(null, 'اطلاعات شخصی شما با موفقیت بروزرسانی شد');
+            $user = $this->profileService->aboutMe($request->all());
+            return $this->success($user, __('messages.about_me_updated'), resource: UserResource::class);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -258,12 +270,18 @@ class ProfileController extends Controller
                         new OA\Schema(
                             ref: "#/components/schemas/SuccessResponse"
                         ),
+
+                        new OA\Property(
+                            property: "data",
+                            ref: "#/components/schemas/User",
+                            type: "object"
+                        )
                     ]
                 )
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated - Invalid or expired token",
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -294,8 +312,8 @@ class ProfileController extends Controller
     public function updatePassword(ChangePasswordRequest $request)
     {
         try {
-            $this->profileService->changePassword($request->all());
-            return $this->success(null, 'کلمه عبور با موفقیت بروزرسانی شد');
+            $user = $this->profileService->changePassword($request->all());
+            return $this->success($user, __('messages.password_changed'), resource: UserResource::class);
         } catch (WrongCurrentPasswordException $e) {
             throw $e;
         } catch (Exception $e) {
@@ -354,7 +372,7 @@ class ProfileController extends Controller
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated - Invalid or expired token",
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -384,7 +402,7 @@ class ProfileController extends Controller
         } catch (InvalidMobileNumberException $e) {
             throw $e;
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -422,6 +440,12 @@ class ProfileController extends Controller
                         new OA\Schema(
                             ref: "#/components/schemas/SuccessResponse"
                         ),
+
+                        new OA\Property(
+                            property: "data",
+                            ref: "#/components/schemas/User",
+                            type: "object"
+                        )
                     ]
                 )
             ),
@@ -464,7 +488,7 @@ class ProfileController extends Controller
             $inputs = $request->all();
             $result = $this->profileService->confirmMobile($token, $inputs);
             if ($result['status']) {
-                return $this->success($result['data'], $result['message'], $result['code']);
+                return $this->success($result['data'], $result['message'], $result['code'], UserResource::class);
             } else {
                 return response()->json([
                     'status' => $result['status'],
@@ -500,16 +524,22 @@ class ProfileController extends Controller
                 response: 200,
                 description: "Username is Updated Successfully",
                 content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "status", type: "boolean", example: true),
-                        new OA\Property(property: "message", type: "string", example: "نام کاربری شما با موفقیت بروزرسانی شد"),
-                        new OA\Property(property: "data", type: "object", nullable: true),
+                    allOf: [
+                        new OA\Schema(
+                            ref: "#/components/schemas/SuccessResponse"
+                        ),
+
+                        new OA\Property(
+                            property: "data",
+                            ref: "#/components/schemas/User",
+                            type: "object"
+                        )
                     ]
                 )
             ),
             new OA\Response(
                 response: 401,
-                description: "Unauthenticated - Invalid or expired token",
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -540,12 +570,12 @@ class ProfileController extends Controller
     public function changeUsername(ChangerUsernameRequest $request)
     {
         try {
-            $this->profileService->changeUsername($request->all());
-            return $this->success(null, 'نام کاربری شما با موفقیت بروزرسانی شد');
+            $user = $this->profileService->changeUsername($request->all());
+            return $this->success($user, __('messages.username_updated'), resource: UserResource::class);
         } catch (LimitChangeUsernameException $e) {
             throw $e;
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 }
