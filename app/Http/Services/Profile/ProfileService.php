@@ -40,12 +40,14 @@ class ProfileService
             "images/profiles/users/{$user->id}",
             null
         );
-        return $this->userRepository->update($user, $data);
+        $this->userRepository->update($user, $data);
+        return $user->fresh();
     }
     public function aboutMe(array $data)
     {
         $user = auth()->user();
-        return $this->userRepository->update($user, $data);
+        $this->userRepository->update($user, $data);
+        return $user->fresh();
     }
     public function changePassword(array $data)
     {
@@ -53,9 +55,10 @@ class ProfileService
         if (!Hash::check($data['current_password'], $user->password)) {
             throw new WrongCurrentPasswordException();
         }
-        return $this->userRepository->update($user, [
+        $this->userRepository->update($user, [
             'password' => Hash::make($data['new_password'])
         ]);
+        return $user->fresh();
     }
     public function changeMobile(array $data)
     {
@@ -127,7 +130,7 @@ class ProfileService
         return [
             'status' => true,
             'message' => 'شماره موبایل شما با موفقیت تأیید شد',
-            'data' => null,
+            'data' => $user->fresh(),
             'code' => 200
         ];
     }
