@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\User\PermissionStoreRequest;
 use App\Http\Requests\Admin\User\RoleStoreRequest;
 use App\Http\Requests\Admin\User\SyncDepartmentRequest;
 use App\Http\Requests\SearchRequest;
-use App\Http\Resources\User\UserResource;
+use App\Http\Resources\User\AdminUserResource;
 use App\Http\Services\User\AdminUserService;
 use App\Models\User\User;
 use App\Traits\ApiResponseTrait;
@@ -89,7 +89,7 @@ class AdminUserController extends Controller
     {
         $perPage = $request->integer('per_page', 15);
         $admins = $this->adminUserService->getAdmins($request->validated('search'), $perPage);
-        return $this->success($admins, resource: UserResource::class);
+        return $this->success($admins, resource: AdminUserResource::class);
     }
 
     #[OA\Get(
@@ -153,7 +153,7 @@ class AdminUserController extends Controller
     public function show(User $admin)
     {
         $admin = $this->adminUserService->showAdmin($admin);
-        return $this->success($admin, resource: UserResource::class);
+        return $this->success($admin, resource: AdminUserResource::class);
     }
 
     #[OA\Get(
@@ -283,7 +283,7 @@ class AdminUserController extends Controller
         try {
             $inputs = $request->all();
             $admin = $this->adminUserService->storeNewAdmin($inputs);
-            return $this->success($admin, __('messages.change_password_link_sent'), 201, resource: UserResource::class);
+            return $this->success($admin, __('messages.change_password_link_sent'), 201, resource: AdminUserResource::class);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -356,7 +356,7 @@ class AdminUserController extends Controller
         try {
             $message = $this->adminUserService->toggleActivation($admin);
             if ($message) {
-                return $this->success($admin->fresh(), $message, resource: UserResource::class);
+                return $this->success($admin->fresh(), $message, resource: AdminUserResource::class);
             }
             return $this->error();
         } catch (Exception $e) {
@@ -445,7 +445,7 @@ class AdminUserController extends Controller
         try {
             $inputs = $request->validated();
             $this->adminUserService->update($admin, $inputs);
-            return $this->success($admin->fresh(), __('messages.user_updated'), resource: UserResource::class);
+            return $this->success($admin->fresh(), __('messages.user_updated'), resource: AdminUserResource::class);
         } catch (Exception $e) {
             return $this->error();
         }
@@ -597,7 +597,7 @@ class AdminUserController extends Controller
         }
         try {
             $this->adminUserService->syncRoles($admin, $request->validated());
-            return $this->success($admin->fresh('roles'), __('messages.admin_roles_updated'), resource: UserResource::class);
+            return $this->success($admin->fresh('roles'), __('messages.admin_roles_updated'), resource: AdminUserResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -684,7 +684,7 @@ class AdminUserController extends Controller
         }
         try {
             $this->adminUserService->permissionsStore($admin, $request->validated());
-            return $this->success($admin->fresh('permissions'), __('messages.admin_permissions_updated'), resource: UserResource::class);
+            return $this->success($admin->fresh('permissions'), __('messages.admin_permissions_updated'), resource: AdminUserResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -771,7 +771,7 @@ class AdminUserController extends Controller
         // }
         try {
             $this->adminUserService->syncDepartments($admin, $request->departments);
-            return $this->success($admin->fresh('departments'), __('messages.admin_departments_updated'), resource: UserResource::class);
+            return $this->success($admin->fresh('departments'), __('messages.admin_departments_updated'), resource: AdminUserResource::class);
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
