@@ -61,6 +61,7 @@ class RefreshTokenService
     /**
      * Validate and rotate a refresh token.
      */
+
     public function rotate(string $plainToken, ?string $expectedClientType = null): array
     {
         $tokenHash = hash('sha256', $plainToken);
@@ -74,7 +75,8 @@ class RefreshTokenService
                 return ['error' => 'invalid'];
             }
 
-            $session = AuthSession::whereKey($token->session_id)
+            $session = AuthSession::with('user')
+                ->whereKey($token->session_id)
                 ->lockForUpdate()
                 ->first();
 
@@ -115,6 +117,24 @@ class RefreshTokenService
                 return ['error' => 'invalid'];
             }
 
+            // Revoke the session if the user's email is not verified.
+            if (!$session->user || !$session->user->hasVerifiedEmail()) {
+                $now = now();
+
+                $session->refreshTokens()
+                    ->whereNull('revoked_at')
+                    ->update([
+                        'revoked_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+
+                $session->update([
+                    'revoked_at' => $now,
+                ]);
+
+                return ['error' => 'email_unverified'];
+            }
+
             $newPlainToken = $this->generateToken();
             $now = now();
 
@@ -144,6 +164,13 @@ class RefreshTokenService
             throw new RuntimeException(
                 'Refresh token reuse detected. Session has been revoked.',
                 401
+            );
+        }
+
+        if (($result['error'] ?? null) === 'email_unverified') {
+            throw new RuntimeException(
+                __('errors.email_has_not_verified'),
+                403
             );
         }
 
