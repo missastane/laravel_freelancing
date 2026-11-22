@@ -472,6 +472,7 @@ Route::
         Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('csrf.refresh'); // use post method to more safety
         Route::middleware(['auth:api'])->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+            Route::get('/me', [AuthController::class, 'getMe'])->name('me');
             Route::get('/email/verify', [EmailVerificationController::class, 'checkVerificationStatus']);
         });
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
