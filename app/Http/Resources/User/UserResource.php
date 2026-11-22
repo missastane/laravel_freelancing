@@ -30,9 +30,6 @@ class UserResource extends JsonResource
             'about_me' => $this->about_me,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'roles' => RoleResource::collection($this->whenLoaded('roles')),
-            'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
-            'departments' => DepartmentOptionResource::collection($this->whenLoaded('departments'))
         ];
     }
 }
