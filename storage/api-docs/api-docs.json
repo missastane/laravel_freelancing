@@ -5271,6 +5271,67 @@
                 }
             }
         },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get Auth User details",
+                "description": "Returns the authenticated user's details. The response schema depends on the user's account type.",
+                "operationId": "8a9ef71caace89d74ca10d5d5dd75ed1",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched Auth User details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "oneOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/User"
+                                                        },
+                                                        {
+                                                            "$ref": "#/components/schemas/AdminUser"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/email/verification-notification": {
             "post": {
                 "tags": [
