@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthRequest;
+use App\Http\Resources\User\AdminUserResource;
+use App\Http\Resources\User\UserResource;
 use App\Http\Services\User\UserService;
 use App\Traits\ApiResponseTrait;
 use Exception;
@@ -606,6 +608,54 @@ class AuthController extends Controller
                 500
             );
         }
+    }
+
+    #[OA\Get(
+        path: "/api/auth/me",
+        summary: "Get Auth User details",
+        description: "Returns the authenticated user's details. The response schema depends on the user's account type.",
+        tags: ["Authentication"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(ref: "#/components/parameters/XLocale"),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Successfully fetched Auth User details",
+                content: new OA\JsonContent(
+                    allOf: [
+                        new OA\Schema(
+                            ref: "#/components/schemas/SuccessResponse"
+                        ),
+                        new OA\Schema(
+                            properties: [
+                                new OA\Property(
+                                    property: "data",
+                                    oneOf: [
+                                        new OA\Schema(ref: "#/components/schemas/User"),
+                                        new OA\Schema(ref: "#/components/schemas/AdminUser"),
+                                    ]
+                                )
+                            ]
+                        ),
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: "Unauthenticated.",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+        ]
+    )]
+    public function getMe()
+    {
+        $user = $this->userService->getMe();
+        $resource = $user->user_type === 2 ? AdminUserResource::class : UserResource::class;
+        return $this->success($user->load('permissions', 'roles', 'departments'), resource: $resource);
     }
 
 }
