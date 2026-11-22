@@ -60,21 +60,21 @@ class SubscriptionService
                 'max_sms_per_month' => $data['max_sms_per_month'],
                 'max_view_deatils_per_month' => $data['max_view_deatils_per_month']
             ]);
-            if (!empty($data['features'])) {
-                foreach ($data['features'] as $feature) {
-                    $this->subscriptionFeatureRepository->updateOrCreate(
-                        [
-                            'subscription_id' => $subscription->id,
-                            'feature_key' => $feature['feature_key'],
-                        ],
-                        [
-                            'feature_persian_key' => $feature['feature_persian_key'],
-                            'feature_value' => $feature['feature_value'],
-                            'feature_value_type' => $feature['feature_value_type'],
-                            'is_limited' => $feature['is_limited'] ?? null,
-                        ]
-                    );
-                }
+            $features = $data['features'] ?? [];
+
+            foreach ($features as $feature) {
+                $this->subscriptionFeatureRepository->updateOrCreate(
+                    [
+                        'subscription_id' => $subscription->id,
+                        'feature_key' => $feature['feature_key'],
+                    ],
+                    [
+                        'feature_persian_key' => $feature['feature_persian_key'],
+                        'feature_value' => $feature['feature_value'],
+                        'feature_value_type' => $feature['feature_value_type'],
+                        'is_limited' => $feature['is_limited'] ? 1 : 2,
+                    ]
+                );
             }
             return $subscription;
         });
@@ -82,7 +82,8 @@ class SubscriptionService
 
     public function updateSubscription(Subscription $subscription, array $data)
     {
-        return $this->subscriptionRepository->update($subscription, $data);
+        $this->subscriptionRepository->update($subscription, $data);
+        return $subscription->fresh();
     }
 
     public function deleteFeature(SubscriptionFeature $subscritptionFeature)

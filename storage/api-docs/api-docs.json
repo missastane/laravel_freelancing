@@ -1539,6 +1539,454 @@
                 ]
             }
         },
+        "/api/admin/market/subscription/store": {
+            "post": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Store a new Subscription by admin",
+                "description": "In this method admins can store a new `Subscription`.",
+                "operationId": "storeSubscription",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubscriptionRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Subscription creation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SubscriptionSchema"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/subscription/show/{subscription}": {
+            "get": {
+                "tags": [
+                    "Subscription",
+                    "Subscription/Form"
+                ],
+                "summary": "Get details of a specific Subscription",
+                "description": "Returns the `Subscription` details",
+                "operationId": "showSubscription",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "description": "ID of the Subscription to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched Subscription details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SubscriptionSchema"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subscription not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/subscription/update/{subscription}": {
+            "put": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Update an existing Subscription by admin",
+                "description": "In this method admins can update an existing `Subscription`.",
+                "operationId": "updateSubscription",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "description": "The ID of the Subscription to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSubscriptionRequestSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Subscription update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SubscriptionSchema"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subscription not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/subscription/delete-feature/{subscriptionFeature}": {
+            "delete": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Delete a SubscriptionFeature",
+                "description": "This endpoint allows the admin to delete an existing `SubscriptionFeature`.",
+                "operationId": "deleteSubscriptionFeature",
+                "parameters": [
+                    {
+                        "name": "subscriptionFeature",
+                        "in": "path",
+                        "description": "The ID of the SubscriptionFeature to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SubscriptionFeature deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "SubscriptionFeature not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/market/subscription/delete/{subscription}": {
+            "delete": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Delete a Subscription",
+                "description": "This endpoint allows the admin to delete an existing `Subscription`.",
+                "operationId": "deleteSubscription",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "description": "The ID of the Subscription to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not authorized to do this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subscription not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/user/admin-user": {
             "get": {
                 "tags": [
@@ -5547,6 +5995,110 @@
                 },
                 "type": "object"
             },
+            "SubscriptionRequestSchema": {
+                "required": [
+                    "name",
+                    "amount",
+                    "duration_days",
+                    "commission_rate",
+                    "max_target_per_month",
+                    "max_notification_per_month",
+                    "max_email_per_month",
+                    "max_sms_per_month",
+                    "max_view_details_per_month"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "پلن طلایی"
+                    },
+                    "amount": {
+                        "type": "integer",
+                        "example": 300000
+                    },
+                    "duration_days": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "commission_rate": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "max_target_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_notification_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_email_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_sms_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "max_view_details_per_month": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "features": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "feature_key",
+                                "feature_persian_key",
+                                "feature_value",
+                                "feature_value_type",
+                                "is_limited"
+                            ],
+                            "properties": {
+                                "feature_key": {
+                                    "type": "string",
+                                    "example": "vip-proposal"
+                                },
+                                "feature_persian_key": {
+                                    "type": "string",
+                                    "example": "پیشنهاد اختصاصی"
+                                },
+                                "feature_value": {
+                                    "type": "string",
+                                    "example": "10"
+                                },
+                                "feature_value_type": {
+                                    "type": "string",
+                                    "example": "عدد"
+                                },
+                                "is_limited": {
+                                    "type": "integer",
+                                    "example": 1,
+                                    "enum": [
+                                        1,
+                                        2
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateSubscriptionRequestSchema": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "This field can only contain Persian and English letters and numbers. Any other characters will result in a validation error.",
+                        "type": "string",
+                        "example": "پلن طلایی"
+                    }
+                },
+                "type": "object"
+            },
             "ErrorResponse": {
                 "required": [
                     "status",
@@ -6472,6 +7024,10 @@
         {
             "name": "Subscription",
             "description": "Subscription"
+        },
+        {
+            "name": "Subscription/Form",
+            "description": "Subscription/Form"
         },
         {
             "name": "Admin",

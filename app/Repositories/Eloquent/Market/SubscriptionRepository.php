@@ -23,7 +23,7 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
     public function getAllSubscriptions(null|string $search, int $perPage = 15)
     {
         $subscriptions = $this->all(search: $search, perPage: $perPage, searchScope: 'search');
-        return new BaseCollection($subscriptions, SubscriptionWithFeatureResource::class, null);
+        return $subscriptions;
     }
 
     public function getAllowedSubscriptionPlans()
@@ -37,7 +37,7 @@ class SubscriptionRepository extends BaseRepository implements SubscriptionRepos
     public function showSubscription(Subscription $subscription)
     {
         $result = $this->showWithRelations($subscription, ['features']);
-        return new SubscriptionWithFeatureResource($result);
+        return $result;
     }
     public function userActivePlan()
     {

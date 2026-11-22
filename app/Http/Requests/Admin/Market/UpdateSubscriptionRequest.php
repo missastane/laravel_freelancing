@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Market;
 
+use App\Rules\SafeTitleRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,12 +29,9 @@ class UpdateSubscriptionRequest extends FormRequest
                 'required',
                 'min:2',
                 'max:255',
-                'regex:/^[ا-یa-zA-Z0-9\-۰-۹ ]+$/u',
+                new SafeTitleRule(),
                 Rule::unique('subscriptions', 'name')
-                    ->where(function ($query) use ($subscription) {
-                        return $query->where('target_type', $subscription->target_type);
-                    })
-                    ->ignore($subscription->id), 
+                    ->ignore($subscription->id),
             ],
         ];
     }

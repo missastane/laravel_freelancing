@@ -14,6 +14,7 @@ return [
     'ignore_reset_password' => 'اگر این درخواست توسط شما انجام نشده است، این پیام را نادیده بگیرید',
     'language_updated' => 'زبان پروفایل شما با موفقیت بروزرسانی شد.',
     'change_password_link_sent' => 'لینک تغییر رمز عبور به ایمیل ارسال شد',
+    'password_changed' => 'کلمه عبور با موفقیت بروزرسانی شد',
     'user_activated' => 'کاربر با موفقیت فعال شد',
     'user_deactivated' => 'کاربر با موفقیت غیرفعال شد',
     'user_updated' => 'کاربر با موفقیت بروزرسانی شد',
@@ -38,5 +39,9 @@ return [
     'city_created' => 'شهر با موفقیت افزوده شد',
     'city_updated' => 'شهر با موفقیت بروزرسانی شد',
     'city_deleted' => 'شهر با موفقیت حذف شد',
+    'subscription_created' => 'پلن اشتراک با موفقیت ثبت شد',
+    'subscription_updated' => 'پلن اشتراک با موفقیت بروزرسانی شد',
+    'subscription_feature_deleted' => 'ویژگی با موفقیت حذف شد',
+    'subscription_deleted' => 'اشتراک با موفقیت حذف شد',
 
 ];

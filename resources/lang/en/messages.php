@@ -38,6 +38,10 @@ return [
    'city_created' => 'The city has been successfully added.',
    'city_updated' => 'The city has been successfully updated.',
    'city_deleted' => 'The city has been successfully deleted.',
+   'subscription_created' => 'The subscription plan has been successfully created.',
+   'subscription_updated' => 'The subscription plan has been successfully updated.',
+   'subscription_feature_deleted' => 'The feature has been successfully deleted.',
+   'subscription_deleted' => 'The subscription has been successfully deleted.',
 
 
 
