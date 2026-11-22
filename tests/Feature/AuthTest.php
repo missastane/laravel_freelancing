@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Services\Auth\RefreshTokenService;
 use App\Models\User\AuthSession;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -517,6 +518,78 @@ class AuthTest extends TestCase
 
         // The authentication session must remain active.
         $this->assertNull($session->fresh()->revoked_at);
+    }
+
+
+    public function test_web_refresh_rejects_unverified_user()
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('123Ss!45678'),
+            'email_verified_at' => null,
+        ]);
+
+        // Create a web authentication session directly.
+        $refreshTokenService = app(RefreshTokenService::class);
+
+        $sessionData = $refreshTokenService->createSession(
+            $user,
+            'web',
+            true
+        );
+
+        $session = $sessionData['session'];
+        $refreshToken = $sessionData['refresh_token'];
+
+        // Generate a valid CSRF token.
+        $csrfToken = app(\App\Support\CsrfToken::class)->generate();
+
+        $response = $this->withUnencryptedCookie(
+            'refresh_token',
+            $refreshToken
+        )->call(
+                'POST',
+                '/api/auth/refresh',
+                [],
+                [
+                    'refresh_token' => $refreshToken,
+                    'XSRF-TOKEN' => $csrfToken,
+                ],
+                [],
+                [
+                    'HTTP_ACCEPT' => 'application/json',
+                    'CONTENT_TYPE' => 'application/json',
+                    'HTTP_ORIGIN' => 'http://localhost:5173',
+                    'HTTP_X_CSRF_TOKEN' => $csrfToken,
+                ]
+            );
+
+        // The refresh request must be rejected.
+        $response->assertStatus(403)
+            ->assertJson([
+                'status' => false,
+                'message' => __('errors.email_has_not_verified'),
+            ]);
+
+        // No access token or replacement refresh token must be issued.
+        $response->assertJsonMissingPath('data.access_token');
+        $response->assertJsonMissingPath('data.refresh_token');
+
+        // The original refresh token must remain unused but revoked.
+        $this->assertDatabaseHas('refresh_tokens', [
+            'session_id' => $session->id,
+            'token_hash' => hash('sha256', $refreshToken),
+            'used_at' => null,
+            'revoked_at' => $session->fresh()->revoked_at,
+        ]);
+
+        // The authentication session must be revoked.
+        $this->assertNotNull($session->fresh()->revoked_at);
+
+        // All active refresh tokens belonging to this session must be revoked.
+        $this->assertDatabaseMissing('refresh_tokens', [
+            'session_id' => $session->id,
+            'revoked_at' => null,
+        ]);
     }
 
     public function test_mobile_user_can_refresh_token()
