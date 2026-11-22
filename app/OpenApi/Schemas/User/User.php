@@ -30,43 +30,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: "about_me", type: "string", example: "رشته اصلی من ریاضی است", nullable: true),
         new OA\Property(property: "created_at", description: "creation datetime", type: "string", format: "date-time", example: "2025-02-22T10:00:00Z"),
         new OA\Property(property: "updated_at", description: "update datetime", type: "string", format: "date-time", example: "2025-02-22T10:00:00Z"),
-        new OA\Property(
-            property: "roles",
-            description: "Array of related roles with both ID and name",
-            type: "array",
-            items: new OA\Items(
-                type: "object",
-                properties: [
-                    new OA\Property(property: "id", type: "integer", example: 3),
-                    new OA\Property(property: "name", type: "string", example: "کارفرما"),
-                ]
-            )
-        ),
-        new OA\Property(
-            property: "permissions",
-            description: "Array of related permissions with both ID and name",
-            type: "array",
-            items: new OA\Items(
-                type: "object",
-                properties: [
-                    new OA\Property(property: "id", type: "integer", example: 3),
-                    new OA\Property(property: "name", type: "string", example: "edit-post"),
-                ]
-            )
-        ),
-          new OA\Property(
-            property: "departemnts",
-            description: "Array of related departemnts with ID and name and status",
-            type: "array",
-            items: new OA\Items(
-                type: "object",
-                properties: [
-                    new OA\Property(property: "id", type: "integer", example: 3),
-                    new OA\Property(property: "name", type: "string", example: "financial"),
-                    new OA\Property(property: "status", type: "integer", description: "1 => active and 2 => deactive"),
-                ]
-            )
-        ),
     ]
 )]
 class User
