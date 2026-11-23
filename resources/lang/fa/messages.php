@@ -14,6 +14,8 @@ return [
     'ignore_reset_password' => 'اگر این درخواست توسط شما انجام نشده است، این پیام را نادیده بگیرید',
     'language_updated' => 'زبان پروفایل شما با موفقیت بروزرسانی شد.',
     'change_password_link_sent' => 'لینک تغییر رمز عبور به ایمیل ارسال شد',
+    'email_change_verification_sent' => 'لینک تأیید تغییر ایمیل به آدرس ایمیل جدید شما ارسال شد.',
+    'email_changed_successfully' => 'آدرس ایمیل شما با موفقیت تغییر کرد.',
     'password_changed' => 'کلمه عبور با موفقیت بروزرسانی شد',
     'about_me_updated' => 'اطلاعات شخصی شما با موفقیت بروزرسانی شد',
     'username_updated' => 'نام کاربری شما با موفقیت بروزرسانی شد',
@@ -46,5 +48,8 @@ return [
     'subscription_updated' => 'پلن اشتراک با موفقیت بروزرسانی شد',
     'subscription_feature_deleted' => 'ویژگی با موفقیت حذف شد',
     'subscription_deleted' => 'اشتراک با موفقیت حذف شد',
+    'confirm_mobile_with_otp' => 'جهت ویرایش موبایل خود با وارد کردن کد تأیید 6 رقمی ارسال شده لطفا آن را تأیید نمایید',
+    'mobile_confirmed' => 'شماره موبایل شما با موفقیت تأیید شد',
+
 
 ];

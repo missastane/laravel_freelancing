@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->string('locale', 5)->default('en');
             $table->string('profile_photo_path')->nullable();
             $table->tinyInteger('gender')->nullable()->comment('1 => male, 2 => female');
-            $table->timestamp('birth_date')->nullable();
+            $table->date('birth_date')->nullable();
             $table->tinyInteger('activation')->default(2)->comment('1 => active, 2=> inactive');
             $table->timestamp('activation_date')->nullable();
             $table->tinyInteger('user_type')->comment('1 => user, 2 => admin');

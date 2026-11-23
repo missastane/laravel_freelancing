@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Api\Customer;
+namespace App\Http\Controllers\Api\Public;
 
 use App\Exceptions\InvalidMobileNumberException;
 use App\Exceptions\User\LimitChangeUsernameException;
 use App\Exceptions\WrongCurrentPasswordException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\AboutMeRequest;
+use App\Http\Requests\Profile\ChangeMobileRequest;
 use App\Http\Requests\Profile\ChangePasswordRequest;
 use App\Http\Requests\Profile\ChangerUsernameRequest;
+use App\Http\Requests\Profile\ConfirmMobileRequest;
+use App\Http\Requests\Profile\RequestEmailChangeRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Services\Profile\ProfileService;
+use App\Http\Services\User\UserService;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,8 +24,10 @@ use OpenApi\Attributes as OA;
 class ProfileController extends Controller
 {
     use ApiResponseTrait;
-    public function __construct(protected ProfileService $profileService)
-    {
+    public function __construct(
+        protected ProfileService $profileService,
+        protected UserService $userService
+    ) {
     }
     #[OA\Get(
         path: "/api/profile",
@@ -156,7 +162,7 @@ class ProfileController extends Controller
             $user = $this->profileService->updateProfile($inputs);
             return $this->success($user, __('messages.profile_updated'), resource: UserResource::class);
         } catch (Exception $e) {
-            return $this->error();
+            return $this->error($e->getMessage());
         }
     }
 
@@ -393,15 +399,29 @@ class ProfileController extends Controller
             ),
         ]
     )]
-    public function updateMobile(Request $request)
+    public function updateMobile(ChangeMobileRequest $request)
     {
         try {
-            $inputs = $request->all();
-            $result = $this->profileService->changeMobile($inputs);
-            return $this->success($result['data'], $result['message'], 200);
+            $result = $this->profileService->changeMobile($request->validated());
+
+            if (!$result['status']) {
+                return $this->error(
+                    $result['message'],
+                    $result['code'],
+                    'OTP_RESEND_LIMIT'
+                );
+            }
+
+            return $this->success(
+                $result['data'],
+                $result['message'],
+                $result['code']
+            );
+
         } catch (InvalidMobileNumberException $e) {
             throw $e;
         } catch (Exception $e) {
+            \Log::info($e->getTraceAsString());
             return $this->error($e->getMessage());
         }
     }
@@ -453,24 +473,21 @@ class ProfileController extends Controller
                 response: 401,
                 description: "OTP is Invalid",
                 content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "status", type: "boolean", example: false),
-                        new OA\Property(property: "message", type: "string", example: "کد وارد شده معتبر نیست"),
-                        new OA\Property(
-                            property: "data",
-                            type: "object",
-                            properties: [
-                                new OA\Property(property: "token", type: "string", example: "kdhbvjnjcxiygfuhdijh..."),
-                                new OA\Property(
-                                    property: "meta",
-                                    type: "object",
-                                    properties: [
-                                        new OA\Property(property: "next_step", type: "string", example: "redirect_back"),
-                                    ]
-                                ),
-                            ]
-                        ),
-                    ]
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+            new OA\Response(
+                response: 409,
+                description: "Mobile number has already been taken",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Mobile number is invalid",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ValidationErrorResponse"
                 )
             ),
             new OA\Response(
@@ -482,20 +499,29 @@ class ProfileController extends Controller
             ),
         ]
     )]
-    public function mobileConfirm($token, Request $request)
+    public function mobileConfirm($token, ConfirmMobileRequest $request)
     {
         try {
-            $inputs = $request->all();
-            $result = $this->profileService->confirmMobile($token, $inputs);
-            if ($result['status']) {
-                return $this->success($result['data'], $result['message'], $result['code'], UserResource::class);
-            } else {
-                return response()->json([
-                    'status' => $result['status'],
-                    'message' => $result['message'],
-                    'data' => $result['data'],
-                ], $result['code']);
+            $result = $this->profileService->confirmMobile(
+                $token,
+                $request->validated()
+            );
+
+            if (!$result['status']) {
+                return $this->error(
+                    $result['message'],
+                    $result['code'],
+                    'OTP_VERIFICATION_FAILED'
+                );
             }
+
+            return $this->success(
+                $result['data'],
+                $result['message'],
+                $result['code'],
+                UserResource::class
+            );
+
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
@@ -574,6 +600,32 @@ class ProfileController extends Controller
             return $this->success($user, __('messages.username_updated'), resource: UserResource::class);
         } catch (LimitChangeUsernameException $e) {
             throw $e;
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
+
+
+    public function requestEmailChange(RequestEmailChangeRequest $request)
+    {
+        try {
+            $result = $this->userService->requestEmailChange(
+                auth()->user(),
+                $request->input('email'),
+                $request->input('current_password')
+            );
+
+            if (!$result['status']) {
+                return $this->error(
+                    $result['message'],
+                    $result['code']
+                );
+            }
+
+            return $this->success(
+                null,
+                $result['message']
+            );
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }

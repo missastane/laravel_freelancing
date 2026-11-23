@@ -10,6 +10,7 @@ use App\Http\Services\Public\MediaStorageService;
 use App\Repositories\Contracts\User\OTPRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -60,79 +61,127 @@ class ProfileService
         ]);
         return $user->fresh();
     }
+
     public function changeMobile(array $data)
     {
-        // get mobile number
         $user = auth()->user();
-        $oldUser = $this->userRepository->findByMobile($data['id']);
-        if (!empty($oldUser) || !normalizeMobile($data['id'])) {
-            Log::info('here');
-            Log::info($oldUser);
+
+        // Normalize the new mobile number.
+        $mobile = normalizeMobile($data['id']);
+
+        if (!$mobile) {
             throw new InvalidMobileNumberException();
         }
-        $oldOTP = $this->oTPService->checkOldOtp($data['id'], 0);
+
+        // Prevent requesting the current mobile number.
+        if ($user->mobile === $mobile) {
+            throw new InvalidMobileNumberException();
+        }
+
+        // Check whether the mobile number belongs to another user.
+        $oldUser = $this->userRepository->findByMobile($mobile);
+
+        if ($oldUser) {
+            throw new InvalidMobileNumberException();
+        }
+
+        // Check OTP resend cooldown.
+        $oldOTP = $this->oTPService->checkOldOtp($mobile, 0);
 
         if ($oldOTP) {
             return [
                 'status' => false,
                 'data' => null,
-                'message' => 'جهت ارسال مجدد کد تأیید لطفا ' . $oldOTP->timer . ' ثانیه دیگر منتظر بمانید',
-                'code' => 429
+                'message' => __('errors.wait_for_otp',['second' => $oldOTP->timer]),
+                'code' => 429,
             ];
         }
-        // send sms
-        $type = 0; //id is a mobile number;
-        $otp = $this->oTPService->createOtp($data['id'], $type, $user->id);
-        $this->oTPService->sendSms($data['id'], $otp->otp_code);
+
+        // Create and send OTP.
+        $type = 0;
+        $otp = $this->oTPService->createOtp($mobile, $type, $user->id);
+
+        $this->oTPService->sendSms($mobile, $otp->otp_code);
+
         return [
+            'status' => true,
             'data' => [
                 'token' => $otp->token,
                 'meta' => [
-                    'next_step' => 'redirect_to_/confirm_otp'
-                ]
+                    'next_step' => 'redirect_to_/confirm_otp',
+                ],
             ],
-            'message' => 'جهت ویرایش موبایل یا ایمیل خود با وارد کردن کد تأیید 6 رقمی ارسال شده لطفا آن را تأیید نمایید'
+            'message' => __('messages.confirm_mobile_with_otp'),
+            'code' => 200,
         ];
     }
-    public function confirmMobile($token, array $data)
+
+    public function confirmMobile(string $token, array $data)
     {
         $user = auth()->user();
-        $otp = $this->oTPRepository->findByUserToken($token, $user->id);
-        if (empty($otp)) {
+
+        return DB::transaction(function () use ($token, $data, $user) {
+
+            $otp = $this->oTPRepository->findByUserTokenForUpdate(
+                $token,
+                $user->id
+            );
+
+            if (!$otp) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.link_is_invalid_or_expired'),
+                    'code' => 401,
+                ];
+            }
+
+            if (!hash_equals((string) $otp->otp_code, (string) $data['otp'])) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.otp_code_is_invalid'),
+                    'code' => 401,
+                ];
+            }
+
+            $mobile = normalizeMobile($otp->login_id);
+
+            if (!$mobile) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.mobile_is_invalid'),
+                    'code' => 422,
+                ];
+            }
+
+            // Ensure the mobile number is still available.
+            $existingUser = $this->userRepository->findByMobile($mobile);
+
+            if ($existingUser && $existingUser->id !== $user->id) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.mobile_already_exists'),
+                    'code' => 409,
+                ];
+            }
+
+            // Mark OTP as used.
+            $this->oTPRepository->update($otp, [
+                'used' => 1,
+            ]);
+
+            // Update the user's mobile number.
+            $this->userRepository->update($user, [
+                'mobile' => $mobile,
+                'mobile_verified_at' => now(),
+            ]);
+
             return [
-                'status' => false,
-                'data' => [
-                    'token' => $token,
-                    'meta' => [
-                        'next_step' => 'redirect_back'
-                    ]
-                ],
-                'message' => 'آدرس وارد شده معتبر نیست',
-                'code' => 401
+                'status' => true,
+                'message' => __('messages.mobile_confirmed'),
+                'data' => $user->fresh(),
+                'code' => 200,
             ];
-        }
-        if ($otp->otp_code !== $data['otp']) {
-            return [
-                'status' => false,
-                'data' => [
-                    'token' => $token,
-                    'meta' => [
-                        'next_step' => 'redirect_back'
-                    ]
-                ],
-                'message' => 'کد وارد شده معتبر نیست',
-                'code' => 401
-            ];
-        }
-        // if everything is ok:
-        $this->oTPRepository->update($otp, ['used' => 1]);
-        $this->userRepository->update($user, ['mobile_verified_at' => Carbon::now(), 'mobile' => normalizeMobile($otp->login_id)]);
-        return [
-            'status' => true,
-            'message' => 'شماره موبایل شما با موفقیت تأیید شد',
-            'data' => $user->fresh(),
-            'code' => 200
-        ];
+        });
     }
 
     public function changeUsername(array $data)

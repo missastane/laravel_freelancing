@@ -14,6 +14,6 @@ interface OTPRepositoryInterface extends
     DeletableRepositoryInterface,
     UpdatableRepositoryInterface
 {
-    public function findByUserToken(string $token, int $userId);
+    public function findByUserTokenForUpdate(string $token, int $userId);
     public function findByLoginId(string $loginId);
 }

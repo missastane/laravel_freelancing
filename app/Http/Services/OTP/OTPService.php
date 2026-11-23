@@ -72,18 +72,19 @@ class OTPService
         if (!$oldOtp) {
             return null;
         }
-        $expiresAt = $oldOtp->created_at->addMinutes(2);
+
+        $expiresAt = $oldOtp->created_at->copy()->addMinutes(1);
         $timer = max($expiresAt->timestamp - now()->timestamp, 0);
+
         if (now()->lessThan($expiresAt)) {
-            // فقط اطلاعات لازم رو برگردون
             return (object) [
                 'token' => $oldOtp->token,
-                'timer' => $timer
+                'timer' => $timer,
             ];
         }
+
         return null;
     }
-
 
     public function sendEmail($input, $code)
     {
@@ -105,7 +106,7 @@ class OTPService
         $smsService = new SmsService();
         $smsService->setFrom(Config::get('sms.otp_from'));
         $smsService->setTo(['0' . $input]);
-        $smsService->setText("مجموعه آمازون\n کد تأیید شما : $code");
+        $smsService->setText("مجموعه فریلنسری کارینجا\n کد تأیید شما : $code");
         $smsService->setIsFlash(true);
         $messageService = new MessageService($smsService);
         $messageService->send();

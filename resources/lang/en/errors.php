@@ -15,5 +15,14 @@ return [
     'access_token_expired' => 'The access token has expired.',
     'validation_failed' => 'The submitted data is invalid.',
     'admin_role_can_not_be_deleted' => 'The admin role cannot be deleted.',
+    'email_change_link_invalid' => 'This email change verification link is invalid or has already been used.',
+    'email_change_link_expired' => 'The email change verification link has expired.',
+    'invalid_mobile_number' => 'The mobile number is invalid or already exists.',
+    'wait_for_otp' => 'Please wait :sencond seconds before requesting another verification code.',
+    'link_is_invalid_or_expired' => 'The provided link is invalid or has expired.',
+    'otp_code_is_invalid' => 'The entered code is invalid.',
+    'mobile_is_invalid' => 'The mobile number is invalid.',
+    'mobile_already_exists' => 'This mobile number is already registered.',
 
+    
 ];

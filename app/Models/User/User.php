@@ -96,7 +96,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'mobile_verified_at' => 'datetime',
-            'birth_date' => 'datetime',
+            'birth_date' => 'date',
             'activation_date' => 'datetime',
             'password' => 'hashed',
         ];
@@ -174,6 +174,12 @@ class User extends Authenticatable implements JWTSubject
         )->withTimestamps();
         ;
     }
+
+    public function emailChangeRequests(): HasMany
+    {
+        return $this->hasMany(EmailChangeRequest::class);
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);

@@ -208,4 +208,31 @@ class EmailVerificationController extends Controller
             $frontendUrl . '/auth/email-verified?status=' . $status
         );
     }
+
+    public function verifyEmailChange(string $token)
+    {
+        try {
+            $result = $this->userService->verifyEmailChange($token);
+
+            if ($result['status']) {
+                return redirect()->away(
+                    config('services.frontend_url') .
+                    '/auth/email-change-verified?status=success'
+                );
+            }
+
+            $status = match ($result['code']) {
+                410 => 'expired',
+                409 => 'email_taken',
+                default => 'failed',
+            };
+
+            return redirect()->away(
+                config('services.frontend_url') .
+                '/auth/email-change-verified?status=' . $status
+            );
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
 }

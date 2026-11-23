@@ -19,6 +19,7 @@ interface UserRepositoryInterface extends
 {
   public function findById(int $id);
   public function findByEmail(string $email): User|null;
+  public function emailExists(string $email, ?int $exceptUserId = null): bool;
   public function findByMobile(string $mobile);
   public function getUsers(int $type, null|string $search, int $perPage);
   public function getAdmins();

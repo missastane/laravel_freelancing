@@ -5695,7 +5695,7 @@
                 ],
                 "summary": "Get Auth User details",
                 "description": "Returns the `Auth User` details",
-                "operationId": "81f26df398443e12a06321c986a5de3d",
+                "operationId": "159fa9bdf2cd7a1bf01fd56efd10fa37",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"
@@ -5754,7 +5754,7 @@
                 ],
                 "summary": "Updates profile information",
                 "description": "This method updates `Profile Information` and saves it.",
-                "operationId": "ce9fd493b24979b4266dfff8f753c81b",
+                "operationId": "6505412937ab896d0e3ec7598f60a12f",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"
@@ -5866,7 +5866,7 @@
                 ],
                 "summary": "Store or Update about-me details by customers",
                 "description": "In this method customers can Store or Update about-me details",
-                "operationId": "23506231b706df5a099930386a4583a3",
+                "operationId": "f4cddb220bc92d81e83cddeba79494a4",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"
@@ -5962,7 +5962,7 @@
                 ],
                 "summary": "Update password by customers",
                 "description": "In this method customers can Update their password",
-                "operationId": "b061fa8bd14a102dc1963ffe9e927be8",
+                "operationId": "fb0be8a25ee424f472fefca303058406",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"
@@ -6073,7 +6073,7 @@
                 ],
                 "summary": "Updates Mobile number",
                 "description": "This method updates `Mobile Number` and sends verification OTP.",
-                "operationId": "c74d4ec9a7ba0451759081013984955e",
+                "operationId": "22df02bdcab444fd6356fb5165230988",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"
@@ -6178,7 +6178,7 @@
                 ],
                 "summary": "Confirm OTP to change Mobile",
                 "description": "This method updates mobile if OTP code is valid.",
-                "operationId": "932d3580e124b13c0049933a18678c79",
+                "operationId": "42809aea079a6e09fc087c14afca94b6",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"
@@ -6235,35 +6235,27 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "کد وارد شده معتبر نیست"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "kdhbvjnjcxiygfuhdijh..."
-                                                },
-                                                "meta": {
-                                                    "properties": {
-                                                        "next_step": {
-                                                            "type": "string",
-                                                            "example": "redirect_back"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Mobile number has already been taken",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Mobile number is invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -6293,7 +6285,7 @@
                 ],
                 "summary": "Change auth user's username",
                 "description": "In this method auth users can change their username up to 2 times.",
-                "operationId": "677e531ac429a9c3f5cc9bc8839f49ae",
+                "operationId": "c31f9b47c0c4fa503f1df7f9f35e732f",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/XLocale"

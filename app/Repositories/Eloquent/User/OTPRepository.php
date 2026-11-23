@@ -21,24 +21,24 @@ class OTPRepository extends BaseRepository implements OTPRepositoryInterface
     {
         parent::__construct($model);
     }
-    public function findByUserToken(string $token, int $userId)
+    
+
+    public function findByUserTokenForUpdate(string $token, int $userId)
     {
-        $otp = $this->model->where('token', $token)
-            ->where('user_id', $userId)->where('used', 0)
-            ->where(
-                'created_at',
-                '>=',
-                Carbon::now()->subMinutes(2)->toDateTimeString()
-            )
+        return $this->model
+            ->where('token', $token)
+            ->where('user_id', $userId)
+            ->where('used', 0)
+            ->where('created_at', '>=', now()->subMinutes(2))
+            ->lockForUpdate()
             ->first();
-        return $otp;
     }
 
     public function findByLoginId(string $loginId)
     {
         $otp = $this->model->where('login_id', $loginId)
-        ->where('used', 0)->orderBy('created_at', 'desc')
-        ->first();
+            ->where('used', 0)->orderBy('created_at', 'desc')
+            ->first();
         return $otp;
     }
 

@@ -11,6 +11,10 @@ class InvalidMobileNumberException extends Exception
 
     public function render($request)
     {
-        return $this->error('شماره موبایل صحیح نیست یا از قبل وجود دارد',422);
+        return $this->error(
+            __('errors.invalid_mobile_number'),
+            422,
+            'INVALID_MOBILE_NUMBER'
+        );
     }
 }

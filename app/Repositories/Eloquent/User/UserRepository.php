@@ -70,6 +70,17 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     return $this->model->where('email', $email)->whereNotNull('email_verified_at')->first();
   }
 
+  public function emailExists(string $email, ?int $exceptUserId = null): bool
+  {
+    return $this->model
+      ->where('email', $email)
+      ->when(
+        $exceptUserId !== null,
+        fn($query) => $query->where('id', '!=', $exceptUserId)
+      )
+      ->exists();
+  }
+
   public function toggleActivation(User $user): string|null
   {
     $user->activation = $user->activation == 1 ? 2 : 1;

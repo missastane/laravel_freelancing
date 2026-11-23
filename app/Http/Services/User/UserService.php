@@ -4,8 +4,11 @@ namespace App\Http\Services\User;
 
 use App\Http\Services\Auth\RefreshTokenService;
 use App\Jobs\ResetPasswordJob;
+use App\Jobs\SendEmailChangeVerification;
 use App\Jobs\SendVerificationEmail;
 use App\Models\User\AuthSession;
+use App\Models\User\EmailChangeRequest;
+use App\Models\User\User;
 use App\Repositories\Contracts\Payment\WalletRepositoryInterface;
 use App\Repositories\Contracts\User\RoleRepositoryInterface;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
@@ -315,4 +318,189 @@ class UserService
         $user = auth()->user();
         return $user;
     }
+
+
+    public function requestEmailChange(
+        User $user,
+        string $newEmail,
+        string $currentPassword
+    ): array {
+        // Verify the user's current password.
+        if (!Hash::check($currentPassword, $user->password)) {
+            return [
+                'status' => false,
+                'message' => __('auth.failed'),
+                'code' => 403,
+            ];
+        }
+
+        $newEmail = strtolower(trim($newEmail));
+
+        // Prevent requesting the current email address.
+        if (strtolower($user->email) === $newEmail) {
+            return [
+                'status' => false,
+                'message' => __('validation.different', [
+                    'attribute' => 'email',
+                    'other' => 'current email',
+                ]),
+                'code' => 422,
+            ];
+        }
+
+        // Check whether the email belongs to another user.
+        if ($this->userRepository->emailExists($newEmail, $user->id)) {
+            return [
+                'status' => false,
+                'message' => __('validation.unique', [
+                    'attribute' => 'email',
+                ]),
+                'code' => 422,
+            ];
+        }
+
+        // Prevent multiple users from having the same active pending email.
+        $pendingEmailExists = EmailChangeRequest::where(
+            'new_email',
+            $newEmail
+        )
+            ->whereNull('verified_at')
+            ->where('expires_at', '>', now())
+            ->where('user_id', '!=', $user->id)
+            ->exists();
+
+        if ($pendingEmailExists) {
+            return [
+                'status' => false,
+                'message' => __('validation.unique', [
+                    'attribute' => 'email',
+                ]),
+                'code' => 422,
+            ];
+        }
+
+        $plainToken = Str::random(64);
+
+        $emailChangeRequest = DB::transaction(function () use ($user, $newEmail, $plainToken) {
+            // Remove previous unverified requests of this user.
+            EmailChangeRequest::where('user_id', $user->id)
+                ->whereNull('verified_at')
+                ->delete();
+
+            return EmailChangeRequest::create([
+                'user_id' => $user->id,
+                'new_email' => $newEmail,
+                'token_hash' => hash('sha256', $plainToken),
+                'expires_at' => now()->addMinutes(30),
+            ]);
+        });
+
+        // Dispatch the verification email after the transaction commits.
+        // Email job will be implemented separately.
+        DB::afterCommit(function () use ($newEmail, $plainToken) {
+            SendEmailChangeVerification::dispatch(
+                $newEmail,
+                $plainToken
+            );
+        });
+
+        return [
+            'status' => true,
+            'message' => __('messages.email_change_verification_sent'),
+            'data' => null,
+            'code' => 200,
+        ];
+    }
+
+
+    public function verifyEmailChange(string $plainToken): array
+    {
+        $tokenHash = hash('sha256', $plainToken);
+
+        return DB::transaction(function () use ($tokenHash) {
+
+            // Find and lock the email change request.
+            $emailChangeRequest = EmailChangeRequest::where(
+                'token_hash',
+                $tokenHash
+            )
+                ->lockForUpdate()
+                ->first();
+
+            if (!$emailChangeRequest || $emailChangeRequest->verified_at) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.email_change_link_invalid'),
+                    'code' => 400,
+                ];
+            }
+
+            // Check whether the request has expired.
+            if ($emailChangeRequest->expires_at->isPast()) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.email_change_link_expired'),
+                    'code' => 410,
+                ];
+            }
+
+            // Lock the user record before updating the email.
+            $user = User::whereKey($emailChangeRequest->user_id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$user) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.email_change_link_invalid'),
+                    'code' => 400,
+                ];
+            }
+
+            // Prevent assigning an email that now belongs to another user.
+            if (
+                $this->userRepository->emailExists(
+                    $emailChangeRequest->new_email,
+                    $user->id
+                )
+            ) {
+                return [
+                    'status' => false,
+                    'message' => __('validation.unique', [
+                        'attribute' => 'email',
+                    ]),
+                    'code' => 409,
+                ];
+            }
+
+            // Prevent unnecessary changes if the email is already the same.
+            if (strtolower($user->email) === strtolower($emailChangeRequest->new_email)) {
+                return [
+                    'status' => false,
+                    'message' => __('errors.email_change_link_invalid'),
+                    'code' => 400,
+                ];
+            }
+
+            // Update the user's email and verification timestamp.
+            $user->forceFill([
+                'email' => $emailChangeRequest->new_email,
+                'email_verified_at' => now(),
+            ])->save();
+
+            // Mark the request as verified so the token cannot be reused.
+            $emailChangeRequest->update([
+                'verified_at' => now(),
+            ]);
+
+            return [
+                'status' => true,
+                'message' => __('messages.email_changed_successfully'),
+                'data' => $user->fresh(),
+                'code' => 200,
+            ];
+        });
+    }
+
+
 }

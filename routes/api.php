@@ -36,8 +36,7 @@ use App\Http\Controllers\API\Customer\ProjectController as CustomerProjectContro
 use App\Http\Controllers\API\Admin\Market\ProposalController;
 use App\Http\Controllers\API\Customer\ProposalController as CustomerProposalController;
 use App\Http\Controllers\API\Admin\Market\SkillController;
-use App\Http\Controllers\API\Admin\ProfileController;
-use App\Http\Controllers\API\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\API\Public\ProfileController;
 use App\Http\Controllers\Api\Admin\Setting\SettingController;
 use App\Http\Controllers\Api\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\Admin\User\CustomerController;
@@ -298,15 +297,6 @@ Route::prefix('admin')->middleware(['auth:api', 'admin'])->group(function () {
             Route::delete('/delete/{ticketPriority}', [TicketPriorityController::class, 'delete']);
         });
     });
-    Route::prefix('profile')->group(function () {
-        Route::put('/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
-        Route::patch('/change-username', [ProfileController::class, 'changeUsername']);
-        Route::patch('/change-mobile', [ProfileController::class, 'changeMobile'])->name('admin.profile.change-mobile');
-        Route::put('/confirm-mobile/{token}', [ProfileController::class, 'confirmMobile'])->name('admin.profile.confirm-mobile');
-        Route::put('/about-me', [ProfileController::class, 'aboutMe']);
-        Route::get('/', [ProfileController::class, 'getProfile']);
-        Route::patch('/change-password', [ProfileController::class, 'changePassword']);
-    });
 });
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('comment')->group(function () {
@@ -358,15 +348,16 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/{post}/submit-comment', [PostCommentController::class, 'store']);
     });
     Route::prefix('profile')->group(function () {
-        Route::get('/', [CustomerProfileController::class, 'index']);
-        Route::put('/update', [CustomerProfileController::class, 'updateBasicInfo']);
+        Route::get('/', [ProfileController::class, 'index']);
+        Route::put('/update', [ProfileController::class, 'updateBasicInfo']);
         Route::patch('/change-locale', [LocaleController::class, 'update'])
             ->name('profile.locale.update');
-        Route::put('/about-me', [CustomerProfileController::class, 'addAboutMe']);
-        Route::patch('/change-password', [CustomerProfileController::class, 'updatePassword']);
-        Route::patch('/change-username', [CustomerProfileController::class, 'changeUsername']);
-        Route::patch('/change-mobile', [CustomerProfileController::class, 'updateMobile']);
-        Route::put('/confirm-mobile/{token}', [CustomerProfileController::class, 'mobileConfirm']);
+        Route::post('/change-email', [ProfileController::class, 'requestEmailChange']);
+        Route::put('/about-me', [ProfileController::class, 'addAboutMe']);
+        Route::patch('/change-password', [ProfileController::class, 'updatePassword']);
+        Route::patch('/change-username', [ProfileController::class, 'changeUsername']);
+        Route::patch('/change-mobile', [ProfileController::class, 'updateMobile']);
+        Route::put('/confirm-mobile/{token}', [ProfileController::class, 'mobileConfirm']);
     });
     Route::prefix('project')->group(function () {
         Route::get('/', [CustomerProjectController::class, 'index']);
@@ -477,6 +468,7 @@ Route::
         });
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
         Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware('signed', 'throttle:6,1')->name('verification.verify');
+        Route::get('/change-email/verify/{token}',[EmailVerificationController::class,'verifyEmailChange'])->middleware('signed', 'throttle:6,1')->name('email-change.verify');
         Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->name('reset-password');
         Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])->name('forgot-password');
     });

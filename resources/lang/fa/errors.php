@@ -15,7 +15,13 @@ return [
     'access_token_expired' => 'توکن دسترسی منقضی شده است',
     'validation_failed' => 'داده‌های ارسال شده نامعتبر است.',
     'admin_role_can_not_be_deleted' => 'نقش ادمین قابل حذف نیست',
-
-
+    'email_change_link_invalid' => 'لینک تأیید تغییر ایمیل نامعتبر است یا قبلاً استفاده شده است.',
+    'email_change_link_expired' => 'مهلت اعتبار لینک تغییر ایمیل به پایان رسیده است.',
+    'invalid_mobile_number' => 'شماره موبایل صحیح نیست یا از قبل وجود دارد',
+    'wait_for_otp' => 'لطفاً :second ثانیه دیگر برای ارسال مجدد کد تأیید منتظر بمانید.',
+    'link_is_invalid_or_expired' => 'آدرس وارد شده معتبر نیست یا اعتبار آن به پایان رسیده است',
+    'otp_code_is_invalid' => 'کد وارد شده معتبر نیست',
+    'mobile_is_invalid' => 'شماره موبایل معتبر نیست',
+    'mobile_already_exists' => 'این شماره موبایل قبلاً ثبت شده است',
 
 ];

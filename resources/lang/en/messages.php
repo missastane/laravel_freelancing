@@ -14,6 +14,8 @@ return [
    'ignore_reset_password' => 'If you did not request a password reset, please ignore this email.',
    'language_updated' => 'Your profile language updated successfully.',
    'change_password_link_sent' => 'The password change link has been sent to the email.',
+   'email_change_verification_sent' => 'An email verification link has been sent to your new email address.',
+   'email_changed_successfully' => 'Your email address has been changed successfully.',
    'password_changed' => 'The password has been successfully updated.',
    'about_me_updated' => 'Your personal information has been successfully updated.',
    'username_updated' => 'Your username has been successfully updated.',
@@ -46,7 +48,7 @@ return [
    'subscription_updated' => 'The subscription plan has been successfully updated.',
    'subscription_feature_deleted' => 'The feature has been successfully deleted.',
    'subscription_deleted' => 'The subscription has been successfully deleted.',
-
-
+   'confirm_mobile_with_otp' => 'Please confirm your mobile number by entering the 6-digit verification code sent to you.',
+   'mobile_confirmed' => 'Your mobile number has been successfully verified.',
 
 ];
