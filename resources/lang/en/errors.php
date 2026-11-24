@@ -33,6 +33,7 @@ return [
         'request_not_eligible' => 'This request is not eligible for processing.',
         'no_pending_request' => 'There is no pending account deletion request to cancel.',
         'cancellation_period_expired' => 'The account deletion request cancellation period has expired.',
+        'pending_request_restricted' => 'Your account deletion request is pending. To continue using marketplace features, please cancel your deletion request first.',
 
 
         'blockers' => [
@@ -44,8 +45,7 @@ return [
             'pending_payments' => 'You have payments that have not been settled yet.',
         ],
     ],
-    'pending_request_restricted' => 'Your account deletion request is pending. To continue using marketplace features, please cancel your deletion request first.',
-
+    'too_many_requests' => 'Too many requests. Please try again later.',
 
 
 ];
