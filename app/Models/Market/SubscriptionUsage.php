@@ -4,9 +4,11 @@ namespace App\Models\Market;
 
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SubscriptionUsage extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'user_id',
         'user_subscription_id',
@@ -33,8 +35,8 @@ class SubscriptionUsage extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-   
+
 }
