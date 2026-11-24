@@ -36,6 +36,7 @@ use App\Http\Controllers\API\Customer\ProjectController as CustomerProjectContro
 use App\Http\Controllers\API\Admin\Market\ProposalController;
 use App\Http\Controllers\API\Customer\ProposalController as CustomerProposalController;
 use App\Http\Controllers\API\Admin\Market\SkillController;
+use App\Http\Controllers\Api\Public\AccountDeletionController;
 use App\Http\Controllers\API\Public\ProfileController;
 use App\Http\Controllers\Api\Admin\Setting\SettingController;
 use App\Http\Controllers\Api\Admin\User\AdminUserController;
@@ -342,7 +343,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/{order}/submit-comment', [OrderCommentController::class, 'store']);
     });
     Route::prefix('payment')->group(function () {
-        Route::post('/', [CustomerPaymentController::class, 'store']);
+        Route::post('/', [CustomerPaymentController::class, 'store'])->middleware('account.deletion');
     });
     Route::prefix('post')->group(function () {
         Route::post('/{post}/submit-comment', [PostCommentController::class, 'store']);
@@ -358,6 +359,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::patch('/change-username', [ProfileController::class, 'changeUsername']);
         Route::patch('/change-mobile', [ProfileController::class, 'updateMobile']);
         Route::put('/confirm-mobile/{token}', [ProfileController::class, 'mobileConfirm']);
+        Route::post('/account-deletion-requests',
+            [AccountDeletionController::class, 'store']
+        );
+        Route::patch('/account-deletion-requests/cancel',
+            [AccountDeletionController::class, 'cancel']
+        );
     });
     Route::prefix('project')->group(function () {
         Route::get('/', [CustomerProjectController::class, 'index']);
@@ -366,7 +373,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/details/{project}', [CustomerProjectController::class, 'viewDetails']);
         Route::middleware('employer')->group(function () {
             Route::get('/user-projects', [CustomerProjectController::class, 'userProjects']);
-            Route::post('/store', [CustomerProjectController::class, 'store']);
+            Route::post('/store', [CustomerProjectController::class, 'store'])->middleware('account.deletion');
             Route::patch('/toggle-full-time/{project}', [CustomerProjectController::class, 'toggleFulltime']);
             Route::put('/update/{project}', [CustomerProjectController::class, 'update']);
             Route::delete('/delete/{project}', [CustomerProjectController::class, 'delete']);
@@ -388,7 +395,7 @@ Route::middleware(['auth:api'])->group(function () {
         });
         Route::middleware('freelancer')->group(function () {
             Route::get('/', [CustomerProposalController::class, 'index']);
-            Route::post('/store/{project}', [CustomerProposalController::class, 'store']);
+            Route::post('/store/{project}', [CustomerProposalController::class, 'store'])->middleware('account.deletion');
             Route::put('/update/{proposal}', [CustomerProposalController::class, 'update']);
             Route::patch('/withdraw/{proposal}', [CustomerProposalController::class, 'withdraw']);
         });
@@ -406,7 +413,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('subscription')->middleware('freelancer')->group(function () {
         Route::get('/', [CustomerSubscriptionController::class, 'index']);
         Route::get('/active-plan', [CustomerSubscriptionController::class, 'activePlan']);
-        Route::post('/purchase/{subscription}', [CustomerSubscriptionController::class, 'purchase']);
+        Route::post('/purchase/{subscription}', [CustomerSubscriptionController::class, 'purchase'])->middleware('account.deletion');
         Route::get('/show/{subscription}', [CustomerSubscriptionController::class, 'show']);
     });
     Route::prefix('user-education')->group(function () {
@@ -451,7 +458,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/show/{walletTransaction}', [CustomerWalletTransactionController::class, 'show']);
     });
     Route::prefix('withdrawal-request')->group(function () {
-        Route::post('/add-request', [CustomerWithdrawalRequestController::class, 'addRequest']);
+        Route::post('/add-request', [CustomerWithdrawalRequestController::class, 'addRequest'])->middleware('account.deletion');
     });
 
 });
@@ -468,7 +475,7 @@ Route::
         });
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
         Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware('signed', 'throttle:6,1')->name('verification.verify');
-        Route::get('/change-email/verify/{token}',[EmailVerificationController::class,'verifyEmailChange'])->middleware('signed', 'throttle:6,1')->name('email-change.verify');
+        Route::get('/change-email/verify/{token}', [EmailVerificationController::class, 'verifyEmailChange'])->middleware('signed', 'throttle:6,1')->name('email-change.verify');
         Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->name('reset-password');
         Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])->name('forgot-password');
     });

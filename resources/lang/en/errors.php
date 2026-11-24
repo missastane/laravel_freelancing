@@ -23,6 +23,29 @@ return [
     'otp_code_is_invalid' => 'The entered code is invalid.',
     'mobile_is_invalid' => 'The mobile number is invalid.',
     'mobile_already_exists' => 'This mobile number is already registered.',
+    'account_deletion' => [
+        'admin_not_allowed' => 'Admin accounts cannot be deleted through this endpoint.',
+        'invalid_password' => 'The provided password is incorrect.',
+        'pending_request_exists' => 'You already have a pending account deletion request.',
+        'blocked' => 'Your account deletion request cannot be submitted. Please resolve the following issues first:',
+        'request_not_found' => 'The account deletion request was not found.',
+        'user_not_found' => 'The user associated with this request was not found.',
+        'request_not_eligible' => 'This request is not eligible for processing.',
+        'no_pending_request' => 'There is no pending account deletion request to cancel.',
+        'cancellation_period_expired' => 'The account deletion request cancellation period has expired.',
 
-    
+
+        'blockers' => [
+            'active_orders' => 'You have ongoing orders.',
+            'pending_disputes' => 'You have unresolved dispute requests.',
+            'active_projects' => 'You have open or ongoing projects.',
+            'pending_proposals' => 'You have proposals awaiting review.',
+            'outstanding_balance' => 'Your wallet balance or locked balance is not zero.',
+            'pending_payments' => 'You have payments that have not been settled yet.',
+        ],
+    ],
+    'pending_request_restricted' => 'Your account deletion request is pending. To continue using marketplace features, please cancel your deletion request first.',
+
+
+
 ];

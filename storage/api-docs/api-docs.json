@@ -5517,6 +5517,30 @@
                 }
             }
         },
+        "/api/auth/change-email/verify/{token}": {
+            "get": {
+                "summary": "Verify email change",
+                "description": "Verify the email change request using the token sent to the new email address. The user will be redirected to the frontend with the verification result.",
+                "operationId": "daf0b40eddcb20106e2378a1572cf28d",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Email change verification token.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "a1b2c3d4e5f6"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to the frontend with one of the following status values: success, expired, email_taken, or failed."
+                    }
+                }
+            }
+        },
         "/api/auth/forgot-password": {
             "post": {
                 "tags": [
@@ -5686,6 +5710,186 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/profile/account-deletion-requests": {
+            "post": {
+                "tags": [
+                    "Customer-Profile"
+                ],
+                "summary": "Request account deletion",
+                "description": "Authenticated users can submit an account deletion request. The request will be scheduled for processing after a 7-day cancellation period. Requests are rejected if the user has active orders, pending disputes, active projects, pending proposals, outstanding wallet balances, or pending payments. Admin accounts cannot use this endpoint.",
+                "operationId": "0ed158157ff80e41a1ced3123321ea8a",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "CurrentPassword123"
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "I no longer need this account.",
+                                        "nullable": true,
+                                        "maxLength": 1000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Account deletion request created successfully. The request will be processed after 7 days unless cancelled.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/AccountDeletionRequest"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin accounts are not allowed to request account deletion.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Account deletion is blocked because of existing blockers, or a pending deletion request already exists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid current password or validation error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/account-deletion-requests/cancel": {
+            "patch": {
+                "tags": [
+                    "Account Deletion"
+                ],
+                "summary": "Cancel account deletion request",
+                "description": "Cancels the authenticated user's pending account deletion request during the 7-day grace period.",
+                "operationId": "9f4fdaa76fe95d44a08c4a3548d68bec",
+                "parameters": [
+                    {
+                        "name": "X-Locale",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "fa",
+                                "en"
+                            ]
+                        },
+                        "example": "en"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Username is Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/AccountDeletionRequest"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "No pending request exists or the cancellation period has expired"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/profile": {
@@ -6364,6 +6568,86 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/change-email": {
+            "post": {
+                "summary": "Request email change",
+                "description": "Submit a request to change the authenticated user email. The current password is required, and a verification link will be sent to the new email address.",
+                "operationId": "ac5de10240b59fe646c77cba680cdba1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "current_password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "new@example.com"
+                                    },
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "CurrentPassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email change verification link sent successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "The email address is already in use or a conflicting request exists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -7358,6 +7642,56 @@
                 },
                 "type": "object"
             },
+            "AccountDeletionRequest": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "status": {
+                        "description": "1 => pending, 2 => cancelled, 3 => completed, 4 => failed",
+                        "type": "integer",
+                        "example": 2,
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    },
+                    "reason": {
+                        "type": "string",
+                        "example": "I no longer need this account.",
+                        "nullable": true
+                    },
+                    "scheduled_for": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "processed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "failure_reason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "AdminUser": {
                 "title": "Admin User",
                 "description": "Admin User schema",
@@ -7821,6 +8155,10 @@
         {
             "name": "Customer-Profile",
             "description": "Customer-Profile"
+        },
+        {
+            "name": "Account Deletion",
+            "description": "Account Deletion"
         }
     ]
 }

@@ -50,5 +50,12 @@ return [
    'subscription_deleted' => 'The subscription has been successfully deleted.',
    'confirm_mobile_with_otp' => 'Please confirm your mobile number by entering the 6-digit verification code sent to you.',
    'mobile_confirmed' => 'Your mobile number has been successfully verified.',
+   'account_deletion' => [
+      'request_created' => 'Your account deletion request has been submitted successfully. Your account will be deleted after the 7-day grace period unless you cancel the request.',
+      'completed' => 'The account has been successfully deleted.',
+      'request_cancelled' => 'Your account deletion request has been cancelled successfully. You can now continue using the platform.',
+
+   ],
+
 
 ];
