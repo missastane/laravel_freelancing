@@ -81,6 +81,12 @@ class Project extends Model
     }
     protected $fillable = ['user_id', 'project_category_id', 'title', 'slug', 'description', 'duration_time', 'amount', 'status'];
     protected $hidden = ['project_category_id', 'status', 'user_id', 'is_full_time'];
+
+    public const STATUS_PENDING = 1;
+    public const STATUS_IN_PROGRESS = 2;
+    public const STATUS_COMPLETED = 3;
+    public const STATUS_CANCELLED = 4;
+
     public function employer()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -150,10 +156,10 @@ class Project extends Model
         return $this->convertTocodes(
             $statuses,
             [
-                'pending' => 1,
-                'processing' => 2,
-                'completed' => 3,
-                'canceled' => 4
+                'pending' => self::STATUS_PENDING,
+                'processing' => self::STATUS_IN_PROGRESS,
+                'completed' => self::STATUS_COMPLETED,
+                'canceled' => self::STATUS_CANCELLED
             ]
         );
     }
