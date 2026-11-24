@@ -235,7 +235,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionBlocked($user);
     }
 
-     public function test_user_cannot_request_deletion_with_locked_wallet_balance()
+    public function test_user_cannot_request_deletion_with_locked_wallet_balance()
     {
         $user = $this->authUser();
 
@@ -248,7 +248,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionBlocked($user);
     }
 
-     public function test_user_cannot_request_deletion_with_pending_payment()
+    public function test_user_cannot_request_deletion_with_pending_payment()
     {
         $user = $this->authUser();
 
@@ -274,7 +274,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_paid_payment_does_not_block_account_deletion()
+    public function test_paid_payment_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -287,7 +287,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_failed_payment_does_not_block_account_deletion()
+    public function test_failed_payment_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -300,7 +300,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_returned_payment_does_not_block_account_deletion()
+    public function test_returned_payment_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -313,7 +313,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_completed_order_does_not_block_account_deletion()
+    public function test_completed_order_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -325,7 +325,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_cancelled_order_does_not_block_account_deletion()
+    public function test_cancelled_order_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -337,7 +337,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_completed_project_does_not_block_account_deletion()
+    public function test_completed_project_does_not_block_account_deletion()
     {
         $user = User::factory()->employer()->create([
             'password' => Hash::make('password123'),
@@ -351,7 +351,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_cancelled_project_does_not_block_account_deletion()
+    public function test_cancelled_project_does_not_block_account_deletion()
     {
         $user = User::factory()->employer()->create([
             'password' => Hash::make('password123'),
@@ -365,7 +365,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_rejected_proposal_does_not_block_account_deletion()
+    public function test_rejected_proposal_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -377,7 +377,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_withdrawn_proposal_does_not_block_account_deletion()
+    public function test_withdrawn_proposal_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -389,7 +389,7 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         $this->assertDeletionAllowed($user);
     }
 
-     public function test_resolved_dispute_does_not_block_account_deletion()
+    public function test_resolved_dispute_does_not_block_account_deletion()
     {
         $user = $this->authUser();
 
@@ -408,5 +408,38 @@ class AccountDeletionRequestTest extends AccountDeletionTestCase
         ]);
 
         $this->assertDeletionAllowed($user);
+    }
+
+    public function test_user_cannot_exceed_account_deletion_request_rate_limit()
+    {
+        $user = $this->authUser();
+
+        // First request: allowed.
+        $firstResponse = $this->actingAs($user, 'api')
+            ->postJson('/api/profile/account-deletion-requests', [
+                'password' => 'password123',
+            ]);
+
+        $firstResponse->assertStatus(201);
+
+        // Second and third requests: counted, but rejected because a pending request exists.
+        for ($i = 0; $i < 2; $i++) {
+            $response = $this->actingAs($user, 'api')
+                ->postJson('/api/profile/account-deletion-requests', [
+                    'password' => 'password123',
+                ]);
+
+            $response->assertStatus(409);
+        }
+
+        // Fourth request: rate limit exceeded.
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/profile/account-deletion-requests', [
+                'password' => 'password123',
+            ]);
+
+        $response->assertStatus(429);
+
+        $this->assertDatabaseCount('account_deletion_requests', 1);
     }
 }
