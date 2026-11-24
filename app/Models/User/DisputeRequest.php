@@ -74,6 +74,11 @@ class DisputeRequest extends Model
         ];
     }
 
+    public const STATUS_PENDING = 1;
+    public const STATUS_RESOLVED = 2;
+    public const STATUS_WITHDRAWN = 3;
+    public const STATUS_REJECTED = 4;
+
     public function orderItem()
     {
         return $this->belongsTo(OrderItem::class, 'order_item_id');
@@ -128,10 +133,10 @@ class DisputeRequest extends Model
     {
         // convert 
         $requestStatuses = [
-            'pending' => 1,
-            'resolved' => 2,
-            'withdrawn' => 3,
-            'rejected' => 4
+            'pending' => self::STATUS_PENDING,
+            'resolved' => self::STATUS_RESOLVED,
+            'withdrawn' => self::STATUS_WITHDRAWN,
+            'rejected' => self::STATUS_REJECTED
         ];
 
         // if the type is valid filters query
