@@ -44,6 +44,12 @@ class Proposal extends Model
     {
         return ['due_date' => 'datetime'];
     }
+
+    public const STATUS_PENDING = 1;
+    public const STATUS_APPROVED = 2;
+    public const STATUS_REJECTED = 3;
+    public const STATUS_WITHDRAWN = 4;
+
     public function project()
     {
         return $this->belongsTo(Project::class, 'project_id');
@@ -84,10 +90,10 @@ class Proposal extends Model
     {
         // convert 
         $proposalStatuses = [
-            'pending' => 1,
-            'approved' => 2,
-            'rejected' => 3,
-            'withdrawn' => 4
+            'pending' => self::STATUS_PENDING,
+            'approved' => self::STATUS_APPROVED,
+            'rejected' => self::STATUS_REJECTED,
+            'withdrawn' => self::STATUS_WITHDRAWN
         ];
 
         // if the type is valid filters query
