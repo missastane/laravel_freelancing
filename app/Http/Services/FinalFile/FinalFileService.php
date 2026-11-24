@@ -12,7 +12,7 @@ class FinalFileService
 {
     public function __construct(
         protected FinalFileRepositoryInterface $finalFileRepository,
-        protected fileItemApproveService $fileItemApproveService,
+        protected FileItemApproveService $fileItemApproveService,
         protected FileItemRejectService $fileItemRejectService,
         protected OrderItemRepositoryInterface $orderItemRepository
     ) {
