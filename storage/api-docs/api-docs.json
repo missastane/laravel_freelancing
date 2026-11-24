@@ -7694,108 +7694,35 @@
             },
             "AdminUser": {
                 "title": "Admin User",
-                "description": "Admin User schema",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 13
+                "description": "Admin user schema extending the common user schema.",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/User"
                     },
-                    "username": {
-                        "type": "string",
-                        "example": "8uIZLvdTYrtMDWcJ"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "missastan@gmail.com"
-                    },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-07-09T07:53:16.000000Z",
-                        "nullable": true
-                    },
-                    "mobile": {
-                        "type": "string",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "mobile_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "first_name": {
-                        "type": "string",
-                        "example": "ایمان",
-                        "nullable": true
-                    },
-                    "last_name": {
-                        "type": "string",
-                        "example": "مدائنی",
-                        "nullable": true
-                    },
-                    "gender": {
-                        "type": "string",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "birth_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "avatar_photo": {
-                        "type": "string",
-                        "format": "uri",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "activation": {
-                        "type": "string",
-                        "example": "کاربر فعال"
-                    },
-                    "active_role": {
-                        "type": "string",
-                        "example": "employer"
-                    },
-                    "about_me": {
-                        "type": "string",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-07-09T07:51:06.000000Z"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2025-07-09T07:53:17.000000Z"
-                    },
-                    "roles": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RoleOption"
-                        }
-                    },
-                    "permissions": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/PermissionOption"
-                        }
-                    },
-                    "departments": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/DepartmentOption"
-                        }
+                    {
+                        "properties": {
+                            "roles": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RoleOption"
+                                }
+                            },
+                            "permissions": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PermissionOption"
+                                }
+                            },
+                            "departments": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/DepartmentOption"
+                                }
+                            }
+                        },
+                        "type": "object"
                     }
-                },
-                "type": "object"
+                ]
             },
             "PermissionSchema": {
                 "properties": {
@@ -8046,6 +7973,32 @@
                     "about_me": {
                         "type": "string",
                         "example": "رشته اصلی من ریاضی است",
+                        "nullable": true
+                    },
+                    "account_deletion_request": {
+                        "description": "Current pending account deletion request, if any.",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 12
+                            },
+                            "status": {
+                                "description": "1 => pending",
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "scheduled_for": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-12-01T12:00:00Z"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-11-24T12:00:00Z"
+                            }
+                        },
+                        "type": "object",
                         "nullable": true
                     },
                     "created_at": {
