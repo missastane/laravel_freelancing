@@ -7,6 +7,7 @@ use App\Exceptions\ProjectViewLimitException;
 use App\Http\Services\Favorite\FavoriteService;
 use App\Http\Services\FileManagemant\FileManagementService;
 use App\Http\Services\Public\MediaStorageService;
+use App\Http\Services\User\AccountDeletionGuardService;
 use App\Jobs\SendNotificationForNewProject;
 use App\Jobs\SendNotificationForUpdatingProject;
 use App\Models\Market\File;
@@ -33,7 +34,8 @@ class ProjectService
         protected UserRepositoryInterface $userRepository,
         protected ProposalRepositoryInterface $proposalRepository,
         protected FavoriteService $favoriteService,
-        protected FileManagementService $fileManagementService
+        protected FileManagementService $fileManagementService,
+        protected AccountDeletionGuardService $accountDeletionGuardService,
     ) {
     }
 
@@ -55,12 +57,18 @@ class ProjectService
             'skills' => $this->skillRepository->skillOption()
         ];
     }
+
     public function storeProject(array $data): Project
     {
         $user = auth()->user();
 
         $project = DB::transaction(function () use ($data, $user) {
-            $data['user_id'] = $user->id;
+
+            // Lock the user and check for a pending deletion request.
+            $lockedUser = $this->accountDeletionGuardService
+                ->lockUserForCommercialAction($user->id);
+
+            $data['user_id'] = $lockedUser->id;
 
             $project = $this->projectRepository->create($data);
 
@@ -76,11 +84,15 @@ class ProjectService
 
             return $project;
         });
+
         if ($project) {
             Cache::forget("user{$user->id}_projects");
         }
+
         $freelancers = $this->userRepository->getFreelancerWithSkills($data['skills']);
+
         SendNotificationForNewProject::dispatch($freelancers);
+
         return $project;
     }
 
@@ -157,7 +169,7 @@ class ProjectService
     {
         $user = auth()->user();
         $result = $this->fileManagementService->deleteFile($file);
-        if($result){
+        if ($result) {
             Cache::forget("user{$user->id}_projects");
         }
         return $result;
@@ -166,7 +178,7 @@ class ProjectService
     {
         $user = auth()->user();
         $result = $this->projectRepository->delete($project);
-         if($result){
+        if ($result) {
             Cache::forget("user{$user->id}_projects");
         }
         if (auth()->user()->active_role === 'admin') {
