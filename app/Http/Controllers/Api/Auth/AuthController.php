@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\AuthRequest;
 use App\Http\Resources\User\AdminUserResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Services\User\UserService;
+use App\Models\User\AccountDeletionRequest;
 use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
@@ -655,7 +656,22 @@ class AuthController extends Controller
     {
         $user = $this->userService->getMe();
         $resource = $user->user_type === 2 ? AdminUserResource::class : UserResource::class;
-        return $this->success($user->load('permissions', 'roles', 'departments'), resource: $resource);
+        return $this->success(
+            $user->load([
+                'permissions',
+                'roles',
+                'departments',
+                'accountDeletionRequests' => function ($query) {
+                    $query
+                        ->where(
+                            'status',
+                            AccountDeletionRequest::STATUS_PENDING
+                        )
+                        ->latest('id');
+                },
+            ]),
+            resource: $resource
+        );
     }
 
 }
