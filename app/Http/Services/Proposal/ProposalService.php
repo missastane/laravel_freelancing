@@ -5,6 +5,7 @@ namespace App\Http\Services\Proposal;
 use App\Http\Resources\Market\ShowProposalResource;
 use App\Http\Services\Chat\ChatService;
 use App\Http\Services\Favorite\FavoriteService;
+use App\Http\Services\User\AccountDeletionGuardService;
 use App\Models\Market\Conversation;
 use App\Models\Market\Project;
 use App\Models\Market\Proposal;
@@ -25,7 +26,8 @@ class ProposalService
         protected ProposalRepositoryInterface $proposalRepository,
         protected ProposalMilestoneRepositoryInterface $proposalMilstoneRepository,
         protected ChatService $chatService,
-        protected FavoriteService $favoriteService
+        protected FavoriteService $favoriteService,
+        protected AccountDeletionGuardService $accountDeletionGuardService,
     ) {
         $this->user = auth()->user();
     }
@@ -38,31 +40,52 @@ class ProposalService
     {
         return $this->proposalRepository->getProjectProposals($project, $status);
     }
+
+
     public function storeProposal(Project $project, array $data)
     {
         $user = auth()->user();
-        $exists = $this->proposalRepository->existsForProjectAndFreelancer($project->id, $user->id);
-        if ($exists) {
-            throw new Exception("شما قبلاً برای این پروژه پیشنهاد ارسال کرده‌اید.");
-        }
-        $usageService = app(SubscriptionUsageManagerService::class, ['user' => $user]);
 
-        if (!$usageService->canUse('target_create')) {
-            throw new Exception("شما به حداکثر تعداد مجاز ایجاد پیشنهاد رسیده‌اید.", 429);
-        }
-        $proposal = DB::transaction(function () use ($project, $data, $usageService) {
-            $user = auth()->user();
+        $usageService = app(SubscriptionUsageManagerService::class, [
+            'user' => $user
+        ]);
+
+        $proposal = DB::transaction(function () use ($project, $data, $user, $usageService) {
+
+            // Lock the freelancer and check for a pending deletion request.
+            $lockedUser = $this->accountDeletionGuardService
+                ->lockUserForCommercialAction($user->id);
+
+            // Prevent duplicate proposals.
+            $exists = $this->proposalRepository
+                ->existsForProjectAndFreelancer($project->id, $lockedUser->id);
+
+            if ($exists) {
+                throw new Exception("شما قبلاً برای این پروژه پیشنهاد ارسال کرده‌اید.");
+            }
+
+            // Check subscription usage after acquiring the user lock.
+            if (!$usageService->canUse('target_create')) {
+                throw new Exception(
+                    "شما به حداکثر تعداد مجاز ایجاد پیشنهاد رسیده‌اید.",
+                    429
+                );
+            }
+
             $proposal = $this->proposalRepository->create([
                 'project_id' => $project->id,
-                'freelancer_id' => $user->id,
+                'freelancer_id' => $lockedUser->id,
                 'description' => $data['description']
             ]);
+
             $totalAmount = 0;
             $totalDuration = 0;
             $currentDate = now();
 
-            foreach ($data['milestones'] as $index => $milestone) {
-                $dueDate = $currentDate->copy()->addDays((int) $milestone['duration_time']);
+            foreach ($data['milestones'] as $milestone) {
+                $dueDate = $currentDate->copy()
+                    ->addDays((int) $milestone['duration_time']);
+
                 $this->proposalMilstoneRepository->create([
                     'proposal_id' => $proposal->id,
                     'title' => $milestone['title'],
@@ -71,19 +94,27 @@ class ProposalService
                     'duration_time' => $milestone['duration_time'],
                     'due_date' => $dueDate,
                 ]);
+
                 $totalAmount += (int) $milestone['amount'];
                 $totalDuration += (int) $milestone['duration_time'];
                 $currentDate = $dueDate;
             }
+
             $this->proposalRepository->update($proposal, [
                 'total_amount' => $totalAmount,
                 'due_date' => now()->addDays($totalDuration),
             ]);
+
             $usageService->increamentUsage('target_create');
+
             return $proposal;
         });
+
         $employer = $project->employer;
-        $employer->notify(new AddNewProposal("پیشنهاد جدید برای پروژه شما ثبت شد", $project));
+        $employer->notify(
+            new AddNewProposal("پیشنهاد جدید برای پروژه شما ثبت شد", $project)
+        );
+
         return $proposal;
     }
 
@@ -163,7 +194,7 @@ class ProposalService
         $inputs['favoritable_id'] = $proposal->id;
         return $this->favoriteService->addToFavorite($inputs);
     }
-    
+
     public function removeFavorite(Proposal $proposal)
     {
         return $this->favoriteService->removeFavorite($proposal);
