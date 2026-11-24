@@ -46,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'employer' => \App\Http\Middleware\Employer::class,
             'freelancer' => \App\Http\Middleware\Freelancer::class,
             'admin' => \App\Http\Middleware\Admin::class,
+            'account.deletion' => \App\Http\Middleware\EnsureNoPendingAccountDeletion::class,
         ]);
     })
 
