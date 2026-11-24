@@ -48,7 +48,7 @@ class Payment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'amount','description', 'gateway', 'transaction_id', 'bank_first_response', 'bank_second_response', 'reference_id', 'paid_at', 'status'];
+    protected $fillable = ['user_id', 'amount', 'description', 'gateway', 'transaction_id', 'bank_first_response', 'bank_second_response', 'reference_id', 'paid_at', 'status'];
 
     protected function casts()
     {
@@ -58,6 +58,11 @@ class Payment extends Model
             'bank_second_response' => 'array'
         ];
     }
+
+    public const STATUS_PENDING = 1;
+    public const STATUS_PAID = 2;
+    public const STATUS_NOT_PAID = 3;
+    public const STATUS_RETURNED = 4;
 
     public function user()
     {
@@ -87,10 +92,10 @@ class Payment extends Model
     {
         // convert 
         $paymentStatuses = [
-            'pending' => 1,
-            'paid' => 2,
-            'not-paid' => 3,
-            'returned' => 4
+            'pending' => self::STATUS_PENDING,
+            'paid' => self::STATUS_PAID,
+            'not-paid' => self::STATUS_NOT_PAID,
+            'returned' => self::STATUS_RETURNED
         ];
 
         // if the type is valid filters query
