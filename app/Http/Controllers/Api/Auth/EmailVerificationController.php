@@ -209,6 +209,27 @@ class EmailVerificationController extends Controller
         );
     }
 
+    #[OA\Get(
+        path: '/api/auth/change-email/verify/{token}',
+        summary: 'Verify email change',
+        description: 'Verify the email change request using the token sent to the new email address. The user will be redirected to the frontend with the verification result.',
+        parameters: [
+            new OA\Parameter(
+                name: 'token',
+                in: 'path',
+                required: true,
+                description: 'Email change verification token.',
+                schema: new OA\Schema(type: 'string'),
+                example: 'a1b2c3d4e5f6'
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 302,
+                description: 'Redirect to the frontend with one of the following status values: success, expired, email_taken, or failed.'
+            ),
+        ]
+    )]
     public function verifyEmailChange(string $token)
     {
         try {
