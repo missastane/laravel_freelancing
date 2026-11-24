@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use App\Http\Services\Message\MessageService;
 use App\Http\Services\Message\SMS\SmsService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use App\Http\Services\Notification\SubscriptionUsageManagerService;
 use App\Repositories\Contracts\Market\SubscriptionDefaultUsageRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +40,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
+        RateLimiter::for('account-deletion-request', function (Request $request) {
+            return Limit::perDay(3)
+                ->by('account-deletion-request:user:' . $request->user()->id);
+        });
+
+        RateLimiter::for('account-deletion-cancel', function (Request $request) {
+            return Limit::perDay(5)
+                ->by('account-deletion-cancel:user:' . $request->user()->id);
+        });
     }
 }
