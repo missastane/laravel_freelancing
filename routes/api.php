@@ -361,10 +361,11 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/confirm-mobile/{token}', [ProfileController::class, 'mobileConfirm']);
         Route::post('/account-deletion-requests',
             [AccountDeletionController::class, 'store']
-        );
+        )->middleware('throttle:account-deletion-request');
+
         Route::patch('/account-deletion-requests/cancel',
             [AccountDeletionController::class, 'cancel']
-        );
+        )->middleware('throttle:account-deletion-cancel');
     });
     Route::prefix('project')->group(function () {
         Route::get('/', [CustomerProjectController::class, 'index']);
