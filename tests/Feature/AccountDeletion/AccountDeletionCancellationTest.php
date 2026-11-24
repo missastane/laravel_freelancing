@@ -136,4 +136,37 @@ class AccountDeletionCancellationTest extends AccountDeletionTestCase
             'status' => AccountDeletionRequest::STATUS_CANCELLED,
         ]);
     }
+
+    public function test_user_cannot_exceed_account_deletion_cancellation_rate_limit()
+    {
+        $user = $this->authUser();
+
+        $this->createPendingDeletionRequest($user);
+
+        // First request: successfully cancels the pending request.
+        $firstResponse = $this->actingAs($user, 'api')
+            ->patchJson('/api/profile/account-deletion-requests/cancel');
+
+        $firstResponse->assertOk();
+
+        // Second to fifth requests: counted, but no pending request exists.
+        for ($i = 0; $i < 4; $i++) {
+            $response = $this->actingAs($user, 'api')
+                ->patchJson('/api/profile/account-deletion-requests/cancel');
+
+            $response->assertStatus(409);
+        }
+
+        // Sixth request: rate limit exceeded.
+        $response = $this->actingAs($user, 'api')
+            ->patchJson('/api/profile/account-deletion-requests/cancel');
+
+        $response->assertStatus(429);
+
+        $this->assertDatabaseCount('account_deletion_requests', 1);
+        $this->assertDatabaseHas('account_deletion_requests', [
+            'user_id' => $user->id,
+            'status' => AccountDeletionRequest::STATUS_CANCELLED,
+        ]);
+    }
 }
