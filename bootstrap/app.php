@@ -13,6 +13,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use App\Support\ApiResponse;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -133,6 +134,17 @@ return Application::configure(basePath: dirname(__DIR__))
                     422,
                     'VALIDATION_ERROR',
                     $e->errors()
+                );
+            }
+        });
+
+        // Rate limit errors
+        $exceptions->renderable(function (ThrottleRequestsException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return ApiResponse::error(
+                    __('errors.too_many_requests'),
+                    429,
+                    'TOO_MANY_REQUESTS'
                 );
             }
         });
