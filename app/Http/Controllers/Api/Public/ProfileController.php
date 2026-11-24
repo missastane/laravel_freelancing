@@ -421,7 +421,6 @@ class ProfileController extends Controller
         } catch (InvalidMobileNumberException $e) {
             throw $e;
         } catch (Exception $e) {
-            \Log::info($e->getTraceAsString());
             return $this->error($e->getMessage());
         }
     }
@@ -605,7 +604,60 @@ class ProfileController extends Controller
         }
     }
 
-
+    #[OA\Post(
+        path: '/api/profile/change-email',
+        summary: 'Request email change',
+        description: 'Submit a request to change the authenticated user email. The current password is required, and a verification link will be sent to the new email address.',
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'current_password'],
+                properties: [
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'new@example.com'
+                    ),
+                    new OA\Property(
+                        property: 'current_password',
+                        type: 'string',
+                        format: 'password',
+                        example: 'CurrentPassword123'
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Email change verification link sent successfully.',
+                content: new OA\JsonContent(ref: "#/components/schemas/SuccessResponse")
+            ),
+            new OA\Response(
+                response: 401,
+                description: "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+            new OA\Response(
+                response: 409,
+                description: 'The email address is already in use or a conflicting request exists.',
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Validation error.",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ValidationErrorResponse"
+                )
+            ),
+        ]
+    )]
     public function requestEmailChange(RequestEmailChangeRequest $request)
     {
         try {
