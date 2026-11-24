@@ -70,6 +70,11 @@ class Order extends Model
             'delivered_at' => 'datetime'
         ];
     }
+    public const STATUS_PENDING = 1;
+    public const STATUS_IN_PROGRESS = 2;
+    public const STATUS_COMPLETED = 3;
+    public const STATUS_CANCELLED = 4;
+
     public function proposal()
     {
         return $this->belongsTo(Proposal::class, 'proposal_id');
@@ -133,10 +138,10 @@ class Order extends Model
     {
         // convert 
         $orderStatuses = [
-            'pending' => 1,
-            'processing' => 2,
-            'completed' => 3,
-            'canceled' => 4,
+            'pending' => self::STATUS_PENDING,
+            'processing' => self::STATUS_IN_PROGRESS,
+            'completed' => self::STATUS_COMPLETED,
+            'canceled' => self::STATUS_CANCELLED,
         ];
 
         // if the type is valid filters query
