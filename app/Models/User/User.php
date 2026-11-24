@@ -180,6 +180,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(EmailChangeRequest::class);
     }
 
+    public function accountDeletionRequests()
+    {
+        return $this->hasMany(AccountDeletionRequest::class);
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);
