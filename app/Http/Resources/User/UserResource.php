@@ -28,6 +28,23 @@ class UserResource extends JsonResource
             'activation_date' => $this->activation_date,
             'active_role' => $this->active_role,
             'about_me' => $this->about_me,
+            'account_deletion_request' => $this->whenLoaded(
+                'accountDeletionRequests',
+                function () {
+                    $deletionRequest = $this->accountDeletionRequests->first();
+
+                    if (!$deletionRequest) {
+                        return null;
+                    }
+
+                    return [
+                        'id' => $deletionRequest->id,
+                        'status' => $deletionRequest->status,
+                        'scheduled_for' => $deletionRequest->scheduled_for,
+                        'created_at' => $deletionRequest->created_at,
+                    ];
+                }
+            ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
