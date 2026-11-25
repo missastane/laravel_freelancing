@@ -154,9 +154,11 @@ trait ProfileTestTrait
             ])
             ->assertStatus(200)
             ->assertJson([
-                'data' => null,
                 'status' => true,
                 'message' => 'کلمه عبور با موفقیت بروزرسانی شد',
+                'data' => [
+                    'id' => $user->id,
+                ],
             ]);
 
         $this->assertTrue(Hash::check('newPassword456!', $user->fresh()->password));
@@ -250,7 +252,9 @@ trait ProfileTestTrait
             ->assertJson([
                 'status' => true,
                 'message' => 'شماره موبایل شما با موفقیت تأیید شد',
-                'data' => null
+                'data' => [
+                    'id' => $user->id,
+                ],
             ]);
 
         $this->assertNotNull($user->fresh()->mobile_verified_at);
@@ -284,7 +288,8 @@ trait ProfileTestTrait
             ->assertStatus(401)
             ->assertJson([
                 'status' => false,
-                'message' => 'آدرس وارد شده معتبر نیست'
+                'message' => 'آدرس وارد شده معتبر نیست یا اعتبار آن به پایان رسیده است',
+                'error_code' => 'OTP_VERIFICATION_FAILED',
             ]);
     }
 }
