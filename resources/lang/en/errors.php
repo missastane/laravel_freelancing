@@ -46,6 +46,12 @@ return [
         ],
     ],
     'too_many_requests' => 'Too many requests. Please try again later.',
+    'two_factor_already_enabled' => 'Two-factor authentication is already enabled for your account.',
+    'two_factor_setup_invalid' => 'The two-factor authentication setup is invalid.',
+    'two_factor_setup_expired' => 'The two-factor authentication setup has expired.',
+    'two_factor_code_invalid' => 'The verification code is invalid.',
+    'two_factor_disable_password_invalid' => 'The current password is incorrect.',
+    'two_factor_not_enabled' => 'Two-factor authentication is not enabled for this account.',
 
 
 ];

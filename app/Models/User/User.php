@@ -20,6 +20,7 @@ use App\Models\Payment\Wallet;
 use App\Models\Ticket\TicketDepartment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -183,6 +184,16 @@ class User extends Authenticatable implements JWTSubject
     public function accountDeletionRequests()
     {
         return $this->hasMany(AccountDeletionRequest::class);
+    }
+
+    public function twoFactorAuth(): HasOne
+    {
+        return $this->hasOne(UserTwoFactorAuth::class);
+    }
+
+    public function twoFactorRecoveryCodes(): HasMany
+    {
+        return $this->hasMany(TwoFactorRecoveryCode::class);
     }
 
     public function messages()

@@ -5712,6 +5712,323 @@
                 }
             }
         },
+        "/api/auth/two-factor/setup": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Start Two-Factor Authentication Setup",
+                "description": "Start setting up TOTP-based two-factor authentication for the authenticated user. Returns a secret and an otpauth URL that can be used to generate an authenticator QR code. The setup must be confirmed within 10 minutes.",
+                "operationId": "dc3c8e916126dd13704c08b6a1b33394",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Two-factor authentication setup started successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "secret": {
+                                                            "description": "TOTP secret. Display this only during setup.",
+                                                            "type": "string",
+                                                            "example": "JBSWY3DPEHPK3PXP"
+                                                        },
+                                                        "otpauth_url": {
+                                                            "description": "Authenticator provisioning URI used to generate the QR code.",
+                                                            "type": "string",
+                                                            "example": "otpauth://totp/MyApp:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=MyApp"
+                                                        },
+                                                        "expires_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-11-25T10:30:00+03:30"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Two-factor authentication is already enabled.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected server error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/two-factor/confirm": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Confirm Two-Factor Authentication Setup",
+                "description": "Verify the TOTP code generated by the user's authenticator application. On successful verification, two-factor authentication is enabled and eight one-time recovery codes are generated. Recovery codes are returned only once.",
+                "operationId": "09f3bdcc918dd83d58b77c17512cb4a5",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]{6}$",
+                                        "example": "123456",
+                                        "maxLength": 6,
+                                        "minLength": 6
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Two-factor authentication enabled successfully. Eight one-time recovery codes are returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "recovery_codes": {
+                                                            "description": "Eight one-time recovery codes. Store them securely; they will not be returned again.",
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "A1B2C3D4E5"
+                                                            },
+                                                            "maxItems": 8,
+                                                            "minItems": 8
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The setup does not exist or two-factor authentication is already enabled.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "410": {
+                        "description": "The two-factor setup has expired.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid TOTP code or request validation failure.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected server error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/two-factor/disable": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Disable Two-Factor Authentication",
+                "description": "Disable two-factor authentication for the authenticated user. Requires the current password and either a valid authenticator code or an unused recovery code. All recovery codes are deleted after successful deactivation.",
+                "operationId": "15f0dedecc27b86e103c2633ba59f024",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "password",
+                                    "code"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "CurrentPassword123"
+                                    },
+                                    "code": {
+                                        "description": "A 6-digit authenticator code or a 10-character recovery code.",
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Two-factor authentication disabled successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, revoked, reused, or missing refresh token. Also returned when both refresh token sources are provided.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Two-factor authentication is not enabled.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid current password, invalid authenticator or recovery code, or request validation failure.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected server error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/profile/account-deletion-requests": {
             "post": {
                 "tags": [
@@ -7974,6 +8291,11 @@
                         "type": "string",
                         "example": "رشته اصلی من ریاضی است",
                         "nullable": true
+                    },
+                    "two_factor_enabled": {
+                        "description": "Whether two-factor authentication is enabled for the user.",
+                        "type": "boolean",
+                        "example": true
                     },
                     "account_deletion_request": {
                         "description": "Current pending account deletion request, if any.",

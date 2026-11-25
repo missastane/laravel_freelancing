@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\Market\PaymentController;
 use App\Http\Controllers\Api\Admin\Market\WalletController;
 use App\Http\Controllers\Api\Admin\Ticket\TicketPriorityController;
 use App\Http\Controllers\Api\Admin\User\ArbitrationRequestController;
+use App\Http\Controllers\Api\Auth\TwoFactorController;
 use App\Http\Controllers\Api\Customer\CommentController as CustomerCommentController;
 use App\Http\Controllers\API\Admin\Content\PostCategoryController;
 use App\Http\Controllers\API\Admin\Content\PostController;
@@ -359,11 +360,13 @@ Route::middleware(['auth:api'])->group(function () {
         Route::patch('/change-username', [ProfileController::class, 'changeUsername']);
         Route::patch('/change-mobile', [ProfileController::class, 'updateMobile']);
         Route::put('/confirm-mobile/{token}', [ProfileController::class, 'mobileConfirm']);
-        Route::post('/account-deletion-requests',
+        Route::post(
+            '/account-deletion-requests',
             [AccountDeletionController::class, 'store']
         )->middleware('throttle:account-deletion-request');
 
-        Route::patch('/account-deletion-requests/cancel',
+        Route::patch(
+            '/account-deletion-requests/cancel',
             [AccountDeletionController::class, 'cancel']
         )->middleware('throttle:account-deletion-cancel');
     });
@@ -473,12 +476,21 @@ Route::
             Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::get('/me', [AuthController::class, 'getMe'])->name('me');
             Route::get('/email/verify', [EmailVerificationController::class, 'checkVerificationStatus']);
+
+            Route::prefix('/two-factor')
+                ->controller(TwoFactorController::class)
+                ->group(function () {
+                    Route::post('/setup', 'startSetup');
+                    Route::post('/confirm', 'confirmSetup');
+                    Route::post('/disable', 'disable');
+                });
         });
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
         Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware('signed', 'throttle:6,1')->name('verification.verify');
         Route::get('/change-email/verify/{token}', [EmailVerificationController::class, 'verifyEmailChange'])->middleware('signed', 'throttle:6,1')->name('email-change.verify');
         Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->name('reset-password');
         Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])->name('forgot-password');
+
     });
 
 Route::post('/broadcasting/auth', function (Request $request) {

@@ -29,6 +29,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: "active_role", type: "string", example: "کارفرما"),
         new OA\Property(property: "about_me", type: "string", example: "رشته اصلی من ریاضی است", nullable: true),
         new OA\Property(
+            property: "two_factor_enabled",
+            description: "Whether two-factor authentication is enabled for the user.",
+            type: "boolean",
+            example: true
+        ),
+        new OA\Property(
             property: "account_deletion_request",
             description: "Current pending account deletion request, if any.",
             nullable: true,

@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'activation_date' => $this->activation_date,
             'active_role' => $this->active_role,
             'about_me' => $this->about_me,
+            'two_factor_enabled' => (bool) $this->twoFactorAuth?->isEnabled(),
             'account_deletion_request' => $this->whenLoaded(
                 'accountDeletionRequests',
                 function () {

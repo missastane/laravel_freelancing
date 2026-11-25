@@ -56,6 +56,9 @@ return [
       'request_cancelled' => 'Your account deletion request has been cancelled successfully. You can now continue using the platform.',
 
    ],
+   'two_factor_setup_started' => 'Two-factor authentication setup has started.',
+   'two_factor_enabled' => 'Two-factor authentication has been enabled successfully.',
+   'two_factor_disabled' => 'Two-factor authentication has been disabled successfully.',
 
 
 ];
