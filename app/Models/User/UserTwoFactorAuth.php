@@ -23,6 +23,7 @@ class UserTwoFactorAuth extends Model
             'secret' => 'encrypted',
             'confirmed_at' => 'datetime',
             'setup_expires_at' => 'datetime',
+            'last_used_at' => 'integer',
         ];
     }
 

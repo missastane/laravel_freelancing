@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Api\Auth;
-
+use OpenApi\Attributes as OA;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthRequest;
+use App\Http\Requests\Auth\TwoFactorLoginRequest;
 use App\Http\Resources\User\AdminUserResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Services\User\UserService;
@@ -12,7 +13,6 @@ use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use OpenApi\Attributes as OA;
 
 #[OA\Info(
     title: "Laravel_Freelancing API",
@@ -104,11 +104,10 @@ class AuthController extends Controller
         }
     }
 
-
     #[OA\Post(
         path: "/api/auth/login",
         summary: "User Login",
-        description: "Authenticate a user and create an authentication session. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies. Mobile clients receive both access and refresh tokens in JSON.",
+        description: "Authenticate a user. If two-factor authentication is disabled, an authentication session is created and tokens are issued. If two-factor authentication is enabled, a temporary login challenge is returned without creating an authentication session or issuing tokens. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies after successful authentication. Mobile clients receive both access and refresh tokens in JSON after successful authentication.",
         tags: ["Authentication"],
         parameters: [
             new OA\Parameter(ref: "#/components/parameters/XLocale"),
@@ -149,53 +148,103 @@ class AuthController extends Controller
             )
         ),
         responses: [
+
             new OA\Response(
                 response: 200,
-                description: "Successful login. Web clients receive refresh_token and XSRF-TOKEN cookies. The refresh_token cookie is HttpOnly; the XSRF-TOKEN cookie is accessible to JavaScript. Mobile clients receive refresh_token in the JSON response instead.",
+                description: "Login successful or two-factor authentication required.",
                 content: new OA\JsonContent(
-                    allOf: [
+                    oneOf: [
+                        // Normal login response.
                         new OA\Schema(
-                            ref: "#/components/schemas/SuccessResponse"
-                        ),
-                        new OA\Schema(
-                            properties: [
-                                new OA\Property(
-                                    property: "data",
-                                    type: "object",
+                            allOf: [
+                                new OA\Schema(
+                                    ref: "#/components/schemas/SuccessResponse"
+                                ),
+                                new OA\Schema(
                                     properties: [
                                         new OA\Property(
-                                            property: "access_token",
-                                            type: "string",
-                                            description: "JWT access token.",
-                                            example: "eyJ0eXAiOiJK..."
-                                        ),
-                                        new OA\Property(
-                                            property: "token_type",
-                                            type: "string",
-                                            example: "bearer"
-                                        ),
-                                        new OA\Property(
-                                            property: "expires_in",
-                                            type: "integer",
-                                            description: "Access token lifetime in seconds.",
-                                            example: 3600
-                                        ),
-                                        new OA\Property(
-                                            property: "refresh_token",
-                                            type: "string",
-                                            description: "Returned only to mobile clients. Web clients receive this token through an HttpOnly cookie.",
-                                            example: "random_refresh_token_value"
-                                        ),
+                                            property: "data",
+                                            type: "object",
+                                            properties: [
+                                                new OA\Property(
+                                                    property: "access_token",
+                                                    type: "string",
+                                                    description: "JWT access token.",
+                                                    example: "eyJ0eXAiOiJK..."
+                                                ),
+                                                new OA\Property(
+                                                    property: "token_type",
+                                                    type: "string",
+                                                    example: "bearer"
+                                                ),
+                                                new OA\Property(
+                                                    property: "expires_in",
+                                                    type: "integer",
+                                                    description: "Access token lifetime in seconds.",
+                                                    example: 3600
+                                                ),
+                                                new OA\Property(
+                                                    property: "refresh_token",
+                                                    type: "string",
+                                                    description: "Returned only to mobile clients. Web clients receive this token through an HttpOnly cookie.",
+                                                    example: "random_refresh_token_value"
+                                                ),
+                                            ]
+                                        )
                                     ]
                                 )
                             ]
-                        )
+                        ),
+
+                        // Two-factor challenge response.
+                        new OA\Schema(
+                            allOf: [
+                                new OA\Schema(
+                                    ref: "#/components/schemas/SuccessResponse"
+                                ),
+                                new OA\Schema(
+                                    properties: [
+                                        new OA\Property(
+                                            property: "data",
+                                            type: "object",
+                                            properties: [
+                                                new OA\Property(
+                                                    property: "requires_two_factor",
+                                                    type: "boolean",
+                                                    example: true
+                                                ),
+                                                new OA\Property(
+                                                    property: "challenge_token",
+                                                    type: "string",
+                                                    description: "Temporary token required to complete two-factor authentication.",
+                                                    example: "a1b2c3d4..."
+                                                ),
+                                                new OA\Property(
+                                                    property: "expires_in",
+                                                    type: "integer",
+                                                    description: "Challenge lifetime in seconds.",
+                                                    example: 300
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ]
+                        ),
                     ]
                 )
             ),
+
             new OA\Response(
                 response: 401,
                 description: "Invalid credentials or authentication failure.",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/ErrorResponse"
+                )
+            ),
+            new OA\Response(
+                response: 403,
+                description: "Email address has not been verified.",
                 content: new OA\JsonContent(
                     ref: "#/components/schemas/ErrorResponse"
                 )
@@ -225,6 +274,15 @@ class AuthController extends Controller
             }
 
             $responseData = $result['data'];
+
+            // Two-factor authentication challenge response.
+            if (!empty($responseData['requires_two_factor'])) {
+                return $this->success(
+                    $responseData,
+                    $result['message'],
+                    $result['code']
+                );
+            }
 
             // Mobile clients receive the refresh token in JSON.
             if ($data['client_type'] === 'mobile') {
@@ -289,6 +347,197 @@ class AuthController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/auth/two-factor/verify-login',
+        summary: 'Verify Two-Factor Login',
+        description: 'Complete the login process by verifying a TOTP or recovery code using the login challenge token received during the initial login request.',
+        tags: ['Authentication'],
+        parameters: [
+            new OA\Parameter(ref: '#/components/parameters/XLocale'),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['challenge_token', 'code'],
+                properties: [
+                    new OA\Property(
+                        property: 'challenge_token',
+                        type: 'string',
+                        example: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234',
+                        description: 'The 64-character login challenge token received from the login endpoint.'
+                    ),
+                    new OA\Property(
+                        property: 'code',
+                        type: 'string',
+                        example: '123456',
+                        description: 'A 6-digit TOTP code or a 10-character recovery code.'
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Two-factor authentication successful. The user is now logged in.',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'status',
+                            type: 'boolean',
+                            example: true
+                        ),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Welcome back, John Doe.'
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'access_token',
+                                    type: 'string',
+                                    example: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'
+                                ),
+                                new OA\Property(
+                                    property: 'token_type',
+                                    type: 'string',
+                                    example: 'bearer'
+                                ),
+                                new OA\Property(
+                                    property: 'expires_in',
+                                    type: 'integer',
+                                    example: 3600
+                                ),
+                                new OA\Property(
+                                    property: 'refresh_token',
+                                    type: 'string',
+                                    nullable: true,
+                                    description: 'Returned in JSON for mobile clients. For web clients, it is sent through an HttpOnly cookie.',
+                                    example: 'refresh_token_example'
+                                ),
+                            ]
+                        ),
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Invalid, expired, or already consumed login challenge.',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/ErrorResponse'
+                )
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'The user email address has not been verified.',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/ErrorResponse'
+                )
+            ),
+            new OA\Response(
+                response: 409,
+                description: 'Two-factor authentication is no longer enabled for this account.',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/ErrorResponse'
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Invalid verification code or request validation failed.',
+                content: new OA\JsonContent(
+                    oneOf: [
+                        new OA\Schema(ref: '#/components/schemas/ErrorResponse'),
+                        new OA\Schema(ref: '#/components/schemas/ValidationErrorResponse'),
+                    ]
+                )
+            ),
+        ]
+    )]
+    public function verifyTwoFactorLogin(TwoFactorLoginRequest $request)
+    {
+        try {
+            $result = $this->userService->completeTwoFactorLogin(
+                $request->validated()['challenge_token'],
+                $request->validated()['code']
+            );
+
+            if (!$result['status']) {
+                return $this->error(
+                    $result['message'],
+                    $result['code'],
+                );
+            }
+
+            $responseData = $result['data'];
+
+            // Retrieve internal metadata.
+            $clientType = $responseData['client_type'];
+            $rememberMe = (bool) $responseData['remember_me'];
+
+            unset(
+                $responseData['client_type'],
+                $responseData['remember_me']
+            );
+
+            // Mobile clients receive the refresh token in JSON.
+            if ($clientType === 'mobile') {
+                return $this->success(
+                    $responseData,
+                    $result['message'],
+                    $result['code']
+                );
+            }
+
+            // Web clients receive the refresh token through an HttpOnly cookie.
+            $refreshToken = $responseData['refresh_token'];
+            unset($responseData['refresh_token']);
+
+            $response = $this->success(
+                $responseData,
+                $result['message'],
+                $result['code']
+            );
+
+            $cookieMinutes = $rememberMe
+                ? 30 * 24 * 60
+                : null;
+
+            $csrfToken = app(\App\Support\CsrfToken::class)->generate();
+
+            $refreshCookie = cookie(
+                'refresh_token',
+                $refreshToken,
+                $cookieMinutes,
+                '/',
+                null,
+                (bool) config('session.secure'),
+                true,
+                false,
+                config('session.same_site', 'lax')
+            );
+
+            $csrfCookie = cookie(
+                'XSRF-TOKEN',
+                $csrfToken,
+                $cookieMinutes,
+                '/',
+                null,
+                (bool) config('session.secure'),
+                false,
+                false,
+                config('session.same_site', 'lax')
+            );
+
+            return $response
+                ->withCookie($refreshCookie)
+                ->withCookie($csrfCookie);
+
+        } catch (Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
 
     #[OA\Post(
         path: "/api/auth/logout",

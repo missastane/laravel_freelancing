@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Services\Auth\LoginChallengeService;
+use App\Http\Services\Auth\TwoFactorService;
 
 class UserService
 {
@@ -28,7 +30,9 @@ class UserService
         protected UserRepositoryInterface $userRepository,
         protected WalletRepositoryInterface $walletRepository,
         protected RoleRepositoryInterface $roleRepository,
-        protected RefreshTokenService $refreshTokenService
+        protected RefreshTokenService $refreshTokenService,
+        protected LoginChallengeService $loginChallengeService,
+        protected TwoFactorService $twoFactorService
     ) {
     }
 
@@ -63,7 +67,6 @@ class UserService
         return $user;
     }
 
-
     public function loginUser(array $data): array
     {
         $user = $this->userRepository->findByEmail($data['email']);
@@ -86,6 +89,29 @@ class UserService
                 'code' => 403,
             ];
         }
+
+        // Require two-factor authentication before creating a session.
+        if ($user->twoFactorAuth?->isEnabled()) {
+            $challengeToken = $this->loginChallengeService->create(
+                user: $user,
+                clientType: $clientType,
+                rememberMe: $rememberMe,
+                ipAddress: $data['ip_address'] ?? null,
+                userAgent: $data['user_agent'] ?? null
+            );
+
+            return [
+                'status' => true,
+                'message' => __('messages.two_factor_required'),
+                'data' => [
+                    'requires_two_factor' => true,
+                    'challenge_token' => $challengeToken,
+                    'expires_in' => 300,
+                ],
+                'code' => 200,
+            ];
+        }
+
         // Create a new authentication session and refresh token.
         $sessionData = $this->refreshTokenService->createSession(
             user: $user,
@@ -110,6 +136,127 @@ class UserService
                 'token_type' => 'bearer',
                 'expires_in' => JWTAuth::factory()->getTTL() * 60,
                 'refresh_token' => $sessionData['refresh_token'],
+            ],
+            'code' => 200,
+        ];
+    }
+
+    /**
+     * Complete login after successful two-factor authentication.
+     */
+    public function completeTwoFactorLogin(
+        string $challengeToken,
+        string $code
+    ): array {
+        $user = null;
+        $failureReason = null;
+
+        $result = $this->loginChallengeService->verifyAndConsume(
+            $challengeToken,
+            function (array $challenge) use ($code, &$user, &$failureReason): bool {
+                $user = User::find($challenge['user_id']);
+
+                if (!$user) {
+                    $failureReason = 'invalid_challenge';
+
+                    return false;
+                }
+
+                if (!$user->hasVerifiedEmail()) {
+                    $failureReason = 'email_unverified';
+
+                    return false;
+                }
+
+                if (!$user->twoFactorAuth?->isEnabled()) {
+                    $failureReason = 'two_factor_disabled';
+
+                    return false;
+                }
+
+                return $this->twoFactorService->verifyLoginCode(
+                    $user,
+                    $code
+                );
+            }
+        );
+
+        if ($result['status'] === 'invalid_challenge') {
+            return [
+                'status' => false,
+                'message' => __('auth.failed'),
+                'code' => 401,
+            ];
+        }
+
+        if ($result['status'] === 'invalid_code') {
+
+            // The user associated with the challenge no longer exists.
+            if ($failureReason === 'invalid_challenge') {
+                return [
+                    'status' => false,
+                    'message' => __('auth.failed'),
+                    'code' => 401,
+                ];
+            }
+
+            if ($failureReason === 'email_unverified') {
+                return [
+                    'status' => false,
+                    'message' => __('errors.email_has_not_verified'),
+                    'code' => 403,
+                ];
+            }
+
+            if ($failureReason === 'two_factor_disabled') {
+                return [
+                    'status' => false,
+                    'message' => __('errors.two_factor_not_enabled'),
+                    'code' => 409,
+                ];
+            }
+
+            $message = __('errors.two_factor_code_invalid');
+            $message .= ' ' . __('errors.two_factor_attempts_remaining', [
+                'remaining' => $result['remaining_attempts'],
+            ]);
+
+            return [
+                'status' => false,
+                'message' => $message,
+                'code' => 422,
+            ];
+        }
+
+        // The challenge has been consumed successfully.
+        $challenge = $result['challenge'];
+
+        // Create the authentication session and refresh token.
+        $sessionData = $this->refreshTokenService->createSession(
+            user: $user,
+            clientType: $challenge['client_type'],
+            rememberMe: $challenge['remember_me'],
+            ipAddress: $challenge['ip_address'],
+            userAgent: $challenge['user_agent']
+        );
+
+        // Generate an access token linked to this session.
+        $token = JWTAuth::claims([
+            'sid' => $sessionData['session']->id,
+        ])->fromUser($user);
+
+        return [
+            'status' => true,
+            'message' => __('messages.login_success', [
+                'user' => $user->full_name,
+            ]),
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60,
+                'refresh_token' => $sessionData['refresh_token'],
+                'client_type' => $challenge['client_type'],
+                'remember_me' => $challenge['remember_me'],
             ],
             'code' => 200,
         ];

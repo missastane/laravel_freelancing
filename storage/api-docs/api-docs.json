@@ -4945,7 +4945,7 @@
                     "Authentication"
                 ],
                 "summary": "User Login",
-                "description": "Authenticate a user and create an authentication session. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies. Mobile clients receive both access and refresh tokens in JSON.",
+                "description": "Authenticate a user. If two-factor authentication is disabled, an authentication session is created and tokens are issued. If two-factor authentication is enabled, a temporary login challenge is returned without creating an authentication session or issuing tokens. Web clients receive the access token in JSON and refresh/CSRF tokens through cookies after successful authentication. Mobile clients receive both access and refresh tokens in JSON after successful authentication.",
                 "operationId": "be2e78e5f93182d4403f839cc516d312",
                 "parameters": [
                     {
@@ -4996,42 +4996,77 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful login. Web clients receive refresh_token and XSRF-TOKEN cookies. The refresh_token cookie is HttpOnly; the XSRF-TOKEN cookie is accessible to JavaScript. Mobile clients receive refresh_token in the JSON response instead.",
+                        "description": "Login successful or two-factor authentication required.",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "allOf": [
+                                    "oneOf": [
                                         {
-                                            "$ref": "#/components/schemas/SuccessResponse"
-                                        },
-                                        {
-                                            "properties": {
-                                                "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/SuccessResponse"
+                                                },
+                                                {
                                                     "properties": {
-                                                        "access_token": {
-                                                            "description": "JWT access token.",
-                                                            "type": "string",
-                                                            "example": "eyJ0eXAiOiJK..."
-                                                        },
-                                                        "token_type": {
-                                                            "type": "string",
-                                                            "example": "bearer"
-                                                        },
-                                                        "expires_in": {
-                                                            "description": "Access token lifetime in seconds.",
-                                                            "type": "integer",
-                                                            "example": 3600
-                                                        },
-                                                        "refresh_token": {
-                                                            "description": "Returned only to mobile clients. Web clients receive this token through an HttpOnly cookie.",
-                                                            "type": "string",
-                                                            "example": "random_refresh_token_value"
+                                                        "data": {
+                                                            "properties": {
+                                                                "access_token": {
+                                                                    "description": "JWT access token.",
+                                                                    "type": "string",
+                                                                    "example": "eyJ0eXAiOiJK..."
+                                                                },
+                                                                "token_type": {
+                                                                    "type": "string",
+                                                                    "example": "bearer"
+                                                                },
+                                                                "expires_in": {
+                                                                    "description": "Access token lifetime in seconds.",
+                                                                    "type": "integer",
+                                                                    "example": 3600
+                                                                },
+                                                                "refresh_token": {
+                                                                    "description": "Returned only to mobile clients. Web clients receive this token through an HttpOnly cookie.",
+                                                                    "type": "string",
+                                                                    "example": "random_refresh_token_value"
+                                                                }
+                                                            },
+                                                            "type": "object"
                                                         }
                                                     },
                                                     "type": "object"
                                                 }
-                                            },
-                                            "type": "object"
+                                            ]
+                                        },
+                                        {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/SuccessResponse"
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "data": {
+                                                            "properties": {
+                                                                "requires_two_factor": {
+                                                                    "type": "boolean",
+                                                                    "example": true
+                                                                },
+                                                                "challenge_token": {
+                                                                    "description": "Temporary token required to complete two-factor authentication.",
+                                                                    "type": "string",
+                                                                    "example": "a1b2c3d4..."
+                                                                },
+                                                                "expires_in": {
+                                                                    "description": "Challenge lifetime in seconds.",
+                                                                    "type": "integer",
+                                                                    "example": 300
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            ]
                                         }
                                     ]
                                 }
@@ -5048,12 +5083,155 @@
                             }
                         }
                     },
+                    "403": {
+                        "description": "Email address has not been verified.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "422": {
                         "description": "Validation Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/two-factor/verify-login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify Two-Factor Login",
+                "description": "Complete the login process by verifying a TOTP or recovery code using the login challenge token received during the initial login request.",
+                "operationId": "b656685c00b28f23782910b2cb732ab6",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/XLocale"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "challenge_token",
+                                    "code"
+                                ],
+                                "properties": {
+                                    "challenge_token": {
+                                        "description": "The 64-character login challenge token received from the login endpoint.",
+                                        "type": "string",
+                                        "example": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234"
+                                    },
+                                    "code": {
+                                        "description": "A 6-digit TOTP code or a 10-character recovery code.",
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Two-factor authentication successful. The user is now logged in.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Welcome back, John Doe."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600
+                                                },
+                                                "refresh_token": {
+                                                    "description": "Returned in JSON for mobile clients. For web clients, it is sent through an HttpOnly cookie.",
+                                                    "type": "string",
+                                                    "example": "refresh_token_example",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid, expired, or already consumed login challenge.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user email address has not been verified.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Two-factor authentication is no longer enabled for this account.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid verification code or request validation failed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ValidationErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }

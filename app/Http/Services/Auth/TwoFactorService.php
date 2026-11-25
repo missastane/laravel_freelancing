@@ -208,4 +208,53 @@ class TwoFactorService
         });
     }
 
+    /**
+     * Verify a two-factor code during login.
+     */
+    public function verifyLoginCode(User $user, string $code): bool
+    {
+        return DB::transaction(function () use ($user, $code) {
+            $twoFactorAuth = $user->twoFactorAuth()
+                ->lockForUpdate()
+                ->first();
+
+            if (!$twoFactorAuth || !$twoFactorAuth->isEnabled()) {
+                return false;
+            }
+
+            // First, verify the code as a TOTP code.
+            $timestamp = $this->google2fa->verifyKeyNewer(
+                $twoFactorAuth->secret,
+                $code,
+                $twoFactorAuth->last_used_at ?? 0
+            );
+
+            if ($timestamp !== false) {
+                $twoFactorAuth->update([
+                    'last_used_at' => $timestamp,
+                ]);
+
+                return true;
+            }
+
+            // If TOTP verification fails, check unused recovery codes.
+            $recoveryCodes = $user->twoFactorRecoveryCodes()
+                ->whereNull('used_at')
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($recoveryCodes as $recoveryCode) {
+                if (Hash::check($code, $recoveryCode->code_hash)) {
+                    $recoveryCode->update([
+                        'used_at' => now(),
+                    ]);
+
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
 }

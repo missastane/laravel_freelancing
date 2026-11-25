@@ -59,6 +59,6 @@ return [
    'two_factor_setup_started' => 'Two-factor authentication setup has started.',
    'two_factor_enabled' => 'Two-factor authentication has been enabled successfully.',
    'two_factor_disabled' => 'Two-factor authentication has been disabled successfully.',
-
+   'two_factor_required' => 'Two-factor authentication is required.',
 
 ];

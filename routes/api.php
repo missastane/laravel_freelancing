@@ -472,6 +472,9 @@ Route::
         Route::post('/register', [AuthController::class, 'register'])->name('register');
         Route::post('/login', [AuthController::class, 'login'])->name('login');
         Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('csrf.refresh'); // use post method to more safety
+        Route::post('/two-factor/verify-login',
+                [AuthController::class, 'verifyTwoFactorLogin']
+            )->name('auth.two-factor.verify-login');
         Route::middleware(['auth:api'])->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::get('/me', [AuthController::class, 'getMe'])->name('me');
@@ -484,6 +487,7 @@ Route::
                     Route::post('/confirm', 'confirmSetup');
                     Route::post('/disable', 'disable');
                 });
+            
         });
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware('throttle:6,1');
         Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware('signed', 'throttle:6,1')->name('verification.verify');

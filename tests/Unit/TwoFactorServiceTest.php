@@ -8,7 +8,7 @@ use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PragmaRX\Google2FA\Google2FA;
 use Tests\TestCase;
-
+use Illuminate\Support\Facades\Hash;
 class TwoFactorServiceTest extends TestCase
 {
     use RefreshDatabase;
@@ -514,4 +514,242 @@ class TwoFactorServiceTest extends TestCase
             'used_at' => null,
         ]);
     }
+
+
+    public function test_it_accepts_a_valid_authenticator_code_during_login(): void
+    {
+        $user = User::factory()->create();
+
+        $google2fa = app(Google2FA::class);
+        $secret = $google2fa->generateSecretKey();
+
+        $user->twoFactorAuth()->create([
+            'secret' => $secret,
+            'confirmed_at' => now(),
+            'setup_expires_at' => null,
+            'last_used_at' => null,
+        ]);
+
+        $code = $google2fa->getCurrentOtp($secret);
+
+        $service = app(TwoFactorService::class);
+
+        $result = $service->verifyLoginCode($user, $code);
+
+        // The valid authenticator code should be accepted.
+        $this->assertTrue($result);
+
+        // The accepted TOTP timestamp should be stored.
+        $this->assertNotNull(
+            $user->twoFactorAuth()->firstOrFail()->last_used_at
+        );
+    }
+
+    public function test_it_rejects_an_invalid_authenticator_code_during_login(): void
+    {
+        $user = User::factory()->create();
+
+        $user->twoFactorAuth()->create([
+            'secret' => 'test-secret',
+            'confirmed_at' => now(),
+            'setup_expires_at' => null,
+            'last_used_at' => 100,
+        ]);
+
+        $google2fa = $this->mock(
+            Google2FA::class,
+            function ($mock) {
+                $mock->shouldReceive('verifyKeyNewer')
+                    ->once()
+                    ->with('test-secret', '123456', 100)
+                    ->andReturnFalse();
+            }
+        );
+
+        $service = new TwoFactorService($google2fa);
+
+        $result = $service->verifyLoginCode($user, '123456');
+
+        // Invalid codes should be rejected.
+        $this->assertFalse($result);
+
+        // The last accepted TOTP timestamp should remain unchanged.
+        $this->assertSame(
+            100,
+            $user->twoFactorAuth()->firstOrFail()->last_used_at
+        );
+    }
+
+    public function test_it_rejects_reusing_the_same_authenticator_code_during_login(): void
+    {
+        $user = User::factory()->create();
+
+        $google2fa = app(Google2FA::class);
+        $secret = $google2fa->generateSecretKey();
+
+        $user->twoFactorAuth()->create([
+            'secret' => $secret,
+            'confirmed_at' => now(),
+            'setup_expires_at' => null,
+            'last_used_at' => null,
+        ]);
+
+        $code = $google2fa->getCurrentOtp($secret);
+
+        $service = app(TwoFactorService::class);
+
+        // The first attempt should succeed.
+        $firstResult = $service->verifyLoginCode($user, $code);
+
+        $this->assertTrue($firstResult);
+
+        // The same TOTP code must not be accepted again.
+        $secondResult = $service->verifyLoginCode($user, $code);
+
+        $this->assertFalse($secondResult);
+    }
+
+    public function test_it_accepts_a_valid_recovery_code_during_login(): void
+    {
+        $user = User::factory()->create();
+
+        $user->twoFactorAuth()->create([
+            'secret' => 'test-secret',
+            'confirmed_at' => now(),
+            'setup_expires_at' => null,
+            'last_used_at' => 100,
+        ]);
+
+        $recoveryCode = 'VALIDCODE1';
+
+        $recoveryCodeRecord = $user->twoFactorRecoveryCodes()->create([
+            'code_hash' => Hash::make($recoveryCode),
+        ]);
+
+        $google2fa = $this->mock(
+            Google2FA::class,
+            function ($mock) {
+                $mock->shouldReceive('verifyKeyNewer')
+                    ->once()
+                    ->with('test-secret', 'VALIDCODE1', 100)
+                    ->andReturnFalse();
+            }
+        );
+
+        $service = new TwoFactorService($google2fa);
+
+        $result = $service->verifyLoginCode($user, $recoveryCode);
+
+        // The valid recovery code should be accepted.
+        $this->assertTrue($result);
+
+        // The recovery code should be marked as used.
+        $this->assertNotNull(
+            $recoveryCodeRecord->fresh()->used_at
+        );
+    }
+
+    public function test_it_rejects_reusing_a_recovery_code_during_login(): void
+    {
+        $user = User::factory()->create();
+
+        $user->twoFactorAuth()->create([
+            'secret' => 'test-secret',
+            'confirmed_at' => now(),
+            'setup_expires_at' => null,
+            'last_used_at' => 100,
+        ]);
+
+        $recoveryCode = 'VALIDCODE1';
+
+        $recoveryCodeRecord = $user->twoFactorRecoveryCodes()->create([
+            'code_hash' => Hash::make($recoveryCode),
+        ]);
+
+        $google2fa = $this->mock(
+            Google2FA::class,
+            function ($mock) {
+                $mock->shouldReceive('verifyKeyNewer')
+                    ->twice()
+                    ->with('test-secret', 'VALIDCODE1', 100)
+                    ->andReturnFalse();
+            }
+        );
+
+        $service = new TwoFactorService($google2fa);
+
+        // The first attempt should succeed.
+        $firstResult = $service->verifyLoginCode($user, $recoveryCode);
+
+        $this->assertTrue($firstResult);
+
+        // The same recovery code must not be accepted again.
+        $secondResult = $service->verifyLoginCode($user, $recoveryCode);
+
+        $this->assertFalse($secondResult);
+
+        // The recovery code should remain marked as used.
+        $this->assertNotNull(
+            $recoveryCodeRecord->fresh()->used_at
+        );
+    }
+
+    public function test_it_does_not_consume_a_recovery_code_when_login_code_is_invalid(): void
+    {
+        $user = User::factory()->create();
+
+        $user->twoFactorAuth()->create([
+            'secret' => 'test-secret',
+            'confirmed_at' => now(),
+            'setup_expires_at' => null,
+            'last_used_at' => 100,
+        ]);
+
+        $recoveryCodeRecord = $user->twoFactorRecoveryCodes()->create([
+            'code_hash' => Hash::make('VALIDCODE1'),
+        ]);
+
+        $google2fa = $this->mock(
+            Google2FA::class,
+            function ($mock) {
+                $mock->shouldReceive('verifyKeyNewer')
+                    ->once()
+                    ->with('test-secret', 'INVALID001', 100)
+                    ->andReturnFalse();
+            }
+        );
+
+        $service = new TwoFactorService($google2fa);
+
+        $result = $service->verifyLoginCode($user, 'INVALID001');
+
+        // Invalid codes should be rejected.
+        $this->assertFalse($result);
+
+        // The recovery code should remain unused.
+        $this->assertNull(
+            $recoveryCodeRecord->fresh()->used_at
+        );
+    }
+
+    public function test_it_rejects_login_code_when_two_factor_is_not_enabled(): void
+    {
+        $user = User::factory()->create();
+
+        $google2fa = $this->mock(
+            Google2FA::class,
+            function ($mock) {
+                // TOTP verification should not be attempted.
+                $mock->shouldNotReceive('verifyKeyNewer');
+            }
+        );
+
+        $service = new TwoFactorService($google2fa);
+
+        $result = $service->verifyLoginCode($user, '123456');
+
+        // Login verification should fail without enabled 2FA.
+        $this->assertFalse($result);
+    }
+
 }

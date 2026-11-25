@@ -52,6 +52,7 @@ return [
     'two_factor_code_invalid' => 'The verification code is invalid.',
     'two_factor_disable_password_invalid' => 'The current password is incorrect.',
     'two_factor_not_enabled' => 'Two-factor authentication is not enabled for this account.',
+    'two_factor_attempts_remaining' => ':remaining attempts remaining.',
 
 
 ];
