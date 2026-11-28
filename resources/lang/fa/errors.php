@@ -52,5 +52,6 @@ return [
     'two_factor_disable_password_invalid' => 'کلمه عبور فعلی صحیح نیست.',
     'two_factor_not_enabled' => 'احراز هویت دومرحله‌ای برای این حساب فعال نیست.',
     'two_factor_attempts_remaining' => ':remaining تلاش دیگر باقی مانده است.',
+    'wrong_current_password' => 'کلمه عبور فعلی نادرست است',
 
 ];
