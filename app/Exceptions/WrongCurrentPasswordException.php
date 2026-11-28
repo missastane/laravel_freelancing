@@ -11,7 +11,7 @@ class WrongCurrentPasswordException extends Exception
 
     public function render($request)
     {
-        return $this->error('کلمه عبور فعلی نادرست است',403);
+        return $this->error(__('errors.wrong_current_password'),403);
        
     }
 }
