@@ -127,7 +127,6 @@ table {border-collapse: collapse;}
 
 </head>
 
-
 <body style="margin: 0px; background-color: #000000; padding: 0px !important;">
     <center role="article" aria-roledescription="email" lang="en" style="width: 100%;background-color: #000000;">
         <!--[if (gte mso 9)|(IE)]>
@@ -199,10 +198,6 @@ table {border-collapse: collapse;}
                   </td>
                 </tr>
 
-              
-  
-
-
               <tr>
                   <td align="center" valign="top" style="font-size:0;background-color:#f2f0eb;padding:20px 45px">
                     <!--[if (gte mso 9)|(IE)]>
@@ -230,8 +225,6 @@ table {border-collapse: collapse;}
                   </td>
                 </tr>
 
-
-
                   <!-- HR line : BEGIN -->
                   <tr>
                     <td style="padding:60px 45px 30px;background-color:#f2f0eb" width="100%">
@@ -243,11 +236,6 @@ table {border-collapse: collapse;}
                     </td>
                   </tr>
                   <!-- HR line : END -->
-
-
-
-       
-
 
                   <tr>
                   <td align="center" valign="top" style="font-size:0;background-color:#f2f0eb;padding:20px 30px">
@@ -293,14 +281,6 @@ table {border-collapse: collapse;}
                     <![endif]-->
                   </td>
                 </tr>
-              
-      
-    
-
-
-
-
-
             </table>
             <!-- Email Body : END -->
             <!--[if (gte mso 9)|(IE)]>

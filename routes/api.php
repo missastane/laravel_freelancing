@@ -470,11 +470,12 @@ Route::middleware(['auth:api'])->group(function () {
 Route::
     prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register'])->name('register');
-        Route::post('/login', [AuthController::class, 'login'])->name('login');
+        Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login');
         Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('csrf.refresh'); // use post method to more safety
         Route::post('/two-factor/verify-login',
                 [AuthController::class, 'verifyTwoFactorLogin']
-            )->name('auth.two-factor.verify-login');
+            )->middleware('throttle:two-factor-login')
+            ->name('auth.two-factor.verify-login');
         Route::middleware(['auth:api'])->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
             Route::get('/me', [AuthController::class, 'getMe'])->name('me');

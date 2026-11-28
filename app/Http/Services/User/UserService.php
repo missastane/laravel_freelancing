@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\User;
 
+use App\Events\TwoFactorLoginAttemptsExceeded;
 use App\Http\Services\Auth\RefreshTokenService;
 use App\Jobs\ResetPasswordJob;
 use App\Jobs\SendEmailChangeVerification;
@@ -214,6 +215,13 @@ class UserService
                     'message' => __('errors.two_factor_not_enabled'),
                     'code' => 409,
                 ];
+            }
+
+            if ($result['attempts_exceeded'] ?? false) {
+                event(new TwoFactorLoginAttemptsExceeded(
+                    user: $user,
+                    challenge: $result['challenge']
+                ));
             }
 
             $message = __('errors.two_factor_code_invalid');

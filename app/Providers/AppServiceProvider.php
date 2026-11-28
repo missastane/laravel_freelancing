@@ -2,15 +2,14 @@
 
 namespace App\Providers;
 
+use App\Http\Services\Auth\LoginChallengeService;
 use App\Http\Services\Message\MessageService;
 use App\Http\Services\Message\SMS\SmsService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-use App\Http\Services\Notification\SubscriptionUsageManagerService;
-use App\Repositories\Contracts\Market\SubscriptionDefaultUsageRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +39,37 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        RateLimiter::for('login', function (Request $request) {
+            $email = Str::lower(trim((string) $request->input('email')));
+
+            return [
+                Limit::perMinute(20)
+                    ->by('login:ip:' . $request->ip()),
+
+                Limit::perMinute(5)
+                    ->by('login:email:' . hash('sha256', $email)),
+            ];
+        });
+
+        RateLimiter::for('two-factor-login', function (Request $request) {
+            $challengeToken = (string) $request->input('challenge_token');
+
+            $challengeService = app(LoginChallengeService::class);
+
+            $userId = $challengeToken !== ''
+                ? $challengeService->getUserIdByToken($challengeToken)
+                : null;
+
+            $userId ??= 'unknown';
+            return [
+                Limit::perMinute(30)
+                    ->by('two-factor-login:ip:' . $request->ip()),
+
+                Limit::perMinute(10)
+                    ->by('two-factor-login:user:' . $userId),
+            ];
+        });
 
         RateLimiter::for('account-deletion-request', function (Request $request) {
             return Limit::perDay(3)

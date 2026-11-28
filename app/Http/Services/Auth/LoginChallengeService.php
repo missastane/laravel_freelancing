@@ -81,6 +81,21 @@ class LoginChallengeService
         return $challenge;
     }
 
+    public function getUserIdByToken(string $token): ?int
+    {
+        $challenge = $this->cache()->get($this->getCacheKey($token));
+
+        if (
+            !$challenge ||
+            $challenge['expires_at'] <= now()->timestamp ||
+            $challenge['attempts'] >= self::MAX_ATTEMPTS
+        ) {
+            return null;
+        }
+
+        return (int) $challenge['user_id'];
+    }
+
     /**
      * Record a failed verification attempt.
      *
@@ -178,6 +193,8 @@ class LoginChallengeService
                     return [
                         'status' => 'invalid_code',
                         'remaining_attempts' => 0,
+                        'attempts_exceeded' => true,
+                        'challenge' => $challenge,
                     ];
                 }
 
